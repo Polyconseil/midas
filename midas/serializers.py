@@ -24,33 +24,51 @@ class GeometryField(serializers.Field):
         return GEOSGeometry(value)
 
 
-class DeviceSerializer(serializers.Serializer):
-    unique_id = serializers.UUIDField()
-    visible_id = serializers.CharField()
+class Device(serializers.Serializer):
+    id = serializers.UUIDField()
+    provider = serializers.UUIDField()
+    identification_number = serializers.CharField()
     model = serializers.CharField()
-    status = serializers.ChoiceField(choices=enums.DEVICE_STATUS_CHOICES)
-    position = GeometryField()  # expects Point
-    battery = serializers.FloatField(min_value=0, max_value=1)
-    timestamp = serializers.DateTimeField()
+    status = serializers.ChoiceField(enums.DEVICE_STATUS_CHOICES)
+    position = GeometryField(required=False, allow_null=True)
+    properties = serializers.JSONField(default=dict, required=False)
 
 
-class TripSerializer(serializers.Serializer):
-    unique_id = serializers.UUIDField()
-    vehicle_id = serializers.UUIDField()
-    route = GeometryField()  # expects Feature of Point with properties: {timestamp}
+class DeviceRegister(serializers.Serializer):
+    id = serializers.UUIDField()
+    provider = serializers.UUIDField()
+    identification_number = serializers.CharField()
+    model = serializers.CharField()
+
+    def create(self, data):
+        return models.Device.objects.create(**data)
+
+
+class DeviceTelemetry(serializers.Serializer):
+    id = serializers.UUIDField()
+    provider = serializers.UUIDField()
+    status = serializers.ChoiceField(enums.DEVICE_STATUS_CHOICES)
+    position = GeometryField(required=False, allow_null=True)
+    properties = serializers.JSONField(default=dict, required=False)
+
+    def update(self, instance, data):
+        return models.Device.objects.filter(
+            id=data.pop("id"), provider=data.pop("provider")
+        ).update(**data)
 
 
 class ServiceAreaSerializer(serializers.Serializer):
-    unique_id = serializers.UUIDField(source="id", read_only=True)
+    id = serializers.UUIDField(read_only=True)
     begin_date = serializers.DateTimeField()
     end_date = serializers.DateTimeField(required=False)
     # TODO are should be a Feature of MultiPolygon.
     # It is a single polygon for the moment
-    area = GeometryField(source="area.polygons")
+    # NOTE (lip): We could use a FeatureCollection of Polygons instead.
+    polygon = GeometryField()
 
     def create(self, data):
         area = models.Area.objects.create(
-            polygons=MultiPolygon([data['area']['polygons']]),
+            polygons=MultiPolygon([data["area"]["polygons"]])
         )
         return models.Service.objects.create(
             area=area,

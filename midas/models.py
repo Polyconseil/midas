@@ -26,39 +26,24 @@ class UnboundedCharField(models.TextField):
         return super().formfield(**kwargs)
 
 
-class UuidModel(models.Model):
+class ProviderModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    provider = models.UUIDField()
 
     class Meta:
         abstract = True
 
 
-class Query(UuidModel):
-    timestamp = models.DateTimeField(auto_now_add=True)
-    provider = UnboundedCharField()
-    endpoint = UnboundedCharField(default=str)
-    method = UnboundedCharField(choices=enums.HTTP_METHOD_CHOICES)
-    content = pg_fields.JSONField(default=dict)
-
-
-class Device(UuidModel):
-    provider = UnboundedCharField()
-    technical_id = UnboundedCharField()
-    visible_id = UnboundedCharField()
+class Device(ProviderModel):
+    identification_number = UnboundedCharField()
     model = UnboundedCharField(default=str)
     status = UnboundedCharField(choices=enums.DEVICE_STATUS_CHOICES)
     position = gis_models.PointField(null=True)
-    position_timestamp = models.DateTimeField(null=True)
-    details = pg_fields.JSONField(default=dict)
+    properties = pg_fields.JSONField(default=dict)
 
 
-class Area(UuidModel):
-    polygons = gis_models.MultiPolygonField()
-
-
-class Service(UuidModel):
-    area = models.ForeignKey(Area, on_delete=models.CASCADE)
-    provider = UnboundedCharField()
+class Area(ProviderModel):
     begin_date = models.DateTimeField()
     end_date = models.DateTimeField(null=True)
-    details = pg_fields.JSONField(default=dict)
+    polygon = gis_models.PolygonField()
+    properties = pg_fields.JSONField(default=dict)
