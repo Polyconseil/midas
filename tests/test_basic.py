@@ -74,7 +74,10 @@ def test_device(client):
             "identification_number": "foo",
             "model": "bar",
             "status": "available",
-            "position": '{ "type": "Point", "coordinates": [ 2.293117046356201, 48.858291707151857 ] }',
+            "position": {
+                "type": "Point",
+                "coordinates": [2.293117046356201, 48.858291707151857],
+            },
             "properties": {},
         }
     ]

@@ -14,10 +14,10 @@ class GeometryField(serializers.Field):
     def to_representation(self, value):
         if isinstance(value, dict) or value is None:
             return value
-        return value.geojson
+        return json.loads(value.geojson)
 
     def to_internal_value(self, value):
-        if not value or isinstance(value, GEOSGeometry):
+        if isinstance(value, GEOSGeometry) or value is None:
             return value
         if isinstance(value, dict):
             value = json.dumps(value)
