@@ -4,6 +4,8 @@
 
 A [City of LA MDS Specification](https://github.com/CityOfLosAngeles/mobility-data-specification) (Mobility Data Specification) compliant implementation of the Agency API.
 
+![Screenshot UI](screenshot.png)
+
 
 ## Goals & non-goals
 
@@ -16,9 +18,9 @@ reference implementation alongside
 
 ### Non-goals
 
-* High-performance: we favor developer-friendliness over performance
-* Full-featured UI: this is an API-first software and for a first iteration, the UI is not paramount
-* Data-analysis: analysis should be done by other apps consuming the consumer API of this app
+* High-performance: we favor developer-friendliness over performance (this software being stateless, scaling is trivial anyway. Just the database needs to be correctly dimensioned)
+* Full-featured UI: we provide an UI with required features, but this remains an API-first software
+* Data-analysis: analysis should be done by other apps consuming the consumer API of this app (the API must be designed to allow data consumption by third-party software)
 
 ## Tech & requirements
 
@@ -39,8 +41,6 @@ reference implementation alongside
 ### Frontend
 
 See dedicated README in [front/README.md](front/README.md)
-
-![Screenshot UI](screenshot.png)
 
 
 ## TODO
