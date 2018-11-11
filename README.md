@@ -43,9 +43,9 @@ See dedicated README in [front/README.md](front/README.md)
 
 ## TODO
 
-- [] API: Testing a more restful approach
-  - [] Add trips
-  - [] Add multiple mobility modes
-- [] Authentication
-- [] Clarify if service_areas should be integrated in this app or in another one that would focus on zoning
-- [] ...
+- [ ] API: Testing a more restful approach
+  - [ ] Add trips
+  - [ ] Add multiple mobility modes
+- [ ] Authentication
+- [ ] Clarify if service_areas should be integrated in this app or in another one that would focus on zoning
+- [ ] ...
