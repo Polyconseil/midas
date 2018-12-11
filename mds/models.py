@@ -46,13 +46,20 @@ class Device(ProviderModel):
     point = gis_models.PointField(null=True)
     properties = pg_fields.JSONField(default=dict, encoder=encoders.JSONEncoder)
 
-
-class Area(ProviderModel):
-    begin_date = models.DateTimeField()
-    end_date = models.DateTimeField(null=True)
+class Polygon(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    creation_date = models.DateTimeField()
+    deletion_date = models.DateTimeField(null=True)
+    label = models.TextField()
     polygon = gis_models.PolygonField()
     properties = pg_fields.JSONField(default=dict, encoder=encoders.JSONEncoder)
 
+class Area(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    creation_date = models.DateTimeField()
+    deletion_date = models.DateTimeField(null=True)
+    label = models.TextField()
+    polygons = models.ManyToManyField(Polygon, blank=True, related_name="polygons")
 
 class Telemetry(models.Model):
     device = models.ForeignKey(
