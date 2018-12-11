@@ -225,7 +225,7 @@ class AreaSerializer(BaseModelSerializer):
     deletion_date = serializers.DateTimeField(
         required=False, help_text="Area deletion date"
     )
-    polygons = PolygonSerializer(many=True)
+    polygons = PolygonSerializer(required=False, many=True)
 
     class Meta:
         model = models.Area
