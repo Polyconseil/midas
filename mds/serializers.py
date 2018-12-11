@@ -203,7 +203,14 @@ class PolygonSerializer(BaseModelSerializer):
 
     class Meta:
         model = models.Area
-        fields = ("id", "label", "creation_date", "deletion_date", "polygon", "properties")
+        fields = (
+            "id",
+            "label",
+            "creation_date",
+            "deletion_date",
+            "polygon",
+            "properties",
+        )
 
 
 class AreaSerializer(BaseModelSerializer):

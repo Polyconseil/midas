@@ -14,8 +14,9 @@ class AreaAdmin(admin.ModelAdmin):
     list_filter = ["creation_date", "deletion_date"]
     ordering = ["-creation_date"]
 
+
 @admin.register(models.Polygon)
-class AreaAdmin(admin.ModelAdmin):
+class PolygonAdmin(admin.ModelAdmin):
     list_display = ["id", "creation_date", "deletion_date", "label"]
     list_filter = ["creation_date", "deletion_date"]
     ordering = ["-creation_date"]
