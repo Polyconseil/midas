@@ -18,6 +18,7 @@ def test_service_area(client):
         data={
             "id": "13b8c961-61fd-4cce-8113-81af1de90942",
             "creation_date": "2012-01-01T00:00:00Z",
+            "label": "test",
         },
         content_type="application/json",
     )
@@ -27,7 +28,7 @@ def test_service_area(client):
     assert response.data == [
         {
             "id": "13b8c961-61fd-4cce-8113-81af1de90942",
-            "label": "",
+            "label": "test",
             "creation_date": "2012-01-01T00:00:00Z",
             "deletion_date": None,
             "polygons": [],
