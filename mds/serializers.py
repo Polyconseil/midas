@@ -193,24 +193,17 @@ class PolygonSerializer(BaseModelSerializer):
     id = serializers.UUIDField(
         required=False, help_text="Unique Polygon identifier (UUID)"
     )
-    label = serializers.StringRelatedField(help_text="Name of the polygon")
+    label = serializers.CharField(help_text="Name of the polygon")
     creation_date = serializers.DateTimeField(help_text="Polygon creation date")
     deletion_date = serializers.DateTimeField(
         required=False, help_text="Polygon deletion date"
     )
     properties = serializers.JSONField(help_text="Properties of the Polygon")
-    polygon = GeometryField(help_text="GeoJSON Polygon")
+    geom = GeometryField(help_text="GeoJSON Polygon")
 
     class Meta:
-        model = models.Area
-        fields = (
-            "id",
-            "label",
-            "creation_date",
-            "deletion_date",
-            "polygon",
-            "properties",
-        )
+        model = models.Polygon
+        fields = ("id", "label", "creation_date", "deletion_date", "geom", "properties")
 
 
 class AreaSerializer(BaseModelSerializer):
@@ -220,7 +213,7 @@ class AreaSerializer(BaseModelSerializer):
     id = serializers.UUIDField(
         required=False, help_text="Unique Area identifier (UUID)"
     )
-    label = serializers.StringRelatedField(help_text="Name of the Area")
+    label = serializers.CharField(help_text="Name of the Area")
     creation_date = serializers.DateTimeField(help_text="Area creation date")
     deletion_date = serializers.DateTimeField(
         required=False, help_text="Area deletion date"

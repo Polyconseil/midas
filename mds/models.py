@@ -3,7 +3,7 @@ Database description
 """
 import uuid
 
-from django import forms
+from django import forms, utils
 from django.contrib.gis.db import models as gis_models
 from django.contrib.postgres import fields as pg_fields
 from django.db import models
@@ -49,19 +49,19 @@ class Device(ProviderModel):
 
 class Polygon(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    creation_date = models.DateTimeField()
+    creation_date = models.DateTimeField(default=utils.timezone.now)
     deletion_date = models.DateTimeField(null=True)
-    label = models.TextField()
-    polygon = gis_models.PolygonField()
+    label = UnboundedCharField(null=True)
+    geom = gis_models.PolygonField()
     properties = pg_fields.JSONField(default=dict, encoder=encoders.JSONEncoder)
 
 
 class Area(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    creation_date = models.DateTimeField()
+    creation_date = models.DateTimeField(default=utils.timezone.now)
     deletion_date = models.DateTimeField(null=True)
-    label = models.TextField()
-    polygons = models.ManyToManyField(Polygon, blank=True, related_name="polygons")
+    label = UnboundedCharField(null=True)
+    polygons = models.ManyToManyField(Polygon, blank=True, related_name="areas")
 
 
 class Telemetry(models.Model):
