@@ -593,6 +593,7 @@ class Area(factory.DjangoModelFactory):
     deletion_date = None
     label = ""
 
+
 class Polygon(factory.DjangoModelFactory):
     class Meta:
         model = models.Polygon
