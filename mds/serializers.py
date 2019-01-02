@@ -215,16 +215,16 @@ class PolygonSerializer(BaseModelSerializer):
         required=False, help_text="Unique Polygon identifier (UUID)"
     )
     label = serializers.CharField(help_text="Name of the polygon")
-    creation_date = serializers.DateTimeField(help_text="Polygon creation date")
+    creation_date = serializers.DateTimeField(required=False, help_text="Polygon creation date")
     deletion_date = serializers.DateTimeField(
-        required=False, help_text="Polygon deletion date"
+        required=False, allow_null=True, help_text="Polygon deletion date"
     )
-    properties = serializers.JSONField(help_text="Properties of the Polygon")
+    properties = serializers.JSONField(required=False, help_text="Properties of the Polygon")
     geom = GeometryField(help_text="GeoJSON Polygon")
 
     class Meta:
         model = models.Polygon
-        fields = ("id", "label", "creation_date", "deletion_date", "geom", "properties")
+        fields = ("id", "label", "creation_date", "deletion_date", "geom", "properties", "areas")
 
 
 class AreaSerializer(BaseModelSerializer):
@@ -235,15 +235,16 @@ class AreaSerializer(BaseModelSerializer):
         required=False, help_text="Unique Area identifier (UUID)"
     )
     label = serializers.CharField(help_text="Name of the Area")
-    creation_date = serializers.DateTimeField(help_text="Area creation date")
+    creation_date = serializers.DateTimeField(required=False, help_text="Area creation date")
     deletion_date = serializers.DateTimeField(
-        required=False, help_text="Area deletion date"
+        required=False, allow_null=True, help_text="Area deletion date"
     )
+    properties = serializers.JSONField(required=False, help_text="Properties of the Area")
     polygons = PolygonSerializer(required=False, many=True)
 
     class Meta:
         model = models.Area
-        fields = ("id", "label", "creation_date", "deletion_date", "polygons")
+        fields = ("id", "label", "creation_date", "deletion_date", "properties", "polygons")
 
 
 class ProviderSerializer(BaseModelSerializer):

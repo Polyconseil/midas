@@ -591,6 +591,7 @@ class Area(factory.DjangoModelFactory):
 
     creation_date = datetime.datetime(2018, 8, 1, tzinfo=pytz.utc)
     deletion_date = None
+    properties = {}
     label = ""
 
 
