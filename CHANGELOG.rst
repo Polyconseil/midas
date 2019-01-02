@@ -4,7 +4,8 @@ Changelog
 0.1.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Set label field unique in Area model.
+- Add properties field on Area model.
 
 
 0.1.2 (2019-01-10)
