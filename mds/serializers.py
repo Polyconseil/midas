@@ -248,7 +248,6 @@ class AreaSerializer(BaseModelSerializer):
         instance = models.Area(**data)
         instance.save()
         if polygons is not None and len(polygons) > 0:
-            new_polygons = []
             for polygon in [dict(p) for p in polygons]:
                 polygon_instance = models.Polygon.objects.filter(id=polygon["id"]).first()
                 instance.polygons.add(polygon_instance)
@@ -258,9 +257,10 @@ class AreaSerializer(BaseModelSerializer):
     def update(self, instance, validated_data):
         polygons = validated_data.pop("polygons", None)
 
-        if "properties" in validated_data:
-            properties = validated_data["properties"]
-            instance.properties = properties
+        instance.label = validated_data.get("label", instance.label)
+        instance.properties = validated_data.get("properties", instance.properties)
+        instance.creation_date = validated_data.get("creation_date", instance.creation_date)
+        instance.deletion_date = validated_data.get("deletion_date", instance.deletion_date)
 
         if polygons is not None:
             if len(polygons) > 0:
@@ -271,7 +271,6 @@ class AreaSerializer(BaseModelSerializer):
             else:
                 # if empty polygons field provided, clear instance polygons
                 instance.polygons.clear()
-
         instance.save()
         return instance
 
