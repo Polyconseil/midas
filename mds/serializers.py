@@ -242,6 +242,39 @@ class AreaSerializer(BaseModelSerializer):
     properties = serializers.JSONField(required=False, help_text="Properties of the Area")
     polygons = PolygonSerializer(required=False, many=True)
 
+    def create(self, validated_data):
+        data = validated_data
+        polygons = data.pop("polygons", None)
+        instance = models.Area(**data)
+        instance.save()
+        if polygons is not None and len(polygons) > 0:
+            new_polygons = []
+            for polygon in [dict(p) for p in polygons]:
+                polygon_instance = models.Polygon.objects.filter(id=polygon["id"]).first()
+                instance.polygons.add(polygon_instance)
+            instance.save()
+        return instance
+
+    def update(self, instance, validated_data):
+        polygons = validated_data.pop("polygons", None)
+
+        if "properties" in validated_data:
+            properties = validated_data["properties"]
+            instance.properties = properties
+
+        if polygons is not None:
+            if len(polygons) > 0:
+                instance.polygons.clear()
+                for polygon in [dict(p) for p in polygons]:
+                    polygon_instance = models.Polygon.objects.filter(id=polygon["id"]).first()
+                    instance.polygons.add(polygon_instance)
+            else:
+                # if empty polygons field provided, clear instance polygons
+                instance.polygons.clear()
+
+        instance.save()
+        return instance
+
     class Meta:
         model = models.Area
         fields = ("id", "label", "creation_date", "deletion_date", "properties", "polygons")
