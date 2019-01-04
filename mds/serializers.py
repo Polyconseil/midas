@@ -215,16 +215,29 @@ class PolygonSerializer(BaseModelSerializer):
         required=False, help_text="Unique Polygon identifier (UUID)"
     )
     label = serializers.CharField(help_text="Name of the polygon")
-    creation_date = serializers.DateTimeField(required=False, help_text="Polygon creation date")
+    creation_date = serializers.DateTimeField(
+        required=False, help_text="Polygon creation date"
+    )
     deletion_date = serializers.DateTimeField(
         required=False, allow_null=True, help_text="Polygon deletion date"
     )
-    properties = serializers.JSONField(required=False, help_text="Properties of the Polygon")
+    properties = serializers.JSONField(
+        required=False, help_text="Properties of the Polygon"
+    )
     geom = GeometryField(help_text="GeoJSON Polygon")
 
     class Meta:
         model = models.Polygon
-        fields = ("id", "label", "creation_date", "deletion_date", "geom", "properties", "areas")
+        fields = (
+            "id",
+            "label",
+            "creation_date",
+            "deletion_date",
+            "geom",
+            "properties",
+            "areas",
+        )
+
 
 
 class AreaSerializer(BaseModelSerializer):
@@ -235,11 +248,15 @@ class AreaSerializer(BaseModelSerializer):
         required=False, help_text="Unique Area identifier (UUID)"
     )
     label = serializers.CharField(help_text="Name of the Area")
-    creation_date = serializers.DateTimeField(required=False, help_text="Area creation date")
+    creation_date = serializers.DateTimeField(
+        required=False, help_text="Area creation date"
+    )
     deletion_date = serializers.DateTimeField(
         required=False, allow_null=True, help_text="Area deletion date"
     )
-    properties = serializers.JSONField(required=False, help_text="Properties of the Area")
+    properties = serializers.JSONField(
+        required=False, help_text="Properties of the Area"
+    )
     polygons = PolygonSerializer(required=False, many=True)
 
     def create(self, validated_data):
@@ -249,7 +266,9 @@ class AreaSerializer(BaseModelSerializer):
         instance.save()
         if polygons is not None and len(polygons) > 0:
             for polygon in [dict(p) for p in polygons]:
-                polygon_instance = models.Polygon.objects.filter(id=polygon["id"]).first()
+                polygon_instance = models.Polygon.objects.filter(
+                    id=polygon["id"]
+                ).first()
                 instance.polygons.add(polygon_instance)
             instance.save()
         return instance
@@ -259,14 +278,20 @@ class AreaSerializer(BaseModelSerializer):
 
         instance.label = validated_data.get("label", instance.label)
         instance.properties = validated_data.get("properties", instance.properties)
-        instance.creation_date = validated_data.get("creation_date", instance.creation_date)
-        instance.deletion_date = validated_data.get("deletion_date", instance.deletion_date)
+        instance.creation_date = validated_data.get(
+            "creation_date", instance.creation_date
+        )
+        instance.deletion_date = validated_data.get(
+            "deletion_date", instance.deletion_date
+        )
 
         if polygons is not None:
             if len(polygons) > 0:
                 instance.polygons.clear()
                 for polygon in [dict(p) for p in polygons]:
-                    polygon_instance = models.Polygon.objects.filter(id=polygon["id"]).first()
+                    polygon_instance = models.Polygon.objects.filter(
+                        id=polygon["id"]
+                    ).first()
                     instance.polygons.add(polygon_instance)
             else:
                 # if empty polygons field provided, clear instance polygons
@@ -276,7 +301,14 @@ class AreaSerializer(BaseModelSerializer):
 
     class Meta:
         model = models.Area
-        fields = ("id", "label", "creation_date", "deletion_date", "properties", "polygons")
+        fields = (
+            "id",
+            "label",
+            "creation_date",
+            "deletion_date",
+            "properties",
+            "polygons",
+        )
 
 
 class ProviderSerializer(BaseModelSerializer):
