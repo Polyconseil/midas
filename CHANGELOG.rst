@@ -5,7 +5,7 @@ Changelog
 ------------------
 
 - Set label field unique in Area model.
-- Add properties field on Area model.
+- Add properties field on Area and Polygon model.
 
 
 0.1.2 (2019-01-10)
