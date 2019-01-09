@@ -2,7 +2,9 @@ import pytest
 from django.contrib.gis.geos.point import Point
 from django.utils import timezone
 
+from mds import enums
 from mds import factories
+from mds import models
 from mds.access_control.scopes import SCOPE_VEHICLE
 from .auth_helper import auth_header
 
@@ -313,3 +315,59 @@ def test_device_update(client):
     }
     for key, resp_val in expected_results.items():
         assert response.data["results"][0][key] == resp_val
+
+
+@pytest.mark.django_db
+def test_aggregations(client, django_assert_num_queries):
+    factories.Telemetry.create_batch(10)
+
+    # first test without filters
+    with django_assert_num_queries(3):
+        # 1 for device
+        # 2 savepoints
+        response = client.get("/vehicle/aggregations/", **auth_header(SCOPE_VEHICLE))
+    assert response.status_code == 200
+    qs = models.Device.objects.all()
+    assert response.data["aggregations"]["category"] == {
+        cat: qs.filter(category=cat).count()
+        for cat, _trans in enums.DEVICE_CATEGORY_CHOICES
+    }
+    assert response.data["aggregations"]["status"] == {
+        stat: sum(1 for d in qs if d.latest_telemetry.status == stat)
+        for stat, _trans in enums.DEVICE_STATUS_CHOICES
+    }
+
+    # convert the default dict to a simple dict for assert
+    assert dict(response.data["aggregations"]["provider"]) == {
+        str(prov): qs.filter(provider_id=prov).count()
+        for prov in models.Provider.objects.values_list("id", flat=True)
+        if qs.filter(provider_id=prov).count()
+    }
+
+    # then add some filters
+    category = "bike"
+    status = "available"
+    provider_id = str(models.Provider.objects.first().id)
+    with django_assert_num_queries(3):
+        # 1 for device
+        # 2 savepoints
+        response = client.get(
+            f"/vehicle/aggregations/?category={category}&status={status}&provider={provider_id}",  # noqa
+            **auth_header(SCOPE_VEHICLE),
+        )
+    assert response.status_code == 200
+    qs = models.Device.objects.filter(category=category, provider_id=provider_id)
+    count = sum(1 for d in qs if d.latest_telemetry.status == status)
+    assert response.data["aggregations"]["category"] == {
+        cat: count if cat == category else 0
+        for cat, _trans in enums.DEVICE_CATEGORY_CHOICES
+    }
+    assert response.data["aggregations"]["status"] == {
+        stat: count if stat == status else 0
+        for stat, _trans in enums.DEVICE_STATUS_CHOICES
+    }
+
+    # convert the default dict to a simple dict for assert
+    assert dict(response.data["aggregations"]["provider"]) == {
+        p: count for p in [provider_id] if count
+    }

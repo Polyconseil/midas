@@ -1,8 +1,10 @@
+import collections
 import json
 import os.path
 import warnings
 
 import yaml
+from django.db import connection
 from django.db.models import OuterRef, Subquery, Prefetch
 from django.shortcuts import render
 from django_filters import rest_framework as filters
@@ -10,6 +12,7 @@ from rest_framework import exceptions
 from rest_framework import serializers as drf_serializers
 from rest_framework import viewsets
 from rest_framework.compat import coreapi, coreschema
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.schemas import inspectors
 from rest_framework.pagination import LimitOffsetPagination
@@ -181,6 +184,46 @@ class DeviceViewSet(
     pagination_class = DeviceLimitOffsetPagination
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = DeviceFilter
+
+    @action(detail=False)
+    def aggregations(self, request):
+        query = """
+            WITH filtered AS (
+                SELECT DISTINCT ON ({device_table}.id) *
+                FROM {device_table} JOIN {telemetry_table} ON {telemetry_table}.device_id = {device_table}.id
+                {where_clause} ORDER BY {device_table}.id, {telemetry_table}.timestamp
+            )
+            SELECT 'provider' AS facet, provider_id::text AS value, count(*) AS count FROM filtered GROUP BY provider_id
+            UNION
+            SELECT 'category' AS facet, category AS value, count(*) AS count FROM filtered GROUP BY category
+            UNION
+            SELECT 'status' AS facet, status AS value, count(*) AS count FROM filtered GROUP BY status
+            ORDER BY facet, value;
+        """  # noqa
+        queryset = self.filter_queryset(self.get_queryset())
+        compiler = queryset.query.get_compiler(connection=connection)
+        where_clause, where_args = compiler.compile(queryset.query.where)
+        with connection.cursor() as cursor:
+            where_clause = ("WHERE %s" % where_clause) if where_clause else ""
+            cursor.execute(
+                query.format(
+                    where_clause=where_clause,
+                    device_table=models.Device._meta.db_table,
+                    telemetry_table=models.Telemetry._meta.db_table,
+                ),
+                where_args,
+            )
+            data = cursor.fetchall()
+        result = {
+            "aggregations": {
+                "category": {cat: 0 for cat, _trans in enums.DEVICE_CATEGORY_CHOICES},
+                "provider": collections.defaultdict(int),
+                "status": {stat: 0 for stat, _trans in enums.DEVICE_STATUS_CHOICES},
+            }
+        }
+        for facet, value, count in data:
+            result["aggregations"][facet][value] += count
+        return Response(result)
 
 
 class AreaViewSet(viewsets.ModelViewSet):

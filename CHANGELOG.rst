@@ -4,6 +4,7 @@ Changelog
 0.1.2 (unreleased)
 ------------------
 
+- Add vehicles aggregation endpoint
 - Support JWT auth
 - Add Provider Django model
 - Add queryset filters on Device ID, type, provider, status and registration date
