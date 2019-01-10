@@ -239,7 +239,6 @@ class PolygonSerializer(BaseModelSerializer):
         )
 
 
-
 class AreaSerializer(BaseModelSerializer):
     """A service area
     """
@@ -260,21 +259,20 @@ class AreaSerializer(BaseModelSerializer):
     polygons = PolygonSerializer(required=False, many=True)
 
     def create(self, validated_data):
-        data = validated_data
-        polygons = data.pop("polygons", None)
-        instance = models.Area(**data)
+        polygons = validated_data.pop("polygons", [])
+        instance = models.Area(**validated_data)
         instance.save()
-        if polygons is not None and len(polygons) > 0:
-            for polygon in [dict(p) for p in polygons]:
-                polygon_instance = models.Polygon.objects.filter(
-                    id=polygon["id"]
-                ).first()
-                instance.polygons.add(polygon_instance)
-            instance.save()
+
+        polygons_ids = [dict(p)["id"] for p in polygons]
+        ThroughModel = models.Area.polygons.through
+        ThroughModel.objects.bulk_create(
+            [ThroughModel(area_id=instance.pk, polygons_id=p) for p in polygons_ids]
+        )
+
         return instance
 
     def update(self, instance, validated_data):
-        polygons = validated_data.pop("polygons", None)
+        polygons = validated_data.pop("polygons", [])
 
         instance.label = validated_data.get("label", instance.label)
         instance.properties = validated_data.get("properties", instance.properties)
@@ -284,19 +282,15 @@ class AreaSerializer(BaseModelSerializer):
         instance.deletion_date = validated_data.get(
             "deletion_date", instance.deletion_date
         )
-
-        if polygons is not None:
-            if len(polygons) > 0:
-                instance.polygons.clear()
-                for polygon in [dict(p) for p in polygons]:
-                    polygon_instance = models.Polygon.objects.filter(
-                        id=polygon["id"]
-                    ).first()
-                    instance.polygons.add(polygon_instance)
-            else:
-                # if empty polygons field provided, clear instance polygons
-                instance.polygons.clear()
         instance.save()
+
+        instance.polygons.clear()
+        polygons_ids = [dict(p)["id"] for p in polygons]
+        ThroughModel = models.Area.polygons.through
+        ThroughModel.objects.bulk_create(
+            [ThroughModel(area_id=instance.pk, polygons_id=p) for p in polygons_ids]
+        )
+
         return instance
 
     class Meta:

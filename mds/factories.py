@@ -1,6 +1,7 @@
 import datetime
 import factory
 import random
+import uuid
 import zlib
 
 from django.contrib.gis.geos.geometry import GEOSGeometry
@@ -589,19 +590,21 @@ class Area(factory.DjangoModelFactory):
     class Meta:
         model = models.Area
 
+    id = factory.LazyFunction(uuid.uuid4)
     creation_date = datetime.datetime(2018, 8, 1, tzinfo=pytz.utc)
     deletion_date = None
     properties = {}
-    label = ""
+    label = factory.LazyAttribute(lambda o: "area_%s" % o.id)
 
 
 class Polygon(factory.DjangoModelFactory):
     class Meta:
         model = models.Polygon
 
+    id = factory.LazyFunction(uuid.uuid4)
     creation_date = datetime.datetime(2018, 8, 1, tzinfo=pytz.utc)
     deletion_date = None
-    label = ""
+    label = factory.LazyAttribute(lambda o: "polygon_%s" % o.id)
     geom = district10
     properties = {}
 

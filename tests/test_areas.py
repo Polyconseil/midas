@@ -23,6 +23,7 @@ def test_areas_detail(client, django_assert_num_queries):
         "label": area.label,
         "creation_date": "2012-01-01T00:00:00Z",
         "deletion_date": None,
+        "properties": {},
         "polygons": [],
     }
 
@@ -43,9 +44,7 @@ def test_areas_list(client, django_assert_num_queries):
 @pytest.mark.django_db
 def test_areas_add(client, django_assert_num_queries):
     response = client.post(
-        "/service_area/",
-        data={"label": "myarea", "creation_date": "2012-01-01T00:00:00Z"},
-        content_type="application/json",
+        "/service_area/", data={"label": "myarea"}, content_type="application/json"
     )
     assert response.status_code == 201
     created_area = models.Area.objects.get()
