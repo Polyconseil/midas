@@ -44,7 +44,6 @@ class Provider(models.Model):
 
 
 class DeviceQueryset(models.QuerySet):
-
     def with_latest_telemetry(self):
         return self.prefetch_related(
             Prefetch(
