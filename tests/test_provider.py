@@ -16,7 +16,7 @@ def test_provider_basic(client, django_assert_num_queries):
         id=uuid.UUID("ccccccc0-1342-413b-8e89-db802b2f83f6"), name="Test provider 3"
     )
 
-    response = client.get("/provider/")
+    response = client.get("/providers/")
     assert response.status_code == 200
     assert len(response.data) == 3
 
