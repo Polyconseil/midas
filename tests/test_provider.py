@@ -23,12 +23,15 @@ def test_provider_basic(client, django_assert_num_queries):
     assert {
         "id": "aaaaaaa0-1342-413b-8e89-db802b2f83f6",
         "name": "Test provider",
+        "logo_b64": None,
     } in response.data
     assert {
         "id": "bbbbbbb0-1342-413b-8e89-db802b2f83f6",
         "name": "Test provider 2",
+        "logo_b64": None,
     } in response.data
     assert {
         "id": "ccccccc0-1342-413b-8e89-db802b2f83f6",
         "name": "Test provider 3",
+        "logo_b64": None,
     } in response.data
