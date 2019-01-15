@@ -180,9 +180,3 @@ class ProviderViewSet(viewsets.ModelViewSet):
     queryset = models.Provider.objects.all()
     lookup_field = "id"
     serializer_class = serializers.ProviderSerializer
-
-
-def swagger(request):
-    oas_file_path = os.path.join(os.path.dirname(__file__), "oas.yml")
-    spec = json.dumps(yaml.load(open(oas_file_path)))
-    return render(request, template_name="swagger.html", context={"data": spec})

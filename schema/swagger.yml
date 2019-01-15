@@ -1,0 +1,707 @@
+swagger: '2.0'
+info:
+  title: Plato API
+  description: Plato API
+  version: v1
+host: localhost:8000
+schemes:
+- http
+basePath: /
+consumes:
+- application/json
+produces:
+- application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+- Basic: []
+paths:
+  /providers/:
+    get:
+      operationId: providers_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Provider'
+      tags:
+      - providers
+    post:
+      operationId: providers_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Provider'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Provider'
+      tags:
+      - providers
+    parameters: []
+  /providers/{id}/:
+    get:
+      operationId: providers_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Provider'
+      tags:
+      - providers
+    post:
+      operationId: providers_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Provider'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Provider'
+      tags:
+      - providers
+    patch:
+      operationId: providers_partial_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Provider'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Provider'
+      tags:
+      - providers
+    delete:
+      operationId: providers_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+      - providers
+    parameters:
+    - name: id
+      in: path
+      description: A UUID string identifying this provider.
+      required: true
+      type: string
+      format: uuid
+  /service_area/:
+    get:
+      operationId: service_area_list
+      description: ''
+      parameters:
+      - name: limit
+        in: query
+        description: Number of results to return per page.
+        required: false
+        type: integer
+      - name: offset
+        in: query
+        description: The initial index from which to return the results.
+        required: false
+        type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+            - count
+            - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Area'
+      tags:
+      - service_area
+    post:
+      operationId: service_area_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Area'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Area'
+      tags:
+      - service_area
+    parameters: []
+  /service_area/{id}/:
+    get:
+      operationId: service_area_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Area'
+      tags:
+      - service_area
+    post:
+      operationId: service_area_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Area'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Area'
+      tags:
+      - service_area
+    patch:
+      operationId: service_area_partial_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Area'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Area'
+      tags:
+      - service_area
+    delete:
+      operationId: service_area_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+      - service_area
+    parameters:
+    - name: id
+      in: path
+      description: A UUID string identifying this area.
+      required: true
+      type: string
+      format: uuid
+  /vehicle/:
+    get:
+      operationId: vehicle_list
+      description: ''
+      parameters:
+      - name: id
+        in: query
+        description: ''
+        required: false
+        type: string
+      - name: category
+        in: query
+        description: ''
+        required: false
+        type: string
+      - name: provider
+        in: query
+        description: ''
+        required: false
+        type: string
+      - name: status
+        in: query
+        description: ''
+        required: false
+        type: string
+      - name: registrationDateFrom
+        in: query
+        description: ''
+        required: false
+        type: string
+      - name: registrationDateTo
+        in: query
+        description: ''
+        required: false
+        type: string
+      - name: limit
+        in: query
+        description: Number of results to return per page.
+        required: false
+        type: integer
+      - name: offset
+        in: query
+        description: The initial index from which to return the results.
+        required: false
+        type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+            - count
+            - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Device'
+      tags:
+      - vehicle
+    post:
+      operationId: vehicle_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/DeviceRegister'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/DeviceRegister'
+      tags:
+      - vehicle
+    parameters: []
+  /vehicle/{id}/:
+    get:
+      operationId: vehicle_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Device'
+      tags:
+      - vehicle
+    post:
+      operationId: vehicle_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/DeviceRegister'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/DeviceRegister'
+      tags:
+      - vehicle
+    patch:
+      operationId: vehicle_partial_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Device'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Device'
+      tags:
+      - vehicle
+    delete:
+      operationId: vehicle_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+      - vehicle
+    parameters:
+    - name: id
+      in: path
+      required: true
+      type: string
+definitions:
+  Provider:
+    required:
+    - name
+    type: object
+    properties:
+      id:
+        title: Id
+        description: Unique Area identifier (UUID)
+        type: string
+        format: uuid
+      name:
+        title: Name
+        description: Name of the Provider
+        type: string
+        minLength: 1
+      logo_b64:
+        title: Logo b64
+        description: Logo of provider base64 encoded
+        type: string
+        minLength: 1
+  Polygon:
+    required:
+    - label
+    - creation_date
+    - geom
+    - properties
+    type: object
+    properties:
+      id:
+        title: Id
+        description: Unique Polygon identifier (UUID)
+        type: string
+        format: uuid
+      label:
+        title: Label
+        description: Name of the polygon
+        type: string
+        minLength: 1
+      creation_date:
+        title: Creation date
+        description: Polygon creation date
+        type: string
+        format: date-time
+      deletion_date:
+        title: Deletion date
+        description: Polygon deletion date
+        type: string
+        format: date-time
+      geom:
+        title: Geom
+        description: GeoJSON Polygon
+        type: string
+      properties:
+        title: Properties
+        description: Properties of the Polygon
+        type: string
+  Area:
+    required:
+    - label
+    - creation_date
+    type: object
+    properties:
+      id:
+        title: Id
+        description: Unique Area identifier (UUID)
+        type: string
+        format: uuid
+      label:
+        title: Label
+        description: Name of the Area
+        type: string
+        minLength: 1
+      creation_date:
+        title: Creation date
+        description: Area creation date
+        type: string
+        format: date-time
+      deletion_date:
+        title: Deletion date
+        description: Area deletion date
+        type: string
+        format: date-time
+      polygons:
+        type: array
+        items:
+          $ref: '#/definitions/Polygon'
+  GSMProperties:
+    title: Gsm
+    description: GSM data
+    required:
+    - timestamp
+    type: object
+    properties:
+      timestamp:
+        title: Timestamp
+        description: Timestamp from GSM provider
+        type: string
+        format: date-time
+      operator:
+        title: Operator
+        description: GSM provider
+        type: string
+        minLength: 1
+        x-nullable: true
+      signal:
+        title: Signal
+        description: Signal strength in percents
+        type: number
+        maximum: 1
+        minimum: 0
+        x-nullable: true
+  GPSProperties:
+    title: Gps
+    description: GPS data
+    required:
+    - timestamp
+    type: object
+    properties:
+      timestamp:
+        title: Timestamp
+        description: Timestamp from GPS
+        type: string
+        format: date-time
+      accuracy:
+        title: Accuracy
+        description: Position accuracy in IS units (m)
+        type: number
+        minimum: 0
+        x-nullable: true
+      course:
+        title: Course
+        description: Vehicle course relative to geographical north in degrees
+        type: number
+        maximum: 360
+        minimum: 0
+        x-nullable: true
+      speed:
+        title: Speed
+        description: Vehicle speed measured by onboard GPS in IS units (m/s)
+        type: number
+        minimum: 0
+        x-nullable: true
+  VehicleProperties:
+    title: Vehicle state
+    description: CAN data
+    required:
+    - acceleration
+    type: object
+    properties:
+      speed:
+        title: Speed
+        description: The vehicle speed in IS units (m/s)
+        type: number
+        minimum: 0
+        x-nullable: true
+      acceleration:
+        description: "The vehicle acceleration on [x,y,z] axis in IS units (m/s\xB2\
+          )"
+        type: array
+        items:
+          type: number
+          minimum: 0
+          x-nullable: true
+      odometer:
+        title: Odometer
+        description: The total distance covered by the vehicle in IS units (m)
+        type: integer
+        minimum: 0
+        x-nullable: true
+      driver_present:
+        title: Driver present
+        description: Driver presence detection
+        type: boolean
+        x-nullable: true
+  EnergyProperties:
+    title: Energy
+    description: Energy information
+    type: object
+    properties:
+      cruise_range:
+        title: Cruise range
+        description: The vehicle range in IS units (m)
+        type: integer
+        minimum: 0
+        x-nullable: true
+      autonomy:
+        title: Autonomy
+        description: The vehicle autonomy in percents
+        type: number
+        maximum: 1
+        minimum: 0
+        x-nullable: true
+  PointProperties:
+    title: Properties
+    type: object
+    properties:
+      gsm:
+        $ref: '#/definitions/GSMProperties'
+      gps:
+        $ref: '#/definitions/GPSProperties'
+      vehicle_state:
+        $ref: '#/definitions/VehicleProperties'
+      energy:
+        $ref: '#/definitions/EnergyProperties'
+  Point:
+    title: Position
+    description: Latest GPS position and telemetry
+    required:
+    - geometry
+    type: object
+    properties:
+      type:
+        title: Type
+        type: string
+        enum:
+        - Feature
+        default: Feature
+      geometry:
+        title: Geometry
+        type: string
+      properties:
+        $ref: '#/definitions/PointProperties'
+  Device:
+    required:
+    - id
+    - provider
+    - identification_number
+    - category
+    - propulsion
+    - status
+    - position
+    - registration_date
+    - last_telemetry_date
+    type: object
+    properties:
+      id:
+        title: Id
+        description: Unique device identifier (UUID)
+        type: string
+        format: uuid
+      provider:
+        title: Provider
+        description: Name of the service provider of the device
+        type: string
+        minLength: 1
+      model:
+        title: Model
+        description: Vehicle model
+        type: string
+        minLength: 1
+      identification_number:
+        title: Identification number
+        description: VIN (Vehicle Identification Number)
+        type: string
+        minLength: 1
+      category:
+        title: Category
+        description: Device type
+        type: string
+        enum:
+        - bike
+        - scooter
+        - car
+      propulsion:
+        title: Propulsion
+        description: Propulsion type
+        type: string
+        enum:
+        - electric
+        - combustion
+      status:
+        title: Status
+        description: Latest status
+        type: string
+        enum:
+        - available
+        - reserved
+        - unavailable
+        - removed
+      position:
+        $ref: '#/definitions/Point'
+      registration_date:
+        title: Registration date
+        description: Device registration date
+        type: string
+        format: date-time
+      last_telemetry_date:
+        title: Last telemetry date
+        description: Device registration date
+        type: string
+        format: date-time
+  DeviceRegister:
+    required:
+    - id
+    - provider
+    - identification_number
+    - category
+    - propulsion
+    type: object
+    properties:
+      id:
+        title: Id
+        description: Unique device identifier (UUID)
+        type: string
+        format: uuid
+      provider:
+        title: Provider
+        type: string
+        format: uuid
+      model:
+        title: Model
+        description: Vehicle model
+        type: string
+        minLength: 1
+      identification_number:
+        title: Identification number
+        description: VIN (Vehicle Identification Number)
+        type: string
+        minLength: 1
+      category:
+        title: Category
+        description: Device type
+        type: string
+        enum:
+        - bike
+        - scooter
+        - car
+      propulsion:
+        title: Propulsion
+        description: Propulsion type
+        type: string
+        enum:
+        - electric
+        - combustion
