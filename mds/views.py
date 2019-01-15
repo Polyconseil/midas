@@ -1,9 +1,5 @@
-import json
-import os.path
 import warnings
 
-import yaml
-from django.shortcuts import render
 from django_filters import rest_framework as filters
 from rest_framework import exceptions
 from rest_framework import pagination
@@ -15,9 +11,9 @@ from rest_framework.schemas import inspectors
 
 from mds.access_control.permissions import require_scopes
 from mds.access_control.scopes import SCOPE_VEHICLE
+from . import enums
 from . import models
 from . import serializers
-from . import enums
 
 
 class MultiSerializerViewSet(viewsets.GenericViewSet):
