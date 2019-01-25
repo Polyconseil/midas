@@ -1,7 +1,12 @@
 import json
+import random
 
 from rest_framework import serializers
 from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
+from django.db import IntegrityError
 
 from mds import models
 from mds.access_control.permissions import require_scopes
@@ -56,6 +61,11 @@ class PolygonResponseSerializer(serializers.Serializer):
     class Meta:
         fields = ("id", "label", "creation_date", "deletion_date", "geom", "areas")
 
+class PolygonsImportRequestSerializer(serializers.Serializer):
+
+    polygons = PolygonRequestSerializer(many=True)
+    class Meta:
+        fields = ("polygons")
 
 class PolygonViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
     permission_classes = (require_scopes(SCOPE_ADMIN),)
@@ -73,6 +83,10 @@ class PolygonViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
             "request": PolygonRequestSerializer,
             "response": utils.EmptyResponseSerializer,
         },
+        "import_polygons" :{
+            "request": PolygonsImportRequestSerializer,
+            "response": utils.EmptyResponseSerializer,
+        }
     }
 
     def create(self, *args, **kwargs):
@@ -81,6 +95,36 @@ class PolygonViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
     def update(self, *args, **kwargs):
         return super()._update(*args, **kwargs)
 
+    @action(methods=["post"], url_path="import", detail=False)
+    def import_polygons(self, request, pk=None):
+        polygons = request.data.get("polygons", None)
+
+        if not isinstance(polygons, list):
+            return Response(status=400)
+
+        for polygon in polygons:
+            geom = polygon.get("geom", None)
+
+            if geom and geom["type"] == "Polygon":
+                try:
+                    areas = []
+                    for area_label in polygon.get("areas", []):
+                        defaults = {
+                            "color": "#%06x" % random.randint(0, 0xFFFFFF)
+                        }
+                        # Create new Area if doesn't exist (based on label)
+                        area = models.Area.objects.get_or_create(
+                            label=area_label, defaults=defaults
+                        )[0]
+                        areas.append(area)
+                    poly = models.Polygon.objects.create(
+                        label=polygon.get("label", ""), geom=str(geom)
+                    )
+                    poly.areas.set([a.id for a in areas])
+                except IntegrityError as ex:
+                    return Response(exception=ex, status=500)
+
+        return Response({"message": "ok"})
 
 class AreaRequestSerializer(serializers.ModelSerializer):
     """A service area, composed of a group of Polygons.
@@ -94,6 +138,23 @@ class AreaRequestSerializer(serializers.ModelSerializer):
         fields = ("label", "polygons", "color")
         model = models.Area
 
+    def create(self, validated_data):
+        instance = self.Meta.model(
+            label=validated_data["label"], geom=json.dumps(validated_data["geom"])
+        )
+        instance.save()
+        return instance
+
+    def update(self, instance, validated_data):
+        if validated_data.get("label"):
+            instance.label = validated_data["label"]
+        if validated_data.get("geom"):
+            instance.geom = json.dumps(validated_data["geom"])
+        if validated_data.get("areas"):
+            areas = validated_data.pop("areas", [])
+            instance.areas.set(areas)
+        instance.save()
+        return instance
 
 class AreaResponseSerializer(serializers.Serializer):
     """A service area, composed of a group of Polygons.
