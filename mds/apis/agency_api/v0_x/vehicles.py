@@ -113,6 +113,9 @@ class DeviceTelemetrySerializer(serializers.Serializer):
 
 
 class DeviceEventSerializer(serializers.Serializer):
+    device_status = serializers.ChoiceField(
+        choices=enums.choices(enums.DEVICE_STATUS), help_text="Vehicle status."
+    )
     event_type = serializers.ChoiceField(
         choices=enums.choices(enums.EVENT_TYPE), help_text="Vehicle event."
     )
@@ -134,6 +137,7 @@ class DeviceEventSerializer(serializers.Serializer):
             timestamp=validated_data["telemetry"]["timestamp"],
             point=gps_to_gis_point(validated_data["telemetry"].get("gps", {})),
             device_id=device.id,
+            device_status=validated_data['device_status'],
             event_type=validated_data["event_type"],
             properties={
                 "telemetry": validated_data["telemetry"],

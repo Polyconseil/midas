@@ -82,7 +82,7 @@ class Device(models.Model):
     year_manufactured = models.IntegerField(null=True)
     manufacturer = UnboundedCharField(default=str)
 
-    # denormalized fields, the source of truth for this data is in the Record table.
+    # denormalized fields, the source of truth for this data is in the EventRecord table.
     dn_gps_point = gis_models.PointField(null=True)
     dn_gps_timestamp = models.DateTimeField(null=True)
     dn_status = UnboundedCharField(
@@ -117,6 +117,9 @@ class EventRecord(models.Model):
     device = models.ForeignKey(
         Device, related_name="event_records", on_delete=models.CASCADE
     )
+    # Also described as event type
+    device_status = UnboundedCharField(choices=enums.choices(enums.DEVICE_STATUS))
+    # Also described as event type reason
     event_type = UnboundedCharField(choices=enums.choices(enums.EVENT_TYPE))
 
     # JSON fields:

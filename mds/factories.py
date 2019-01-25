@@ -642,6 +642,7 @@ class EventRecord(factory.DjangoModelFactory):
         + datetime.timedelta(seconds=n)
     )
     saved_at = datetime.datetime(2018, 8, 1, 1, tzinfo=pytz.utc)
+    device_status = factory.Iterator(c.name for c in enums.DEVICE_STATUS)
     event_type = factory.Iterator(c.name for c in enums.EVENT_TYPE)
     properties = factory.Dict(
         {
