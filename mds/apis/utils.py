@@ -122,13 +122,12 @@ class PolygonSerializer(BaseGeometrySerializer):
 
 class UnixTimestampMilliseconds(serializers.IntegerField):
     def to_representation(self, value: datetime.datetime):
-        dt = value - datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
-        return int(dt.total_seconds() * 1000)
+        td = value - datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
+        return int(td.total_seconds() * 1000 + td.microseconds / 1000)
 
-    def to_internal_value(self, value):
-        value = super().to_representation(value)
+    def to_internal_value(self, value: int):
         dt = datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
-        return dt + datetime.timedelta(0, 0, 0, value)
+        return dt + datetime.timedelta(microseconds=value * 1000)
 
 
 # Schema #########################################################
