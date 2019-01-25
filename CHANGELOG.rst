@@ -4,7 +4,7 @@ Changelog
 0.4.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Management command to poll provider status changes.
 
 
 0.4.3 (2019-01-25)

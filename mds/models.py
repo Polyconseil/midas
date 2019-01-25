@@ -44,6 +44,8 @@ class Provider(models.Model):
     name = UnboundedCharField(default=str)
     logo_b64 = UnboundedCharField(null=True, blank=True, default=None)
     device_category = UnboundedCharField(choices=enums.choices(enums.DEVICE_CATEGORY))
+    base_api_url = UnboundedCharField(verbose_name="Base API URL")
+    authentication_token = UnboundedCharField(verbose_name="Authentication token")
 
 
 class DeviceQueryset(models.QuerySet):
