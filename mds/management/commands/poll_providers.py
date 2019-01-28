@@ -5,6 +5,7 @@ import urllib.parse
 
 from django.contrib.gis import geos
 from django.core import management
+from django.db import transaction
 from django.db.models.aggregates import Max
 
 import requests
@@ -31,7 +32,8 @@ class Command(management.BaseCommand):
 
             self.stdout.write("Polling %s... " % provider.name, ending="")
             try:
-                self.poll_status_changes(provider)
+                with transaction.atomic():
+                    self.poll_status_changes(provider)
             except Exception:  # pylint: disable=broad-except
                 logger.exception("Error in polling provider %s", provider.name)
                 self.stderr.write("Polling failed!")

@@ -37,7 +37,6 @@ def test_poll_provider_batch(client):
 
     assert_command_success(stdout, stderr)
 
-    device1.refresh_from_db()  # XXX
     event1 = device1.event_records.get()
     assert_event_equal(event1, expected_event1)
 
@@ -51,7 +50,7 @@ def test_poll_provider_batch(client):
 
 
 @pytest.mark.django_db
-def test_several_providers(client):
+def test_several_providers(client, django_assert_num_queries):
     """Two providers this time."""
     provider1 = factories.Provider(base_api_url="http://provider1")
     device1 = factories.Device(provider=provider1)
@@ -61,20 +60,28 @@ def test_several_providers(client):
     expected_event2 = factories.EventRecord.build()
     stdout, stderr = io.StringIO(), io.StringIO()
 
-    with requests_mock.Mocker() as m:
-        m.get(
-            urllib.parse.urljoin(provider1.base_api_url, "/status_changes"),
-            json=make_response(provider1, device1, expected_event1),
-        )
-        m.get(
-            urllib.parse.urljoin(provider2.base_api_url, "/status_changes"),
-            json=make_response(provider2, device2, expected_event2),
-        )
-        call_command("poll_providers", stdout=stdout, stderr=stderr)
+    n = 1  # List of providers
+    n += (
+        2  # Savepoint/release for each provider
+        + 1  # Max timestamp for each provider
+        + 1  # Does each device exist?
+        + 1  # Does each event record exist?
+        + 3  # Savepoint/insert/release for each record
+    ) * 2  # For each provider
+    with django_assert_num_queries(n):
+        with requests_mock.Mocker() as m:
+            m.get(
+                urllib.parse.urljoin(provider1.base_api_url, "/status_changes"),
+                json=make_response(provider1, device1, expected_event1),
+            )
+            m.get(
+                urllib.parse.urljoin(provider2.base_api_url, "/status_changes"),
+                json=make_response(provider2, device2, expected_event2),
+            )
+            call_command("poll_providers", stdout=stdout, stderr=stderr)
 
     assert_command_success(stdout, stderr)
 
-    device1.refresh_from_db()  # XXX
     event1 = device1.event_records.get()
     assert_event_equal(event1, expected_event1)
     event2 = device2.event_records.get()
