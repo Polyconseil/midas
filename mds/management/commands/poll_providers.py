@@ -8,7 +8,9 @@ from django.core import management
 from django.db import transaction
 from django.db.models.aggregates import Max
 
+from oauthlib.oauth2 import BackendApplicationClient
 import requests
+from requests_oauthlib import OAuth2Session
 import pytz
 
 from mds import models
@@ -44,7 +46,8 @@ class Command(management.BaseCommand):
             self.stdout.write("Success!")
 
     def poll_status_changes(self, provider):
-        next_url = urllib.parse.urljoin(provider.base_api_url, "/status_changes")
+        # FIXME it was reverted to "status_changes" as the doc writes it
+        next_url = urllib.parse.urljoin(provider.base_api_url, "status-changes/")
         # Start where we left
         # (we wouldn't know if the provider recorded late telemetries after the last sync)
         max_timestamp = models.EventRecord.objects.filter(
@@ -60,7 +63,7 @@ class Command(management.BaseCommand):
 
         # Pagination
         while next_url:
-            data = self.get_data(next_url)
+            data = self.get_data(provider, next_url)
             for status_change in data["data"]["status_changes"]:
                 device, created = models.Device.objects.get_or_create(
                     pk=status_change["device_id"],
@@ -114,7 +117,37 @@ class Command(management.BaseCommand):
                 # Hoping that they *do* implement "start_time"...
                 next_url = None
 
-    def get_data(self, url):
-        response = requests.get(url, timeout=30)  # TODO authentication
+    def get_data(self, provider, url):
+        authentication_type = provider.authentication.get("type")
+        if authentication_type in (None, "", "none"):
+            client = requests
+        if authentication_type == "oauth2":
+            client = authenticate_client_credentials(provider)
+        else:
+            raise NotImplementedError()
+
+        response = client.get(url, timeout=30)
         response.raise_for_status()
         return response.json()
+
+
+def authenticate_client_credentials(provider):
+    """Authenticate using the Backend Application Flow from OAuth2."""
+    client_id = provider.authentication["client_id"]
+    client_secret = provider.authentication["client_secret"]
+
+    # Skip the whole token refreshing with just BlueLA to consider
+    token = _fetch_token(provider, client_id, client_secret)
+    client = OAuth2Session(client_id, token=token)
+    return client
+
+
+def _fetch_token(provider, client_id, client_secret):
+    """Fetch an access token from the provider"""
+    client = BackendApplicationClient(client_id=client_id)
+    oauth = OAuth2Session(client=client)
+    refresh_url = urllib.parse.urljoin(provider.base_api_url, "/oauth2/token/")
+    token = oauth.fetch_token(
+        token_url=refresh_url, client_id=client_id, client_secret=client_secret
+    )
+    return token
