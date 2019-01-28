@@ -121,7 +121,7 @@ class Command(management.BaseCommand):
         authentication_type = provider.authentication.get("type")
         if authentication_type in (None, "", "none"):
             client = requests
-        if authentication_type == "oauth2":
+        elif authentication_type == "oauth2":
             client = authenticate_client_credentials(provider)
         else:
             raise NotImplementedError()
