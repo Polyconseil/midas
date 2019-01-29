@@ -56,7 +56,7 @@ class AppCreationView(GenericAPIView):
             owner=validated_data["app_owner"]
         ).last()
 
-        if application:
+        if application and application.scopes: # Application is revoked if there are no scopes
             serializer = self.CreationResponseSerializer(instance={
                 "client_id": application.client_id,
                 "client_secret": application.client_secret,
@@ -98,9 +98,9 @@ class AppCreationView(GenericAPIView):
              )
 
         if validated_data['delete']:
-            delete_application(validated_data["app_owner"], application)
+            delete_application(validated_data["app_owner"])
         else:
-            revoke_application(validated_data["app_owner"], application)
+            revoke_application(validated_data["app_owner"])
 
 
         return Response(self.RevokationResponseSerializer().data, status=200)

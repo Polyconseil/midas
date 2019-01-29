@@ -66,12 +66,12 @@ def create_application(name, owner=None, user=None, grant=None, scopes=None):
     )
 
 
-def revoke_application(owner_id, application):
+def revoke_application(owner_id):
     models.Application.objects.filter(
         owner=owner_id
-    ).last().update(scopes=[])
+    ).update(scopes=[])
 
-def delete_application(owner_id, application):
+def delete_application(owner_id):
     models.Application.objects.filter(
         owner=owner_id
-    ).last().delete()
+    ).delete()
