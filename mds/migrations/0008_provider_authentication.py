@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="provider",
             name="api_authentication",
-            field=django.contrib.postgres.fields.hstore.HStoreField(
+            field=django.contrib.postgres.fields.jsonb.JSONField(
                 default=mds.models.api_authentication_default,
                 verbose_name="API Authentication",
             ),

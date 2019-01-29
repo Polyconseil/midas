@@ -66,7 +66,7 @@ class Provider(models.Model):
     logo_b64 = UnboundedCharField(null=True, blank=True, default=None)
     device_category = UnboundedCharField(choices=enums.choices(enums.DEVICE_CATEGORY))
     base_api_url = UnboundedCharField(default="", verbose_name="Base API URL")
-    api_authentication = pg_fields.HStoreField(
+    api_authentication = pg_fields.JSONField(
         default=api_authentication_default, verbose_name="API Authentication"
     )
     api_configuration = pg_fields.JSONField(
