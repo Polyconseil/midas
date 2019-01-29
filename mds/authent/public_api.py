@@ -13,7 +13,7 @@ def get_long_lived_token(application, duration):
         seconds=duration
     )
 
-    token = generators.generate_jwt(application, token_duration)
+    token = generators.generate_jwt(application, token_duration, save=True)
     return token
 
 def revoke_long_lived_token(token):
@@ -22,8 +22,8 @@ def revoke_long_lived_token(token):
     ).last();
 
     if (stored_token):
-        token.revoked_after=timezone.now()
-        token.save()
+        stored_token.revoked_after=timezone.now()
+        stored_token.save()
 
 def get_revocation_list() -> List[str]:
     """Get the list of revoked tokens.

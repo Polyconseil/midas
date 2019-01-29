@@ -181,9 +181,17 @@ class LongLivedTokenView(GenericAPIView):
                 }
             )
 
+        if token.revoked_after:
+            raise exceptions.ValidationError(
+                {
+                    "token": _("Token %s already revoked")
+                             % validated_data["access_token"]
+                }
+            )
+
         revoke_long_lived_token(serializer.validated_data["access_token"])
 
-        return Response(utils.EmptyResponseSerializer, status=200)
+        return Response(None, status=200)
 
 urls = ([
     path(
