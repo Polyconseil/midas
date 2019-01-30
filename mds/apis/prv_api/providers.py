@@ -17,7 +17,7 @@ class ProviderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Provider
-        fields = ("id", "name", "logo_b64")
+        fields = ("id", "name", "logo_b64", "api_authentication", "api_configuration", "agency_api_authentication")
 
 
 class ProviderViewSet(viewsets.ModelViewSet):
