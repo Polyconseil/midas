@@ -128,6 +128,9 @@ class LongLivedTokenView(GenericAPIView):
     class RevokeRequestSerializer(serializers.Serializer):
         access_token = serializers.CharField()
 
+    class RevokeResponseSerializer(utils.EmptyResponseSerializer):
+        pass
+
     class ResponseSerializer(serializers.Serializer):
         access_token = serializers.CharField()
         token_type = serializers.ChoiceField(choices=["bearer"])
@@ -190,8 +193,7 @@ class LongLivedTokenView(GenericAPIView):
             )
 
         revoke_long_lived_token(serializer.validated_data["access_token"])
-
-        return Response(None, status=200)
+        return Response(self.RevokeResponseSerializer().data, status=200)
 
 urls = ([
     path(
