@@ -153,10 +153,12 @@ def _fetch_token(provider):
     client_secret = provider.api_authentication["client_secret"]
     client = BackendApplicationClient(client_id=client_id)
     session = OAuth2Session(client=client)
-    refresh_url = urllib.parse.urljoin(provider.base_api_url, "/oauth2/token")
-    if provider.api_configuration.get("trailing_slash"):
-        refresh_url += "/"
+    token_url = provider.oauth2_url
+    if not token_url:
+        token_url = urllib.parse.urljoin(provider.base_api_url, "/oauth2/token")
+        if provider.api_configuration.get("trailing_slash"):
+            token_url += "/"
     token = session.fetch_token(
-        token_url=refresh_url, client_id=client_id, client_secret=client_secret
+        token_url=token_url, client_id=client_id, client_secret=client_secret
     )
     return token

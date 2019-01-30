@@ -24,4 +24,19 @@ class Migration(migrations.Migration):
                 verbose_name="API Authentication",
             ),
         ),
+        migrations.AddField(
+            model_name="provider",
+            name="api_configuration",
+            field=django.contrib.postgres.fields.jsonb.JSONField(
+                default=mds.models.api_configuration_default,
+                verbose_name="API Configuration",
+            ),
+        ),
+        migrations.AddField(
+            model_name="provider",
+            name="oauth2_url",
+            field=mds.models.UnboundedCharField(
+                default="", verbose_name="OAuth2 URL (if different)"
+            ),
+        ),
     ]
