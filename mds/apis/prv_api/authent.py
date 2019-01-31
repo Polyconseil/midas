@@ -1,7 +1,6 @@
 from uuid import uuid4
 from mds.authent import models
 
-from django.urls import path
 from django.utils.translation import ugettext as _
 
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication, TokenHasScope
@@ -214,11 +213,3 @@ class LongLivedTokenView(GenericAPIView):
                 serializer.validated_data["access_token"]
             )
         return Response(self.RevokeResponseSerializer().data, status=200)
-
-
-urls = [
-    path("long_lived_token/", LongLivedTokenView.as_view(), name="long_lived_token"),
-    path("create_application/", AppCreationView.as_view(), name="create_app"),
-    path("revoke_application/", AppCreationView.as_view(), name="revoke_app"),
-    path("delete_application/", AppCreationView.as_view(), name="delete_app"),
-]

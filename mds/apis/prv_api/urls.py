@@ -24,5 +24,16 @@ def get_prv_router():
 
 app_name = "mds_prv_api"
 
-urlpatterns = [path("authent/", include(authent.urls))]
+auth_urls = [
+    path(
+        "long_lived_token/",
+        authent.LongLivedTokenView.as_view(),
+        name="long_lived_token",
+    ),
+    path("create_application/", authent.AppCreationView.as_view(), name="create_app"),
+    path("revoke_application/", authent.AppCreationView.as_view(), name="revoke_app"),
+    path("delete_application/", authent.AppCreationView.as_view(), name="delete_app"),
+]
+
+urlpatterns = [path("authent/", include(auth_urls))]
 urlpatterns += get_prv_router().urls
