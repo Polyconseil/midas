@@ -49,7 +49,6 @@ def agency_api_authentication_default():
     return {"type": "none"}
 
 
-
 def api_authentication_default():
     """Default value for the API authentication field of a provider.
 
@@ -87,7 +86,8 @@ class Provider(models.Model):
         default=api_configuration_default, verbose_name="API Configuration"
     )
     agency_api_authentication = pg_fields.JSONField(
-        default=agency_api_authentication_default, verbose_name="API Agency Authentication"
+        default=agency_api_authentication_default,
+        verbose_name="API Agency Authentication",
     )
 
 

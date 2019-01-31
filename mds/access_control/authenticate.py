@@ -99,4 +99,3 @@ def build_user(payload: Dict) -> RemoteUser:
     scopes = set(payload["scope"].split(" "))
 
     return RemoteUser(payload["sub"], scopes, payload.get("app_owner", None))
-
