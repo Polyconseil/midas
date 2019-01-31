@@ -1,5 +1,5 @@
 from uuid import uuid4
-from mds import models
+from mds.authent import models
 
 from django.urls import path
 from django.utils.translation import ugettext as _
