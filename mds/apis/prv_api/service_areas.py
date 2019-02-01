@@ -131,7 +131,7 @@ class AreaRequestSerializer(serializers.ModelSerializer):
     """
 
     label = serializers.CharField(help_text="Name of the Area")
-    polygons = PolygonRequestSerializer(required=False, many=True)
+    polygons = serializers.PrimaryKeyRelatedField(many=True, queryset=models.Polygon.objects)
     color = serializers.CharField(required=False, help_text="Color of the Area")
 
     class Meta:
@@ -140,19 +140,21 @@ class AreaRequestSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         instance = self.Meta.model(
-            label=validated_data["label"], geom=json.dumps(validated_data["geom"])
-        )
+            label=validated_data["label"],
+            color=validated_data["color"])
+        polygons = validated_data.get('polygons', [])
+        instance.polygons.set(polygons)
         instance.save()
         return instance
 
     def update(self, instance, validated_data):
         if validated_data.get("label"):
             instance.label = validated_data["label"]
-        if validated_data.get("geom"):
-            instance.geom = json.dumps(validated_data["geom"])
-        if validated_data.get("areas"):
-            areas = validated_data.pop("areas", [])
-            instance.areas.set(areas)
+        if validated_data.get("color"):
+            instance.color = validated_data["color"]
+        if "polygons" in validated_data:
+            polygons = validated_data.get('polygons', [])
+            instance.polygons.set(polygons)
         instance.save()
         return instance
 
