@@ -142,6 +142,7 @@ class AreaRequestSerializer(serializers.ModelSerializer):
         instance = self.Meta.model(
             label=validated_data["label"],
             color=validated_data["color"])
+        instance.save()
         polygons = validated_data.get('polygons', [])
         instance.polygons.set(polygons)
         instance.save()
