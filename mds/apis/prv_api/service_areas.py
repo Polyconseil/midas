@@ -61,11 +61,14 @@ class PolygonResponseSerializer(serializers.Serializer):
     class Meta:
         fields = ("id", "label", "creation_date", "deletion_date", "geom", "areas")
 
+
 class PolygonsImportRequestSerializer(serializers.Serializer):
 
     polygons = PolygonRequestSerializer(many=True)
+
     class Meta:
-        fields = ("polygons")
+        fields = "polygons"
+
 
 class PolygonViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
     permission_classes = (require_scopes(SCOPE_ADMIN),)
@@ -83,10 +86,10 @@ class PolygonViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
             "request": PolygonRequestSerializer,
             "response": utils.EmptyResponseSerializer,
         },
-        "import_polygons" :{
+        "import_polygons": {
             "request": PolygonsImportRequestSerializer,
             "response": utils.EmptyResponseSerializer,
-        }
+        },
     }
 
     def create(self, *args, **kwargs):
@@ -108,33 +111,34 @@ class PolygonViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
                 geom = polygon.get("geom", None)
                 if geom and geom["type"] == "Polygon":
 
-                        areas = []
-                        for area_label in polygon.get("areas", []):
-                            defaults = {
-                                "color": "#%06x" % random.randint(0, 0xFFFFFF)
-                            }
-                            # Create new Area if doesn't exist (based on label)
-                            area = models.Area.objects.get_or_create(
-                                label=area_label, defaults=defaults
-                            )[0]
-                            areas.append(area)
-                        poly = models.Polygon(
-                            label=polygon.get("label", ""), geom=str(geom)
-                        )
-                        poly.areas.set([a.id for a in areas])
-                        polygons_to_create.append(poly)
+                    areas = []
+                    for area_label in polygon.get("areas", []):
+                        defaults = {"color": "#%06x" % random.randint(0, 0xFFFFFF)}
+                        # Create new Area if doesn't exist (based on label)
+                        area = models.Area.objects.get_or_create(
+                            label=area_label, defaults=defaults
+                        )[0]
+                        areas.append(area)
+                    poly = models.Polygon(
+                        label=polygon.get("label", ""), geom=str(geom)
+                    )
+                    poly.areas.set([a.id for a in areas])
+                    polygons_to_create.append(poly)
             models.Polygon.objects.bulk_create(polygons_to_create)
         except IntegrityError as ex:
             return Response(exception=ex, status=500)
 
         return Response({"message": "ok"})
 
+
 class AreaRequestSerializer(serializers.ModelSerializer):
     """A service area, composed of a group of Polygons.
     """
 
     label = serializers.CharField(help_text="Name of the Area")
-    polygons = serializers.PrimaryKeyRelatedField(many=True, queryset=models.Polygon.objects)
+    polygons = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=models.Polygon.objects
+    )
     color = serializers.CharField(required=False, help_text="Color of the Area")
 
     class Meta:
@@ -143,10 +147,10 @@ class AreaRequestSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         instance = self.Meta.model(
-            label=validated_data["label"],
-            color=validated_data["color"])
+            label=validated_data["label"], color=validated_data["color"]
+        )
         instance.save()
-        polygons = validated_data.get('polygons', [])
+        polygons = validated_data.get("polygons", [])
         instance.polygons.set(polygons)
         instance.save()
         return instance
@@ -157,10 +161,11 @@ class AreaRequestSerializer(serializers.ModelSerializer):
         if validated_data.get("color"):
             instance.color = validated_data["color"]
         if "polygons" in validated_data:
-            polygons = validated_data.get('polygons', [])
+            polygons = validated_data.get("polygons", [])
             instance.polygons.set(polygons)
         instance.save()
         return instance
+
 
 class AreaResponseSerializer(serializers.Serializer):
     """A service area, composed of a group of Polygons.
