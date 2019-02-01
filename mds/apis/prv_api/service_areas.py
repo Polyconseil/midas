@@ -102,27 +102,31 @@ class PolygonViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
         if not isinstance(polygons, list):
             return Response(status=400)
 
-        for polygon in polygons:
-            geom = polygon.get("geom", None)
+        try:
+            polygons_to_create = []
+            for polygon in polygons:
+                geom = polygon.get("geom", None)
 
-            if geom and geom["type"] == "Polygon":
-                try:
-                    areas = []
-                    for area_label in polygon.get("areas", []):
-                        defaults = {
-                            "color": "#%06x" % random.randint(0, 0xFFFFFF)
-                        }
-                        # Create new Area if doesn't exist (based on label)
-                        area = models.Area.objects.get_or_create(
-                            label=area_label, defaults=defaults
-                        )[0]
-                        areas.append(area)
-                    poly = models.Polygon.objects.create(
-                        label=polygon.get("label", ""), geom=str(geom)
-                    )
-                    poly.areas.set([a.id for a in areas])
-                except IntegrityError as ex:
-                    return Response(exception=ex, status=500)
+                if geom and geom["type"] == "Polygon":
+
+                        areas = []
+                        for area_label in polygon.get("areas", []):
+                            defaults = {
+                                "color": "#%06x" % random.randint(0, 0xFFFFFF)
+                            }
+                            # Create new Area if doesn't exist (based on label)
+                            area = models.Area.objects.get_or_create(
+                                label=area_label, defaults=defaults
+                            )[0]
+                            areas.append(area)
+                        poly = models.Polygon(
+                            label=polygon.get("label", ""), geom=str(geom)
+                        )
+                        poly.areas.set([a.id for a in areas])
+                        polygons_to_create.append(poly)
+            models.Polygon.objects.bulk_create(polygons_to_create)
+        except IntegrityError as ex:
+            return Response(exception=ex, status=500)
 
         return Response({"message": "ok"})
 
