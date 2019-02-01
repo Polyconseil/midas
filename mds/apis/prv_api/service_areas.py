@@ -106,7 +106,6 @@ class PolygonViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
             polygons_to_create = []
             for polygon in polygons:
                 geom = polygon.get("geom", None)
-
                 if geom and geom["type"] == "Polygon":
 
                         areas = []

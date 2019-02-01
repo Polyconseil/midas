@@ -285,3 +285,66 @@ def test_polygon_delete(client):
         "{}{}/".format(POLY_BASE_URL, polygon_id), **auth_header(SCOPE_ADMIN)
     )
     assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_polygons_import(client):
+    new_polygon = {
+        "label": "test import",
+        "geom": MOCK_GEOJSON,
+        "areas": ["test area", "test_other_area"],
+    }
+
+    response = client.post(
+        "{}import/".format(POLY_BASE_URL),
+        data={"polygons": [new_polygon]},
+        content_type="application/json",
+        **auth_header(SCOPE_ADMIN),
+    )
+
+    assert response.status_code == 200
+    assert models.Polygon.objects.filter(label=new_polygon["label"]).count() == 1
+    assert models.Area.objects.filter(label__in=new_polygon["areas"]).count() == len(
+        new_polygon["areas"]
+    )
+
+    polygon = models.Polygon.objects.all().first()
+    assert polygon.areas.count() == 2
+
+
+@pytest.mark.django_db
+def test_polygons_import_without_areas(client):
+    new_polygon = {"label": "test import", "geom": MOCK_GEOJSON, "areas": []}
+
+    response = client.post(
+        "{}import/".format(POLY_BASE_URL),
+        data={"polygons": [new_polygon]},
+        content_type="application/json",
+        **auth_header(SCOPE_ADMIN),
+    )
+
+    assert response.status_code == 200
+    assert models.Polygon.objects.filter(label=new_polygon["label"]).count() == 1
+    assert models.Area.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_polygons_import_existing_areas(client):
+    Area(label="test_area")
+
+    new_polygon = {
+        "label": "test import",
+        "geom": MOCK_GEOJSON,
+        "areas": ["test_area", "test_other_area"],
+    }
+
+    response = client.post(
+        "{}import/".format(POLY_BASE_URL),
+        data={"polygons": [new_polygon]},
+        content_type="application/json",
+        **auth_header(SCOPE_ADMIN),
+    )
+
+    assert response.status_code == 200
+    assert models.Polygon.objects.filter(label=new_polygon["label"]).count() == 1
+    assert models.Area.objects.filter(label__in=new_polygon["areas"]).count() == 2
