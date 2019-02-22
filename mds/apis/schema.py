@@ -1,10 +1,10 @@
 """A few helpers around Swagger."""
 from django_filters import rest_framework as filters
 from drf_yasg.inspectors import SwaggerAutoSchema
+from drf_yasg.inspectors.base import FilterInspector, NotHandled
 import drf_yasg.inspectors.base
 import drf_yasg.openapi
 import drf_yasg.utils
-from drf_yasg.inspectors.base import FilterInspector, NotHandled
 
 
 def _call_view_method(
