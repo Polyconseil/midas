@@ -50,6 +50,7 @@ EVENT_TYPE = enum.Enum(
         ("trip_leave", pgettext_lazy("Event type", "Trip leave")),
         ("register", pgettext_lazy("Event type", "Register")),
         ("low_battery", pgettext_lazy("Event type", "Low battery")),
+        ("battery_charged", pgettext_lazy("Event type", "Battery charged")),
         ("maintenance", pgettext_lazy("Event type", "Maintenance")),
         ("service_end", pgettext_lazy("Event type", "Service end")),
         ("rebalance_pick_up", pgettext_lazy("Event type", "Rebalance pick up")),
@@ -57,7 +58,7 @@ EVENT_TYPE = enum.Enum(
         ("deregister", pgettext_lazy("Event type", "Deregister")),
         # this last event is not in the MDS spec
         ("telemetry", pgettext_lazy("Event type", "Received telemetry")),
-        # Also added to fill a hole in the provider API
+        # TODO remove - Also added to fill a hole in the provider API
         ("battery_ok", pgettext_lazy("Event type", "Battery OK")),
     ],
 )
@@ -75,6 +76,7 @@ EVENT_TYPE_TO_DEVICE_STATUS = {
     EVENT_TYPE.trip_leave.name: DEVICE_STATUS.reserved.name,
     EVENT_TYPE.register.name: DEVICE_STATUS.unknown.name,
     EVENT_TYPE.low_battery.name: DEVICE_STATUS.unavailable.name,
+    EVENT_TYPE.battery_charged.name: DEVICE_STATUS.available.name,
     EVENT_TYPE.maintenance.name: DEVICE_STATUS.unavailable.name,
     EVENT_TYPE.service_end.name: DEVICE_STATUS.unavailable.name,
     EVENT_TYPE.rebalance_pick_up.name: DEVICE_STATUS.reserved.name,
@@ -94,10 +96,11 @@ PROVIDER_EVENT_TYPE_REASON_TO_AGENCY_EVENT_TYPE = {
     "user_pick_up": EVENT_TYPE.trip_start.name,
     "maintenance": EVENT_TYPE.maintenance.name,
     "low_battery": EVENT_TYPE.low_battery.name,
+    "battery_charged": EVENT_TYPE.battery_charged.name,
     "service_end": EVENT_TYPE.service_end.name,
     "rebalance_pick_up": EVENT_TYPE.rebalance_pick_up.name,
     "maintenance_pick_up": EVENT_TYPE.maintenance_pick_up.name,
-    # XXX Added to fill a hole in the provider API
+    # TODO remove - Added to fill a hole in the provider API
     "battery_ok": EVENT_TYPE.battery_ok.name,
 }
 

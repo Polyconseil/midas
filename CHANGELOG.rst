@@ -4,7 +4,7 @@ Changelog
 0.4.16 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Prepare for the upcoming "battery_charged" provider event.
 
 
 0.4.15 (2019-02-22)
