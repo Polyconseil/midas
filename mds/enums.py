@@ -31,6 +31,8 @@ DEVICE_CATEGORY = enum.Enum(
 DEVICE_PROPULSION = enum.Enum(
     "Device propulsion",
     [
+        ("human", pgettext_lazy("Device propulsion", "Human")),
+        ("electric_assist", pgettext_lazy("Device propulsion", "Electric Assist")),
         ("electric", pgettext_lazy("Device propulsion", "Electric")),
         ("combustion", pgettext_lazy("Device propulsion", "Combustion")),
     ],
@@ -41,7 +43,7 @@ EVENT_TYPE = enum.Enum(
     [
         ("service_start", pgettext_lazy("Event type", "Service start")),
         ("trip_end", pgettext_lazy("Event type", "Trip end")),
-        ("rebalance_drop_off", pgettext_lazy("Event type", "Rebalance drop_off")),
+        ("rebalance_drop_off", pgettext_lazy("Event type", "Rebalance drop off")),
         ("maintenance_drop_off", pgettext_lazy("Event type", "Maintenance drop off")),
         ("cancel_reservation", pgettext_lazy("Event type", "Cancel reservation")),
         ("reserve", pgettext_lazy("Event type", "Reserve")),

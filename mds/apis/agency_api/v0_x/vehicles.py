@@ -7,6 +7,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from django.contrib.gis.geos import Point
+from django.db.utils import IntegrityError
+from django.http import HttpResponse
 
 from mds import enums
 from mds import models
@@ -85,16 +87,29 @@ class DeviceRegisterSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         provider_id = self.context["request"].user.provider_id
-        return models.Device.objects.create(provider_id=provider_id, **validated_data)
+        try:
+            return models.Device.objects.create(
+                provider_id=provider_id, **validated_data
+            )
+        except IntegrityError:
+            detail = f"A vehicle with id={validated_data['id']} is already registered"
+            raise utils.AlreadyRegisteredError({"already_registered": detail})
 
 
 class GPSSerializer(serializers.Serializer):
     lat = serializers.FloatField()
     lng = serializers.FloatField()
     altitude = serializers.FloatField(help_text="in meters")
-    heading = serializers.FloatField(help_text="degrees, starting at 0 at true North")
+    heading = serializers.FloatField(
+        min_value=0, help_text="degrees, starting at 0 at true North"
+    )
     speed = serializers.FloatField(help_text="in meters/second")
-    accuracy = serializers.FloatField(help_text="in meters")
+    hdop = serializers.FloatField(
+        min_value=1, source="accuracy", help_text="Horizontal GPS accuracy"
+    )
+    satellites = serializers.IntegerField(
+        min_value=0, help_text="Number of GPS satellites"
+    )
 
 
 def gps_to_gis_point(gps_data):
@@ -110,11 +125,21 @@ class DeviceTelemetrySerializer(serializers.Serializer):
     timestamp = utils.UnixTimestampMilliseconds(
         help_text="Unix timestamp in milliseconds"
     )
+    charge = serializers.FloatField(
+        required=False,
+        source="battery_pct",
+        min_value=0,
+        max_value=1,
+        help_text="Percent battery charge of vehicle, expressed between 0 and 1",
+    )
 
 
 class DeviceEventSerializer(serializers.Serializer):
     event_type = serializers.ChoiceField(
         choices=enums.choices(enums.EVENT_TYPE), help_text="Vehicle event."
+    )
+    timestamp = utils.UnixTimestampMilliseconds(
+        help_text="Timestamp of the last event update"
     )
     telemetry = DeviceTelemetrySerializer(
         write_only=True, help_text="Single point of telemetry."

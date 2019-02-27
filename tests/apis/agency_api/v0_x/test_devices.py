@@ -176,6 +176,7 @@ def test_device_add(client):
 def test_device_event(client):
     provider = factories.Provider(id="aaaa0000-61fd-4cce-8113-81af1de90942")
     device_id = "bbbb0000-61fd-4cce-8113-81af1de90942"
+    fake_device_id = "cccc0000-61fd-4cce-8113-81af1de90942"
     device = factories.Device(id=device_id, provider=provider)
 
     data = {
@@ -189,10 +190,12 @@ def test_device_event(client):
                 "altitude": 30.0,
                 "heading": 245.2,
                 "speed": 32.3,
-                "accuracy": 2.0,
+                "hdop": 2.0,
+                "satellites": 6,
             },
             "charge": 0.54,
         },
+        "timestamp": 1_325_376_000_000,
         "trip_id": None,
     }
 
@@ -204,6 +207,8 @@ def test_device_event(client):
         content_type="application/json",
     )
     assert response.status_code == 401
+
+    # test nominal
     response = client.post(
         "/mds/v0.x/vehicles/%s/event/" % device_id,
         data=data,
@@ -236,9 +241,9 @@ def test_device_telemetry(client, django_assert_num_queries):
                     "altitude": 30.0,
                     "heading": 245.2,
                     "speed": 32.3,
-                    "accuracy": 2.0,
+                    "hdop": 2.0,
+                    "satellites": 6,
                 },
-                "charge": 0.54,
             },
             {
                 "device_id": device_id % 2,
@@ -249,7 +254,8 @@ def test_device_telemetry(client, django_assert_num_queries):
                     "altitude": 30.1,
                     "heading": 245.2,
                     "speed": 32.4,
-                    "accuracy": 2.0,
+                    "hdop": 2.0,
+                    "satellites": 6,
                 },
                 "charge": 0.58,
             },
@@ -264,7 +270,8 @@ def test_device_telemetry(client, django_assert_num_queries):
             "altitude": 30.1,
             "heading": 245.2,
             "speed": 32.4,
-            "accuracy": 2.0,
+            "hdop": 2.0,
+            "satellites": 6,
         },
         "charge": 0.58,
     }

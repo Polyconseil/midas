@@ -8,21 +8,23 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-27 12:53+0000\n"
+"POT-Creation-Date: 2019-02-27 12:45+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: fr_FR\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: mds/access_control/authenticate.py:57
 msgid "Signature has expired."
-msgstr "La signature a expiré"
+msgstr ""
 
 #: mds/access_control/authenticate.py:60
 msgid "Error decoding signature."
-msgstr "Erreur de décodage de la signature"
+msgstr ""
 
 #: mds/access_control/authenticate.py:67
 msgid "Expired or revoked token"
@@ -31,167 +33,161 @@ msgstr ""
 #: mds/access_control/authenticate.py:92
 #, python-format
 msgid "Invalid payload, missing fields: %(fields)s"
-msgstr "Contenu invalide, champs manquants: %(fields)s"
+msgstr ""
 
 #: mds/apis/prv_api/authent.py:84 mds/apis/prv_api/authent.py:133
 #, python-format
 msgid "No application known for owner %s"
-msgstr "Pas d'application connue pour %s"
+msgstr ""
 
 #: mds/apis/prv_api/authent.py:158
 #, python-format
 msgid "No access token known for %s"
-msgstr "Pas de jeton d'accès pour %s"
+msgstr ""
 
 #: mds/apis/utils.py:19
-msgctxt "API Error"
 msgid "Already registered"
-msgstr "Déjà enregistré"
+msgstr ""
 
 #: mds/enums.py:15
 msgctxt "Device status"
 msgid "Available"
-msgstr "Disponible"
+msgstr ""
 
 #: mds/enums.py:16
 msgctxt "Device status"
 msgid "Reserved"
-msgstr "Réservé"
+msgstr ""
 
 #: mds/enums.py:17
 msgctxt "Device status"
 msgid "Unavailable"
-msgstr "Indisponible"
+msgstr ""
 
 #: mds/enums.py:18
 msgctxt "Device status"
 msgid "Removed"
-msgstr "Supprimé"
+msgstr ""
 
 #: mds/enums.py:19
 msgctxt "Device status"
 msgid "Unknown"
-msgstr "Inconnu"
+msgstr ""
 
 #: mds/enums.py:26
 msgctxt "Device category"
 msgid "Bike"
-msgstr "Vélo"
+msgstr ""
 
 #: mds/enums.py:27
 msgctxt "Device category"
 msgid "Scooter"
-msgstr "Trottinette"
+msgstr ""
 
 #: mds/enums.py:28
 msgctxt "Device category"
 msgid "Car"
-msgstr "Voiture"
+msgstr ""
 
 #: mds/enums.py:34
 msgctxt "Device propulsion"
 msgid "Human"
-msgstr "Manuelle"
+msgstr ""
 
 #: mds/enums.py:35
 msgctxt "Device propulsion"
 msgid "Electric Assist"
-msgstr "Assistance électrique"
-
-#: mds/enums.py:36
-msgctxt "Device propulsion"
-msgid "Electric"
-msgstr "Électrique"
+msgstr ""
 
 #: mds/enums.py:37
 msgctxt "Device propulsion"
 msgid "Combustion"
-msgstr "Combustion"
+msgstr ""
 
 #: mds/enums.py:44
 msgctxt "Event type"
 msgid "Service start"
-msgstr "Début de service"
+msgstr ""
 
 #: mds/enums.py:45
 msgctxt "Event type"
 msgid "Trip end"
-msgstr "Fin de parcours"
+msgstr ""
 
 #: mds/enums.py:46
 msgctxt "Event type"
 msgid "Rebalance drop off"
-msgstr "Dépôt pour rééquilibrage"
+msgstr ""
 
 #: mds/enums.py:47
 msgctxt "Event type"
 msgid "Maintenance drop off"
-msgstr "Dépôt pour maintenance"
+msgstr ""
 
 #: mds/enums.py:48
 msgctxt "Event type"
 msgid "Cancel reservation"
-msgstr "Annulation de réservation"
+msgstr ""
 
 #: mds/enums.py:49
 msgctxt "Event type"
 msgid "Reserve"
-msgstr "Réservation"
+msgstr ""
 
 #: mds/enums.py:50
 msgctxt "Event type"
 msgid "Trip start"
-msgstr "Début de parcours"
+msgstr ""
 
 #: mds/enums.py:51
 msgctxt "Event type"
 msgid "Trip enter"
-msgstr "Entrée en parcours"
+msgstr ""
 
 #: mds/enums.py:52
 msgctxt "Event type"
 msgid "Trip leave"
-msgstr "Sortie de parcours"
+msgstr ""
 
 #: mds/enums.py:53
 msgctxt "Event type"
 msgid "Register"
-msgstr "Enregistrement"
+msgstr ""
 
 #: mds/enums.py:54
 msgctxt "Event type"
 msgid "Low battery"
-msgstr "Batterie faible"
+msgstr ""
 
 #: mds/enums.py:55
 msgctxt "Event type"
 msgid "Maintenance"
-msgstr "Maintenance"
+msgstr ""
 
 #: mds/enums.py:56
 msgctxt "Event type"
 msgid "Service end"
-msgstr "Fin de service"
+msgstr ""
 
 #: mds/enums.py:57
 msgctxt "Event type"
 msgid "Rebalance pick up"
-msgstr "Retrait pour rééquilibrage"
+msgstr ""
 
 #: mds/enums.py:58
 msgctxt "Event type"
 msgid "Maintenance pick up"
-msgstr "Retrait pour maintenance"
+msgstr ""
 
 #: mds/enums.py:59
 msgctxt "Event type"
 msgid "Deregister"
-msgstr "Désinscription"
+msgstr ""
 
 #: mds/enums.py:61
 msgctxt "Event type"
 msgid "Received telemetry"
-msgstr "Télémétrie reçue"
+msgstr ""
 
 #: mds/enums.py:63
 msgctxt "Event type"
@@ -201,9 +197,9 @@ msgstr ""
 #: mds/enums.py:111
 msgctxt "Event source"
 msgid "push"
-msgstr "push"
+msgstr ""
 
 #: mds/enums.py:113
 msgctxt "Event source"
 msgid "pull"
-msgstr "pull"
+msgstr ""
