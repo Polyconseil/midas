@@ -113,3 +113,13 @@ EVENT_SOURCE = enum.Enum(
         ("pull", pgettext_lazy("Event source", "pull")),
     ],
 )
+
+AREA_TYPE = enum.Enum(
+    "Area type",
+    [
+        ("unrestricted", pgettext_lazy("Area type", "Unrestricted")),
+        ("restricted", pgettext_lazy("Area type", "Restricted")),
+        ("preferred_pick_up", pgettext_lazy("Area type", "Preferred pick up")),
+        ("preferred_drop_off", pgettext_lazy("Area type", "Preferred drop off")),
+    ],
+)

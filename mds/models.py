@@ -204,3 +204,6 @@ class Area(models.Model):
     color = models.CharField(
         max_length=8, default="#FFFFFF", help_text="hexa representation"
     )
+    area_type = UnboundedCharField(
+        choices=enums.choices(enums.AREA_TYPE), default="unrestricted"
+    )
