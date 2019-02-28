@@ -8,7 +8,6 @@ from rest_framework.response import Response
 
 from django.contrib.gis.geos import Point
 from django.db.utils import IntegrityError
-from django.http import HttpResponse
 
 from mds import enums
 from mds import models
@@ -138,6 +137,7 @@ class DeviceEventSerializer(serializers.Serializer):
     event_type = serializers.ChoiceField(
         choices=enums.choices(enums.EVENT_TYPE), help_text="Vehicle event."
     )
+    # Defined in MDS spec, but useless for us since we store the latest event
     timestamp = utils.UnixTimestampMilliseconds(
         help_text="Timestamp of the last event update"
     )
@@ -167,10 +167,12 @@ class DeviceEventSerializer(serializers.Serializer):
         )
 
 
-# TODO: these are in the spec but I don't see what it adds.
-# class DeviceEventResponseSerializer(serializers.Serializer):
-#     device_id = serializers.UUIDField()
-#     status = serializers.ChoiceField(choices=enums.DEVICE_STATUS_CHOICES)
+class DeviceEventResponseSerializer(serializers.Serializer):
+    device_id = serializers.UUIDField()
+    status = serializers.ChoiceField(
+        source="device.latest_event.updated_status",
+        choices=enums.choices(enums.DEVICE_STATUS),
+    )
 
 
 class DeviceTelemetryInputSerializer(serializers.Serializer):
@@ -230,7 +232,7 @@ class DeviceViewSet(
         },
         "event": {
             "request": DeviceEventSerializer,
-            "response": utils.EmptyResponseSerializer,
+            "response": DeviceEventResponseSerializer,
         },
         "telemetry": {
             "request": DeviceTelemetryInputSerializer,

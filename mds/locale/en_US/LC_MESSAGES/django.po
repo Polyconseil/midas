@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-27 12:53+0000\n"
+"POT-Creation-Date: 2019-02-28 14:43+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en_US\n"
@@ -70,140 +70,155 @@ msgstr ""
 
 #: mds/enums.py:19
 msgctxt "Device status"
+msgid "Trip"
+msgstr ""
+
+#: mds/enums.py:20
+msgctxt "Device status"
+msgid "Elsewhere"
+msgstr ""
+
+#: mds/enums.py:21
+msgctxt "Device status"
+msgid "Inactive"
+msgstr ""
+
+#: mds/enums.py:22
+msgctxt "Device status"
 msgid "Unknown"
 msgstr ""
 
-#: mds/enums.py:26
+#: mds/enums.py:29
 msgctxt "Device category"
 msgid "Bike"
 msgstr ""
 
-#: mds/enums.py:27
+#: mds/enums.py:30
 msgctxt "Device category"
 msgid "Scooter"
 msgstr ""
 
-#: mds/enums.py:28
+#: mds/enums.py:31
 msgctxt "Device category"
 msgid "Car"
 msgstr ""
 
-#: mds/enums.py:34
+#: mds/enums.py:37
 msgctxt "Device propulsion"
 msgid "Human"
 msgstr ""
 
-#: mds/enums.py:35
+#: mds/enums.py:38
 msgctxt "Device propulsion"
 msgid "Electric Assist"
 msgstr ""
 
-#: mds/enums.py:36
+#: mds/enums.py:39
 msgctxt "Device propulsion"
 msgid "Electric"
 msgstr ""
 
-#: mds/enums.py:37
+#: mds/enums.py:40
 msgctxt "Device propulsion"
 msgid "Combustion"
 msgstr ""
 
-#: mds/enums.py:44
+#: mds/enums.py:47
 msgctxt "Event type"
 msgid "Service start"
 msgstr ""
 
-#: mds/enums.py:45
+#: mds/enums.py:48
 msgctxt "Event type"
 msgid "Trip end"
 msgstr ""
 
-#: mds/enums.py:46
+#: mds/enums.py:49
 msgctxt "Event type"
 msgid "Rebalance drop off"
 msgstr ""
 
-#: mds/enums.py:47
+#: mds/enums.py:50
 msgctxt "Event type"
 msgid "Maintenance drop off"
 msgstr ""
 
-#: mds/enums.py:48
+#: mds/enums.py:51
 msgctxt "Event type"
 msgid "Cancel reservation"
 msgstr ""
 
-#: mds/enums.py:49
+#: mds/enums.py:52
 msgctxt "Event type"
 msgid "Reserve"
 msgstr ""
 
-#: mds/enums.py:50
+#: mds/enums.py:53
 msgctxt "Event type"
 msgid "Trip start"
 msgstr ""
 
-#: mds/enums.py:51
+#: mds/enums.py:54
 msgctxt "Event type"
 msgid "Trip enter"
 msgstr ""
 
-#: mds/enums.py:52
+#: mds/enums.py:55
 msgctxt "Event type"
 msgid "Trip leave"
 msgstr ""
 
-#: mds/enums.py:53
+#: mds/enums.py:56
 msgctxt "Event type"
 msgid "Register"
 msgstr ""
 
-#: mds/enums.py:54
+#: mds/enums.py:57
 msgctxt "Event type"
 msgid "Low battery"
 msgstr ""
 
-#: mds/enums.py:55
+#: mds/enums.py:58
 msgctxt "Event type"
 msgid "Maintenance"
 msgstr ""
 
-#: mds/enums.py:56
+#: mds/enums.py:59
 msgctxt "Event type"
 msgid "Service end"
 msgstr ""
 
-#: mds/enums.py:57
+#: mds/enums.py:60
 msgctxt "Event type"
 msgid "Rebalance pick up"
 msgstr ""
 
-#: mds/enums.py:58
+#: mds/enums.py:61
 msgctxt "Event type"
 msgid "Maintenance pick up"
 msgstr ""
 
-#: mds/enums.py:59
+#: mds/enums.py:62
 msgctxt "Event type"
 msgid "Deregister"
 msgstr ""
 
-#: mds/enums.py:61
+#: mds/enums.py:64
 msgctxt "Event type"
 msgid "Received telemetry"
 msgstr ""
 
-#: mds/enums.py:63
+#: mds/enums.py:66
 msgctxt "Event type"
 msgid "Battery OK"
 msgstr ""
 
-#: mds/enums.py:111
+#: mds/enums.py:114
 msgctxt "Event source"
 msgid "push"
 msgstr ""
 
-#: mds/enums.py:113
+#: mds/enums.py:116
 msgctxt "Event source"
 msgid "pull"
 msgstr ""

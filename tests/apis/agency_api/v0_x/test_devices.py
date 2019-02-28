@@ -176,11 +176,10 @@ def test_device_add(client):
 def test_device_event(client):
     provider = factories.Provider(id="aaaa0000-61fd-4cce-8113-81af1de90942")
     device_id = "bbbb0000-61fd-4cce-8113-81af1de90942"
-    fake_device_id = "cccc0000-61fd-4cce-8113-81af1de90942"
     device = factories.Device(id=device_id, provider=provider)
 
     data = {
-        "event_type": "reserve",
+        "event_type": "service_end",
         "telemetry": {
             "device_id": device_id,
             "timestamp": 1_325_376_000_000,
@@ -216,7 +215,7 @@ def test_device_event(client):
         **auth_header(SCOPE_AGENCY_API, provider_id=provider.id),
     )
     assert response.status_code == 201
-    assert response.data == {}
+    assert response.data == {"device_id": device_id, "status": "removed"}
     assert device.event_records.all().count() == 1
 
 

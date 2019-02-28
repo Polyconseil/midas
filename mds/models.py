@@ -182,6 +182,12 @@ class EventRecord(models.Model):
             return None
         return json.loads(self.point.geojson)
 
+    @property
+    def updated_status(self):
+        return enums.EVENT_TYPE_TO_DEVICE_STATUS.get(
+            self.event_type, enums.DEVICE_STATUS.unknown.name
+        )
+
 
 class Polygon(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
