@@ -98,16 +98,19 @@ class DeviceRegisterSerializer(serializers.Serializer):
 class GPSSerializer(serializers.Serializer):
     lat = serializers.FloatField()
     lng = serializers.FloatField()
-    altitude = serializers.FloatField(help_text="in meters")
+    altitude = serializers.FloatField(required=False, help_text="in meters")
     heading = serializers.FloatField(
-        min_value=0, help_text="degrees, starting at 0 at true North"
+        required=False, min_value=0, help_text="degrees, starting at 0 at true North"
     )
-    speed = serializers.FloatField(help_text="in meters/second")
+    speed = serializers.FloatField(required=False, help_text="in meters/second")
     hdop = serializers.FloatField(
-        min_value=1, source="accuracy", help_text="Horizontal GPS accuracy"
+        required=False,
+        min_value=1,
+        source="accuracy",
+        help_text="Horizontal GPS accuracy",
     )
     satellites = serializers.IntegerField(
-        min_value=0, help_text="Number of GPS satellites"
+        required=False, min_value=0, help_text="Number of GPS satellites"
     )
 
 
@@ -126,7 +129,7 @@ class DeviceTelemetrySerializer(serializers.Serializer):
     )
     charge = serializers.FloatField(
         required=False,
-        source="battery_pct",
+        source="dn_battery_pct",
         min_value=0,
         max_value=1,
         help_text="Percent battery charge of vehicle, expressed between 0 and 1",
@@ -137,7 +140,6 @@ class DeviceEventSerializer(serializers.Serializer):
     event_type = serializers.ChoiceField(
         choices=enums.choices(enums.EVENT_TYPE), help_text="Vehicle event."
     )
-    # Defined in MDS spec, but useless for us since we store the latest event
     timestamp = utils.UnixTimestampMilliseconds(
         help_text="Timestamp of the last event update"
     )
@@ -156,7 +158,7 @@ class DeviceEventSerializer(serializers.Serializer):
     def create(self, validated_data):
         device = self.context["device"]
         return models.EventRecord.objects.create(
-            timestamp=validated_data["telemetry"]["timestamp"],
+            timestamp=validated_data["timestamp"],
             point=gps_to_gis_point(validated_data["telemetry"].get("gps", {})),
             device_id=device.id,
             event_type=validated_data["event_type"],
@@ -170,8 +172,7 @@ class DeviceEventSerializer(serializers.Serializer):
 class DeviceEventResponseSerializer(serializers.Serializer):
     device_id = serializers.UUIDField()
     status = serializers.ChoiceField(
-        source="device.latest_event.updated_status",
-        choices=enums.choices(enums.DEVICE_STATUS),
+        source="updated_status", choices=enums.choices(enums.DEVICE_STATUS)
     )
 
 
