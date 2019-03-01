@@ -23,7 +23,7 @@ msgid "Error decoding signature."
 msgstr "Erreur de décodage de la signature"
 
 msgid "Expired or revoked token"
-msgstr ""
+msgstr "Jeton expiré ou révoqué"
 
 #, python-format
 msgid "Invalid payload, missing fields: %(fields)s"
@@ -171,7 +171,7 @@ msgstr "Télémétrie reçue"
 
 msgctxt "Event type"
 msgid "Battery OK"
-msgstr ""
+msgstr "Batterie OK"
 
 msgctxt "Event source"
 msgid "push"
@@ -192,7 +192,6 @@ msgstr "Restreint"
 msgctxt "Area type"
 msgid "Preferred pick up"
 msgstr "Préféré pour retrait"
-
 
 msgctxt "Area type"
 msgid "Preferred drop off"

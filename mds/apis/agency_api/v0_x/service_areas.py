@@ -39,7 +39,9 @@ class AreaSerializer(serializers.ModelSerializer):
     )
     area = MultiPolygonField(source="polygons.all")
     type = serializers.ChoiceField(
-        choices=enums.choices(enums.AREA_TYPE), default="unrestricted"
+        source="area_type",
+        choices=enums.choices(enums.AREA_TYPE),
+        default="unrestricted",
     )
 
     class Meta:
