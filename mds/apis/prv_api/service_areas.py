@@ -15,6 +15,7 @@ from mds.apis import utils
 
 from rest_framework import filters
 
+
 class PolygonRequestSerializer(serializers.ModelSerializer):
     """What we expect for a geographic polygon.
     """
@@ -75,8 +76,8 @@ class PolygonViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
     permission_classes = (require_scopes(SCOPE_PRV_API),)
     queryset = models.Polygon.objects.prefetch_related("areas").all()
     filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ('label',)
-    ordering = ('label')
+    ordering_fields = ("label",)
+    ordering = "label"
     lookup_field = "id"
     serializer_class = PolygonResponseSerializer
     serializers_mapping = {
@@ -193,8 +194,8 @@ class AreaViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
     permission_classes = (require_scopes(SCOPE_PRV_API),)
     queryset = models.Area.objects.prefetch_related("polygons").all()
     filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ('label',)
-    ordering = ('label')
+    ordering_fields = ("label",)
+    ordering = "label"
     lookup_field = "id"
     serializer_class = AreaResponseSerializer
     serializers_mapping = {
