@@ -70,6 +70,15 @@ class DeviceSerializer(serializers.ModelSerializer):
         help_text="Percentage between 0 and 1",
         allow_null=True,
     )
+    areas = serializers.SerializerMethodField()
+
+    def get_areas(self, obj):
+        if not obj.dn_gps_point:
+            return []
+        areas = models.Area.objects.filter(
+            polygons__geom__contains=obj.dn_gps_point
+        ).order_by("label", "id")
+        return list(areas.values("id", "label"))
 
     class Meta:
         model = models.Device
@@ -86,6 +95,7 @@ class DeviceSerializer(serializers.ModelSerializer):
             "registration_date",
             "last_telemetry_date",
             "battery",
+            "areas",
         )
 
 
