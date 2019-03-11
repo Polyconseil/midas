@@ -63,6 +63,7 @@ def test_device_list_basic(client, django_assert_num_queries):
         "last_telemetry_date": "2012-01-01T00:00:00Z",
         "registration_date": "2012-01-01T00:00:00Z",
         "battery": 0.5,
+        "areas": [],
     }
     expected_device2 = {
         "id": uuid2,
@@ -77,6 +78,7 @@ def test_device_list_basic(client, django_assert_num_queries):
         "position": None,
         "registration_date": "2012-01-01T00:00:00Z",
         "battery": None,
+        "areas": [],
     }
     # test auth
     response = client.get("/prv/vehicles/")
@@ -84,6 +86,7 @@ def test_device_list_basic(client, django_assert_num_queries):
 
     n = BASE_NUM_QUERIES
     n += 1  # query on devices
+    n += 1  # query to get areas of device
     n += 1  # query latest events
     n += 1  # count on devices
     with django_assert_num_queries(n):
