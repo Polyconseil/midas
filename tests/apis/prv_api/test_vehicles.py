@@ -19,6 +19,9 @@ def test_device_list_basic(client, django_assert_num_queries):
     provider = factories.Provider(name="Test provider")
     provider2 = factories.Provider(name="Test another provider")
 
+    area_id = "ccccccc3-1342-413b-8e89-db802b2f83f6"
+    area_label = "area_of_device1"
+
     device = factories.Device(
         id=uuid1,
         provider=provider,
@@ -63,7 +66,7 @@ def test_device_list_basic(client, django_assert_num_queries):
         "last_telemetry_date": "2012-01-01T00:00:00Z",
         "registration_date": "2012-01-01T00:00:00Z",
         "battery": 0.5,
-        "areas": [],
+        "areas": [{"id": uuid.UUID(area_id), "label": area_label}],
     }
     expected_device2 = {
         "id": uuid2,
@@ -80,6 +83,7 @@ def test_device_list_basic(client, django_assert_num_queries):
         "battery": None,
         "areas": [],
     }
+    factories.Area(id=area_id, label=area_label)
     # test auth
     response = client.get("/prv/vehicles/")
     assert response.status_code == 401
