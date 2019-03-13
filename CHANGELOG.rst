@@ -1,11 +1,18 @@
 Changelog
 =========
 
-0.5.1 (unreleased)
+0.5.2 (unreleased)
 ------------------
 
 - Fix conversion of datetime objects to MDS timestamps in the APIs.
 - Added areas methodField to DeviceSerializer
+
+
+0.5.1 (2019-03-12)
+------------------
+
+- Fix conversion of datetime objects to MDS timestamps in the APIs.
+- Also take into account "battery_charged" event type from providers.
 
 
 0.5.0 (2019-03-01)
