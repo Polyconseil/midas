@@ -200,9 +200,8 @@ class Command(management.BaseCommand):
         self.create_missing_devices(status_changes)
         self.create_event_records(status_changes)
 
-        # Returning the latest event recorded, assuming they are sorted!
+        # Returning the latest event recorded (order is not asserted in the specs)
         last_start_time_polled = utils.from_mds_timestamp(
-            # Order is not asserted in the specs
             max(status_change["event_time"] for status_change in status_changes)
         )
         return last_start_time_polled
@@ -349,7 +348,9 @@ def create_device(status_change):
     dn_battery_pct = status_change.get("battery_pct")
     event_location = status_change["event_location"]
     if event_location:
-        dn_gps_point = geos.Point(event_location["geometry"]["coordinates"], srid=4326).ewkt
+        dn_gps_point = geos.Point(
+            event_location["geometry"]["coordinates"], srid=4326
+        ).ewkt
     else:
         dn_gps_point = None
     dn_gps_timestamp = utils.from_mds_timestamp(status_change["event_time"])
