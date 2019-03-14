@@ -33,7 +33,6 @@ logger = logging.getLogger(__name__)
 
 
 class OAuth2Store(threading.local):
-
     def __init__(self):
         super().__init__()
         self.token_cache = {}
@@ -69,12 +68,15 @@ class OAuth2Store(threading.local):
         # Provider-specific parameters to request the token
         kwargs = {}
         try:
-            kwargs.update(provider.api_configuration['token_params'])
+            kwargs.update(provider.api_configuration["token_params"])
         except KeyError:
             pass
 
         token = session.fetch_token(
-            token_url=token_url, client_id=client_id, client_secret=client_secret, **kwargs
+            token_url=token_url,
+            client_id=client_id,
+            client_secret=client_secret,
+            **kwargs
         )
         return token
 
@@ -86,10 +88,10 @@ class Command(management.BaseCommand):
     help = "Poll providers to fetch their latest data."
 
     def handle(self, *args, **options):
-        self.verbosity = options['verbosity']
+        self.verbosity = options["verbosity"]
         self.token_cache = {}
-        self.providers = set(models.Provider.objects.values_list('pk', flat=True))
-        self.devices = set(models.Device.objects.values_list('pk', flat=True))
+        self.providers = set(models.Provider.objects.values_list("pk", flat=True))
+        self.devices = set(models.Device.objects.values_list("pk", flat=True))
 
         for provider in models.Provider.objects.all():
             if not provider.base_api_url:
@@ -121,11 +123,13 @@ class Command(management.BaseCommand):
         # Start where we left, it's all based on providers sorting by start_time, obviously
         # (we wouldn't know if the provider recorded late telemetries earlier than this date)
         if provider.last_start_time_polled:
-            params["start_time"] = utils.to_mds_timestamp(provider.last_start_time_polled)
+            params["start_time"] = utils.to_mds_timestamp(
+                provider.last_start_time_polled
+            )
 
         # Provider-specific params to optimise polling
         try:
-            params.update(provider.api_configuration['status_changes_params'])
+            params.update(provider.api_configuration["status_changes_params"])
         except KeyError:
             pass
 
@@ -136,8 +140,8 @@ class Command(management.BaseCommand):
         while next_url:
             body = self.get_body(provider, next_url)
             # Translate older versions of data
-            translated_data = translate_data(body['data'], body['version'])
-            status_changes = translated_data['status_changes']
+            translated_data = translate_data(body["data"], body["version"])
+            status_changes = translated_data["status_changes"]
 
             # A transaction for each "page" of data
             with transaction.atomic():
@@ -158,14 +162,16 @@ class Command(management.BaseCommand):
             raise NotImplementedError
 
         headers = {}
-        accepted_content_types = ['application/json']
+        accepted_content_types = ["application/json"]
         # Add versioning header (some providers may choke on this)
         for version in ACCEPTED_MDS_VERSIONS:
-            accepted_content_types.append("application/vnd.mds.provider+json;version=%s" % version)
-        headers['Accept'] = ", ".join(accepted_content_types)
+            accepted_content_types.append(
+                "application/vnd.mds.provider+json;version=%s" % version
+            )
+        headers["Accept"] = ", ".join(accepted_content_types)
 
         if self.verbosity > 1:
-            self.stdout.write('Polling provider on URL %s' % url)
+            self.stdout.write("Polling provider on URL %s" % url)
         response = client.get(url, timeout=30, headers=headers)
         # When we get a 401 with oauth2, we should try renewing the access token,
         # but when we try every minute, we're just delaying that retrial
@@ -173,15 +179,15 @@ class Command(management.BaseCommand):
 
         # Servers should send what version of the API was served
         # but we rather trust the versioning in the body
-        content_type = response.headers['Content-Type']
-        if content_type.startswith('application/json'):
-            version = 'unspecified'
+        content_type = response.headers["Content-Type"]
+        if content_type.startswith("application/json"):
+            version = "unspecified"
         else:
             # Let it raise if malformed
-            content_type, version = content_type.split(';')
-            _, version = version.split('=')
+            content_type, version = content_type.split(";")
+            _, version = version.split("=")
         if self.verbosity > 1:
-            self.stdout.write('Provider pretends to accept version %s' % version)
+            self.stdout.write("Provider pretends to accept version %s" % version)
 
         body = response.json()
         return body
@@ -197,7 +203,7 @@ class Command(management.BaseCommand):
         # Returning the latest event recorded, assuming they are sorted!
         last_start_time_polled = utils.from_mds_timestamp(
             # Order is not asserted in the specs
-            max(status_change['event_time'] for status_change in status_changes)
+            max(status_change["event_time"] for status_change in status_changes)
         )
         return last_start_time_polled
 
@@ -205,41 +211,47 @@ class Command(management.BaseCommand):
         """Some preliminary checks/addenda"""
 
         for status_change in status_changes:
-            status_change['provider_id'] = uuid.UUID(status_change['provider_id'])
-            status_change['device_id'] = device_id = uuid.UUID(status_change['device_id'])
-            status_change['event_time'] = int(status_change['event_time'])
+            status_change["provider_id"] = uuid.UUID(status_change["provider_id"])
+            status_change["device_id"] = device_id = uuid.UUID(
+                status_change["device_id"]
+            )
+            status_change["event_time"] = int(status_change["event_time"])
 
             # The list of event types and even the naming don't match between
             # the provider and agency APIs, so translate one to the other
             try:
                 event_type_reason = status_change["event_type_reason"]
             except KeyError:  # Spec violation!
-                self.stderr.write('Warning: device %s has no event_type_reason' % device_id)
+                self.stderr.write(
+                    "Warning: device %s has no event_type_reason" % device_id
+                )
                 # Let recording the device fail with a null value, but only that one in the batch
                 agency_event_type = None
             else:
-                agency_event_type = enums.PROVIDER_EVENT_TYPE_REASON_TO_AGENCY_EVENT_TYPE[event_type_reason]
-            status_change['agency_event_type'] = agency_event_type
+                agency_event_type = enums.PROVIDER_EVENT_TYPE_REASON_TO_AGENCY_EVENT_TYPE[
+                    event_type_reason
+                ]
+            status_change["agency_event_type"] = agency_event_type
 
             event_location = status_change["event_location"]
             if event_location:
                 assert event_location["geometry"]["type"] == "Point"
             else:  # Spec violation!
-                self.stderr.write('Warning: device %s has no event_location' % device_id)
+                self.stderr.write(
+                    "Warning: device %s has no event_location" % device_id
+                )
 
     def create_missing_providers(self, status_changes):
         """Make sure all providers mentioned exist"""
 
         for status_change in status_changes:
-            provider_id = status_change['provider_id']
+            provider_id = status_change["provider_id"]
             if provider_id not in self.providers:
-                name = status_change['provider_name']
-                device_category = status_change['vehicle_type']
+                name = status_change["provider_name"]
+                device_category = status_change["vehicle_type"]
 
                 models.Provider.objects.create(
-                    pk=provider_id,
-                    name=name,
-                    device_category=device_category,
+                    pk=provider_id, name=name, device_category=device_category
                 )
                 self.providers.add(provider_id)
                 self.stdout.write("Provider %s was created." % name)
@@ -248,8 +260,9 @@ class Command(management.BaseCommand):
         """Make sure all devices mentioned exist"""
 
         with_missing_devices = (
-            status_change for status_change in status_changes
-            if status_change['device_id'] not in self.devices
+            status_change
+            for status_change in status_changes
+            if status_change["device_id"] not in self.devices
         )
 
         with connection.cursor() as cursor:
@@ -285,10 +298,12 @@ class Command(management.BaseCommand):
                 (
                     create_device(status_change)
                     for status_change in with_missing_devices
-                )
+                ),
             )
 
-        devices_added = [status_change['device_id'] for status_change in with_missing_devices]
+        devices_added = [
+            status_change["device_id"] for status_change in with_missing_devices
+        ]
         if devices_added:
             self.devices.update(devices_added)
             self.stdout.write("Devices created: %s" % ", ".join(devices_added))
@@ -321,49 +336,60 @@ class Command(management.BaseCommand):
                 (
                     create_event_record(status_change)
                     for status_change in status_changes
-                )
+                ),
             )
 
 
 def create_device(status_change):
-    device_id = status_change['device_id']
+    device_id = status_change["device_id"]
     identification_number = status_change["vehicle_id"]
     if not identification_number:  # Spec violation!
-        identification_number = "test-%s" % str(device_id).split('-', 1)
+        identification_number = "test-%s" % str(device_id).split("-", 1)
     # XXX Is it even the role of the poller?
-    dn_battery_pct = status_change.get('battery_pct')
-    event_location = status_change['event_location']
-    dn_gps_point = geos.Point(event_location["geometry"]["coordinates"], srid=4326).ewkt if event_location else None
+    dn_battery_pct = status_change.get("battery_pct")
+    event_location = status_change["event_location"]
+    if event_location:
+        dn_gps_point = geos.Point(event_location["geometry"]["coordinates"], srid=4326).ewkt
+    else:
+        dn_gps_point = None
     dn_gps_timestamp = utils.from_mds_timestamp(status_change["event_time"])
-    agency_event_type = status_change['agency_event_type']
-    dn_status = enums.EVENT_TYPE_TO_DEVICE_STATUS[agency_event_type] if agency_event_type else None
+    agency_event_type = status_change["agency_event_type"]
+    dn_status = (
+        enums.EVENT_TYPE_TO_DEVICE_STATUS[agency_event_type]
+        if agency_event_type
+        else None
+    )
 
     return {
-        'id': device_id,
+        "id": device_id,
         # Don't assume the device received belongs to the provider requested
         # The LA sandbox contains data for several providers
-        'provider_id': status_change['provider_id'],
-        'registration_date': timezone.now(),
-        'identification_number': identification_number,
-        'category': status_change["vehicle_type"],
-        'model': "",
-        'propulsion': status_change["propulsion_type"],
-        'manufacturer': "",
-        'dn_battery_pct': dn_battery_pct,
-        'dn_gps_point': dn_gps_point,
-        'dn_gps_timestamp': dn_gps_timestamp,
-        'dn_status': dn_status,
+        "provider_id": status_change["provider_id"],
+        "registration_date": timezone.now(),
+        "identification_number": identification_number,
+        "category": status_change["vehicle_type"],
+        "model": "",
+        "propulsion": status_change["propulsion_type"],
+        "manufacturer": "",
+        "dn_battery_pct": dn_battery_pct,
+        "dn_gps_point": dn_gps_point,
+        "dn_gps_timestamp": dn_gps_timestamp,
+        "dn_status": dn_status,
     }
 
 
 def create_event_record(status_change):
-    event_location = status_change['event_location']
+    event_location = status_change["event_location"]
+    if event_location:
+        point = geos.Point(event_location["geometry"]["coordinates"], srid=4326).ewkt
+    else:
+        point = None
     properties = {}
     associated_trip = status_change.get("associated_trip")
     if associated_trip:
         properties["trip_id"] = associated_trip
     if event_location:
-        properties['telemetry'] = {
+        properties["telemetry"] = {
             "timestamp": event_location["properties"]["timestamp"],
             "gps": {
                 "lng": event_location["geometry"]["coordinates"][0],
@@ -374,34 +400,34 @@ def create_event_record(status_change):
         }
 
     return {
-        'device_id': status_change['device_id'],
-        'timestamp': utils.from_mds_timestamp(status_change["event_time"]),
-        'source': "pull",  # pulled by agency,
-        'point': geos.Point(event_location["geometry"]["coordinates"], srid=4326).ewkt if event_location else None,
-        'event_type': status_change['agency_event_type'],
-        'properties': json.dumps(properties),
-        'saved_at': timezone.now(),
+        "device_id": status_change["device_id"],
+        "timestamp": utils.from_mds_timestamp(status_change["event_time"]),
+        "source": "pull",  # pulled by agency,
+        "point": point,
+        "event_type": status_change["agency_event_type"],
+        "properties": json.dumps(properties),
+        "saved_at": timezone.now(),
     }
 
 
 def translate_data(data, version):
     version = Version(version)
 
-    if version >= Version('0.3.0') and version < Version('0.4.0'):
+    if version >= Version("0.3.0") and version < Version("0.4.0"):
         return data
 
-    if version >= Version('0.2.0'):
+    if version >= Version("0.2.0"):
         # The only two noticeable changes from our point of view are:
         # - timestamps converted from floating-point seconds to milliseconds;
         # - "trip_ids" now is a single "trip_id"
-        for status_change in data['status_changes']:
+        for status_change in data["status_changes"]:
             # We were already expecting milliseconds in the 0.2 implementation
-            if '.' in str(status_change['event_time']):
-                status_change['event_time'] = round(status_change['event_time'] * 1000)
+            if "." in str(status_change["event_time"]):
+                status_change["event_time"] = round(status_change["event_time"] * 1000)
             # Keep only the first (and probably only) trip ID
-            associated_trip = status_change.pop('associated_trips', None)
+            associated_trip = status_change.pop("associated_trips", None)
             if associated_trip:
-                status_change['associated_trip'] = associated_trip[0]
+                status_change["associated_trip"] = associated_trip[0]
         return data
 
     raise NotImplementedError(version)
