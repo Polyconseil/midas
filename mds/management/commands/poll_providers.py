@@ -179,7 +179,9 @@ class Command(management.BaseCommand):
 
         # Servers should send what version of the API was served
         # but we rather trust the versioning in the body
-        content_type = response.headers.get("Content-Type", "application/json; charset=UTF-8")
+        content_type = response.headers.get(
+            "Content-Type", "application/json; charset=UTF-8"
+        )
         if content_type.startswith("application/json"):
             version = "unspecified"
         else:
@@ -385,9 +387,7 @@ def create_event_record(status_change):
         point = geos.Point(event_location["geometry"]["coordinates"], srid=4326).ewkt
     else:
         point = None
-    properties = {
-        "trip_id": status_change.get("associated_trip")
-    }
+    properties = {"trip_id": status_change.get("associated_trip")}
     if event_location:
         properties["telemetry"] = {
             "timestamp": event_location["properties"]["timestamp"],
