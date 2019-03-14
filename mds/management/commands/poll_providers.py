@@ -14,7 +14,6 @@ from django.contrib.gis import geos
 from django.core import management
 from django.db import connection
 from django.db import transaction
-from django.db.models.aggregates import Max
 from django.utils import timezone
 
 from oauthlib.oauth2 import BackendApplicationClient
@@ -119,13 +118,10 @@ class Command(management.BaseCommand):
 
         params = {}
 
-        # Start where we left
-        # (we wouldn't know if the provider recorded late telemetries after the last sync)
-        max_timestamp = models.EventRecord.objects.filter(
-            device__provider=provider
-        ).aggregate(max_timestamp=Max("timestamp"))["max_timestamp"]
-        if max_timestamp:
-            params["start_time"] = utils.to_mds_timestamp(max_timestamp)
+        # Start where we left, it's all based on providers sorting by start_time, obviously
+        # (we wouldn't know if the provider recorded late telemetries earlier than this date)
+        if provider.last_start_time_polled:
+            params["start_time"] = utils.to_mds_timestamp(provider.last_start_time_polled)
 
         # Provider-specific params to optimise polling
         try:
@@ -141,10 +137,13 @@ class Command(management.BaseCommand):
             body = self.get_body(provider, next_url)
             # Translate older versions of data
             translated_data = translate_data(body['data'], body['version'])
+            status_changes = translated_data['status_changes']
 
             # A transaction for each "page" of data
             with transaction.atomic():
-                self.process_status_changes(translated_data['status_changes'])
+                last_start_time_polled = self.process_status_changes(status_changes)
+                provider.last_start_time_polled = last_start_time_polled
+                provider.save()
 
             next_url = body.get("links", {}).get("next")
 
@@ -195,12 +194,20 @@ class Command(management.BaseCommand):
         self.create_missing_devices(status_changes)
         self.create_event_records(status_changes)
 
+        # Returning the latest event recorded, assuming they are sorted!
+        last_start_time_polled = utils.from_mds_timestamp(
+            # Order is not asserted in the specs
+            max(status_change['event_time'] for status_change in status_changes)
+        )
+        return last_start_time_polled
+
     def prepare_status_changes(self, status_changes):
         """Some preliminary checks/addenda"""
 
         for status_change in status_changes:
             status_change['provider_id'] = uuid.UUID(status_change['provider_id'])
             status_change['device_id'] = device_id = uuid.UUID(status_change['device_id'])
+            status_change['event_time'] = int(status_change['event_time'])
 
             # The list of event types and even the naming don't match between
             # the provider and agency APIs, so translate one to the other
@@ -326,8 +333,8 @@ def create_device(status_change):
     # XXX Is it even the role of the poller?
     dn_battery_pct = status_change.get('battery_pct')
     event_location = status_change['event_location']
-    dn_gps_point = geos.Point(event_location["geometry"]["coordinates"]) if event_location else None
-    dn_gps_timestamp = utils.from_mds_timestamp(int(status_change["event_time"]))
+    dn_gps_point = geos.Point(event_location["geometry"]["coordinates"], srid=4326).ewkt if event_location else None
+    dn_gps_timestamp = utils.from_mds_timestamp(status_change["event_time"])
     agency_event_type = status_change['agency_event_type']
     dn_status = enums.EVENT_TYPE_TO_DEVICE_STATUS[agency_event_type] if agency_event_type else None
 
@@ -368,9 +375,9 @@ def create_event_record(status_change):
 
     return {
         'device_id': status_change['device_id'],
-        'timestamp': utils.from_mds_timestamp(int(status_change["event_time"])),
+        'timestamp': utils.from_mds_timestamp(status_change["event_time"]),
         'source': "pull",  # pulled by agency,
-        'point': geos.Point(event_location["geometry"]["coordinates"]) if event_location else None,
+        'point': geos.Point(event_location["geometry"]["coordinates"], srid=4326).ewkt if event_location else None,
         'event_type': status_change['agency_event_type'],
         'properties': json.dumps(properties),
         'saved_at': timezone.now(),
