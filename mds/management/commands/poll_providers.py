@@ -159,8 +159,8 @@ class Command(management.BaseCommand):
             raise NotImplementedError
 
         headers = {}
-        # Add versioning header (some providers may choke on this)
         accepted_content_types = ['application/json']
+        # Add versioning header (some providers may choke on this)
         for version in ACCEPTED_MDS_VERSIONS:
             accepted_content_types.append("application/vnd.mds.provider+json;version=%s" % version)
         headers['Accept'] = ", ".join(accepted_content_types)
@@ -184,8 +184,8 @@ class Command(management.BaseCommand):
         if self.verbosity > 1:
             self.stdout.write('Provider pretends to accept version %s' % version)
 
-        data = response.json()
-        return data
+        body = response.json()
+        return body
 
     def process_status_changes(self, status_changes):
         if self.verbosity > 1:
