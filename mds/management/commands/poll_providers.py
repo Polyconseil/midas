@@ -179,7 +179,7 @@ class Command(management.BaseCommand):
 
         # Servers should send what version of the API was served
         # but we rather trust the versioning in the body
-        content_type = response.headers["Content-Type"]
+        content_type = response.headers.get("Content-Type", "application/json; charset=UTF-8")
         if content_type.startswith("application/json"):
             version = "unspecified"
         else:
@@ -258,11 +258,11 @@ class Command(management.BaseCommand):
     def create_missing_devices(self, status_changes):
         """Make sure all devices mentioned exist"""
 
-        with_missing_devices = (
+        with_missing_devices = [
             status_change
             for status_change in status_changes
             if status_change["device_id"] not in self.devices
-        )
+        ]
 
         with connection.cursor() as cursor:
             cursor.executemany(
@@ -301,7 +301,7 @@ class Command(management.BaseCommand):
             )
 
         devices_added = [
-            status_change["device_id"] for status_change in with_missing_devices
+            str(status_change["device_id"]) for status_change in with_missing_devices
         ]
         if devices_added:
             self.devices.update(devices_added)
@@ -385,10 +385,9 @@ def create_event_record(status_change):
         point = geos.Point(event_location["geometry"]["coordinates"], srid=4326).ewkt
     else:
         point = None
-    properties = {}
-    associated_trip = status_change.get("associated_trip")
-    if associated_trip:
-        properties["trip_id"] = associated_trip
+    properties = {
+        "trip_id": status_change.get("associated_trip")
+    }
     if event_location:
         properties["telemetry"] = {
             "timestamp": event_location["properties"]["timestamp"],
