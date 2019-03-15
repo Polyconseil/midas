@@ -60,6 +60,11 @@ def api_configuration_default():
     return {"trailing_slash": False}  # Some providers endpoint won't reply without it
 
 
+def short_uuid4(uid):
+    """When seeing a glimpse of the UID is enough."""
+    return str(uid)[:8]  # Basically splitting on the first dash
+
+
 class Provider(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     name = UnboundedCharField(default=str)
@@ -82,6 +87,9 @@ class Provider(models.Model):
     # We may poll a provider, e.g. LADOT sandbox that replies for many providers
     # but has no device itself. So we cannot rely on checking their latest record
     last_start_time_polled = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return "{} ({})".format(self.name, short_uuid4(self.id))
 
 
 class DeviceQueryset(models.QuerySet):
@@ -130,6 +138,13 @@ class Device(models.Model):
     )
 
     objects = DeviceQueryset.as_manager()
+
+    def __str__(self):
+        return "{} {} ({})".format(
+            self.get_category_display(),
+            self.identification_number,
+            short_uuid4(self.id),
+        )
 
     @property
     def latest_event(self):
@@ -192,6 +207,9 @@ class Polygon(models.Model):
     geom = gis_models.PolygonField()
     properties = pg_fields.JSONField(default=dict, encoder=encoders.JSONEncoder)
 
+    def __str__(self):
+        return "{} ({})".format(self.label, short_uuid4(self.id))
+
 
 class Area(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
@@ -208,3 +226,6 @@ class Area(models.Model):
     area_type = UnboundedCharField(
         choices=enums.choices(enums.AREA_TYPE), default="unrestricted"
     )
+
+    def __str__(self):
+        return "{} ({})".format(self.label, short_uuid4(self.id))
