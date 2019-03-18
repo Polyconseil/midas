@@ -5,18 +5,13 @@ Changelog
 ------------------
 
 - Fix conversion of datetime objects to MDS timestamps in the APIs.
-<<<<<<< HEAD
-<<<<<<< HEAD
-- Created separate RetrieveDeviceSerializer with areas methodField
-
+- Created separate RetrieveDeviceSerializer with areas methodField.
+- Added provider_logo in RetrieveDeviceSerializer.
 
 0.5.2 (2019-03-15)
 ------------------
 
 - Almost rewritten the provider poller with support for MDS 0.3.
-=======
-- Created separate RetrieveDeviceSerializer with areas methodField
->>>>>>> created separate RetriveDeviceSerializer for retrieving details vehicle using postgres
 
 
 0.5.1 (2019-03-12)
@@ -24,9 +19,7 @@ Changelog
 
 - Fix conversion of datetime objects to MDS timestamps in the APIs.
 - Also take into account "battery_charged" event type from providers.
-=======
 - Added areas methodField to DeviceSerializer
->>>>>>> added areas methodField to deviceSerializer
 
 
 0.5.0 (2019-03-01)

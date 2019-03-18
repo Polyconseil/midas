@@ -6,7 +6,6 @@ from mds.access_control.permissions import require_scopes
 from mds.access_control.scopes import SCOPE_PRV_API
 from mds.apis import utils
 
-from drf_yasg.utils import swagger_serializer_method
 from typing import List, Dict
 
 
@@ -98,6 +97,7 @@ class RetrieveDeviceSerializer(DeviceSerializer):
         source="provider.logo_b64",
         help_text="logo of the service provider of the device",
     )
+
     def get_areas(self, obj) -> List[Dict[str, str]]:
         if not obj.dn_gps_point:
             return []
