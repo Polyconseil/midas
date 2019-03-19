@@ -5,8 +5,8 @@ Changelog
 ------------------
 
 - Fix conversion of datetime objects to MDS timestamps in the APIs.
-- Created separate RetrieveDeviceSerializer with areas methodField.
-- Added provider_logo in RetrieveDeviceSerializer.
+- Create separate RetrieveDeviceSerializer with areas methodField.
+- Add provider_logo in RetrieveDeviceSerializer.
 
 0.5.2 (2019-03-15)
 ------------------
@@ -19,7 +19,6 @@ Changelog
 
 - Fix conversion of datetime objects to MDS timestamps in the APIs.
 - Also take into account "battery_charged" event type from providers.
-- Added areas methodField to DeviceSerializer
 
 
 0.5.0 (2019-03-01)

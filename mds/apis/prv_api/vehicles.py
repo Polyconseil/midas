@@ -95,7 +95,7 @@ class RetrieveDeviceSerializer(DeviceSerializer):
     areas = serializers.SerializerMethodField()
     provider_logo = serializers.CharField(
         source="provider.logo_b64",
-        help_text="logo of the service provider of the device",
+        help_text="logo in base 64 of the service provider of the device",
     )
 
     def get_areas(self, obj) -> List[Dict[str, str]]:
