@@ -216,7 +216,10 @@ class DeviceTelemetryInputSerializer(serializers.Serializer):
                     )
                 if longitude < -180.0 or longitude > 180.0:
                     raise ValidationError(
-                        {"data.gps.lng": "Longitude is outside [-180 180]: %s" % longitude}
+                        {
+                            "data.gps.lng": "Longitude is outside [-180 180]: %s"
+                            % longitude
+                        }
                     )
 
         to_create = [
