@@ -96,8 +96,8 @@ class DeviceRegisterSerializer(serializers.Serializer):
 
 
 class GPSSerializer(serializers.Serializer):
-    lat = serializers.FloatField(min_value=-90.0, max_value=90.0)
-    lng = serializers.FloatField(min_value=-180.0, max_value=180.0)
+    lat = serializers.FloatField()
+    lng = serializers.FloatField()
     altitude = serializers.FloatField(required=False, help_text="in meters")
     heading = serializers.FloatField(
         required=False, min_value=0, help_text="degrees, starting at 0 at true North"
