@@ -360,7 +360,8 @@ class Command(management.BaseCommand):
                     category,
                     model,
                     propulsion,
-                    manufacturer
+                    manufacturer,
+                    dn_status
                 ) VALUES (
                     %(id)s,
                     %(provider_id)s,
@@ -369,7 +370,8 @@ class Command(management.BaseCommand):
                     %(category)s,
                     %(model)s,
                     %(propulsion)s,
-                    %(manufacturer)s
+                    %(manufacturer)s,
+                    %(dn_status)s
                 ) ON CONFLICT DO NOTHING
                 """,
                 (
@@ -415,6 +417,7 @@ def create_device(status_change):
         "model": "",
         "propulsion": status_change["propulsion_type"],
         "manufacturer": "",
+        "dn_status": enums.DEVICE_STATUS.unknown.name,
     }
 
 
