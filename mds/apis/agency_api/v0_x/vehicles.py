@@ -201,12 +201,22 @@ class DeviceTelemetryInputSerializer(serializers.Serializer):
 
         # Some providers may mistake latitude and longitude
         provider = models.Provider.objects.get(pk=provider_id)
-        if provider.agency_api_configuration.get("swap_lat_lng"):
-            for telemetry in validated_data["data"]:
-                if telemetry.get("gps"):
-                    telemetry["gps"]["lng"], telemetry["gps"]["lat"] = (
-                        telemetry["gps"]["lat"],
-                        telemetry["gps"]["lng"],
+        for telemetry in validated_data["data"]:
+            if telemetry.get("gps"):
+                latitude = telemetry["gps"]["lat"]
+                longitude = telemetry["gps"]["lng"]
+                if provider.agency_api_configuration.get("swap_lat_lng"):
+                    latitude, longitude = longitude, latitude
+                    telemetry["gps"]["lat"] = latitude
+                    telemetry["gps"]["lng"] = longitude
+                # Now we can validate
+                if latitude < -90.0 or latitude > 90.0:
+                    raise ValidationError(
+                        {"data.gps.lat": "Latitude is outside [-90 90]: %s" % latitude}
+                    )
+                if longitude < -180.0 or longitude > 180.0:
+                    raise ValidationError(
+                        {"data.gps.lng": "Longitude is outside [-180 180]: %s" % longitude}
                     )
 
         to_create = [
