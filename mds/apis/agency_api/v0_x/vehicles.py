@@ -96,8 +96,8 @@ class DeviceRegisterSerializer(serializers.Serializer):
 
 
 class GPSSerializer(serializers.Serializer):
-    lat = serializers.FloatField()
-    lng = serializers.FloatField()
+    lat = serializers.FloatField(min_value=-90.0, max_value=90.0)
+    lng = serializers.FloatField(min_value=-180.0, max_value=180.0)
     altitude = serializers.FloatField(required=False, help_text="in meters")
     heading = serializers.FloatField(
         required=False, min_value=0, help_text="degrees, starting at 0 at true North"
@@ -198,6 +198,16 @@ class DeviceTelemetryInputSerializer(serializers.Serializer):
             raise ValidationError(
                 {"data.device_id": "Unknown ids: %s" % " ".join(unknown_ids)}
             )
+
+        # Some providers may mistake latitude and longitude
+        provider = models.Provider.objects.get(pk=provider_id)
+        if provider.agency_api_configuration.get("swap_lat_lng"):
+            for telemetry in validated_data["data"]:
+                if telemetry.get("gps"):
+                    telemetry["gps"]["lng"], telemetry["gps"]["lat"] = (
+                        telemetry["gps"]["lat"],
+                        telemetry["gps"]["lng"],
+                    )
 
         to_create = [
             models.EventRecord(
