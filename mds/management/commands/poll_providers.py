@@ -234,7 +234,11 @@ class Command(management.BaseCommand):
                     event_type_reason
                 ]
             except KeyError:  # Spec violation!
-                logger.warning('Device %s has unknown "%s" event_type_reason', device_id, event_type_reason)
+                logger.warning(
+                    'Device %s has unknown "%s" event_type_reason',
+                    device_id,
+                    event_type_reason,
+                )
                 # Ignore just that status change to avoid rejecting the whole batch
                 continue
             status_change["agency_event_type"] = agency_event_type
