@@ -49,13 +49,13 @@ class DeviceSerializer(serializers.Serializer):
         help_text="Current vehicle status.",
     )
     prev_event = serializers.ChoiceField(
-        source="latest_event[0].event_type",
+        source="latest_event.event_type",
         choices=enums.choices(enums.EVENT_TYPE),
         help_text="Last Vehicle Event.",
         allow_null=True,
     )
     updated = utils.UnixTimestampMilliseconds(
-        source="latest_events[0].saved_at",
+        source="latest_event.saved_at",
         help_text="Date of last event update as Unix Timestamp (milliseconds).",
         allow_null=True,
     )
@@ -157,7 +157,7 @@ class DeviceTelemetrySerializer(serializers.Serializer):
     )
     charge = serializers.FloatField(
         required=False,
-        source="dn_battery_pct",
+        source="battery_pct", # use provider API field for consistency
         min_value=0,
         max_value=1,
         help_text="Percent battery charge of vehicle, expressed between 0 and 1",

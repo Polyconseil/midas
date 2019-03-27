@@ -159,16 +159,16 @@ class Device(models.Model):
         )
 
     @property
-    def latest_events(self):
+    def latest_event(self):
         if hasattr(self, "_latest_events"):
             # don't do a query in this case, the telemetry was prefetched.
-            return self._latest_events[:5]
-        latestEvents = (
+            return self._latest_event.first()
+        latestEvent = (
             EventRecord.objects.filter(device_id=self.id)
             .exclude(event_type="telemetry")
-            .order_by("-timestamp")[:5]
+            .order_by("-timestamp")
         )
-        return latestEvents
+        return latestEvent.first()
 
     @property
     def gps_point_as_geojson(self):
