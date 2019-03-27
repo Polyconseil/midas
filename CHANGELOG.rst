@@ -15,6 +15,7 @@ Changelog
 ------------------
 
 - Fix polling when the batch does not contain any valid data.
+- Change property latest_event of Device model to latest_events and the query that was taking too much time
 
 
 0.5.8 (2019-03-26)
