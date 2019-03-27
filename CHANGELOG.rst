@@ -15,8 +15,10 @@ Changelog
 ------------------
 
 - Fix polling when the batch does not contain any valid data.
-- Change property latest_event of Device model to latest_events and the query that was taking too much time
-
+- Change the query of with_latest_events that is taking too much time
+- Remove with_latest_events in deviceQuerySet in prv API (still used in agency_api)
+- Fix naming of dn_battery_pct to battery_pct in deviceTelemetrySerializer to be consistent with provider API
+- Change battery in DeviceSerializer to use dn_battery_pct in device model
 
 0.5.8 (2019-03-26)
 ------------------

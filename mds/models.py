@@ -117,6 +117,8 @@ class DeviceQueryset(models.QuerySet):
             ),
             to_attr="_latest_events",
         )
+        #Here, we can't limit the query set, so in order to limit, we have to use a property latest_event (go see the property in the model)
+        #Excluding telemetry because MDS Agency separates event from telemetry and the "latest_event" does not count telemetries as events
         prefetch_related = self.prefetch_related(prefetchedEvents)
         return prefetch_related
 
