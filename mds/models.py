@@ -109,14 +109,14 @@ class Provider(models.Model):
 
 
 class DeviceQueryset(models.QuerySet):
-    def with_latest_event(self):
-        return self.prefetch_related(
-            Prefetch(
+    def with_latest_events(self):
+        prefetchedEvents = Prefetch(
                 "event_records",
                 queryset=EventRecord.objects.exclude(event_type="telemetry").order_by("-timestamp"),
-                to_attr="_latest_event",
+                to_attr="_latest_events",
             )
-        )
+        prefetch_related = self.prefetch_related(prefetchedEvents)
+        return prefetch_related
 
 
 class Device(models.Model):
@@ -157,12 +157,12 @@ class Device(models.Model):
         )
 
     @property
-    def latest_event(self):
-        if hasattr(self, "_latest_event"):
+    def latest_events(self):
+        if hasattr(self, "_latest_events"):
             # don't do a query in this case, the telemetry was prefetched.
-            return self._latest_event[0] if self._latest_event else None
-        device = Device.objects.filter(pk=self.pk).with_latest_event().get()
-        return device.latest_event
+            return self._latest_events[:5]
+        latestEvents = EventRecord.objects.filter(device_id=self.id).exclude(event_type="telemetry").order_by("-timestamp")[:5]
+        return latestEvents
 
     @property
     def gps_point_as_geojson(self):

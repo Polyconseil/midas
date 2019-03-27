@@ -49,13 +49,13 @@ class DeviceSerializer(serializers.Serializer):
         help_text="Current vehicle status.",
     )
     prev_event = serializers.ChoiceField(
-        source="latest_event.event_type",
+        source="latest_event[0].event_type",
         choices=enums.choices(enums.EVENT_TYPE),
         help_text="Last Vehicle Event.",
         allow_null=True,
     )
     updated = utils.UnixTimestampMilliseconds(
-        source="latest_event.saved_at",
+        source="latest_events[0].saved_at",
         help_text="Date of last event update as Unix Timestamp (milliseconds).",
         allow_null=True,
     )
@@ -254,7 +254,7 @@ class DeviceViewSet(
     viewsets.GenericViewSet,
 ):
 
-    queryset = models.Device.objects.with_latest_event()
+    queryset = models.Device.objects.with_latest_events()
     permission_classes = (require_scopes(SCOPE_AGENCY_API),)
     lookup_field = "id"
     serializer_class = DeviceSerializer
