@@ -208,10 +208,14 @@ class Command(management.BaseCommand):
             )
         except (KeyError, ValueError):
             # Data so bad there is no or nothing but invalid event times
-            logger.exception("No valid event_time found in status_changes series: %s", status_changes)
+            logger.exception(
+                "No valid event_time found in status_changes series: %s", status_changes
+            )
             # How can we prevent from asking them again next time?
             if provider.last_start_time_polled:
-                return provider.last_start_time_polled + datetime.timedelta(milliseconds=1)
+                return provider.last_start_time_polled + datetime.timedelta(
+                    milliseconds=1
+                )
             # The provider really doesn't help!
             return timezone.now()
 
