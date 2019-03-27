@@ -113,14 +113,7 @@ class DeviceQueryset(models.QuerySet):
         return self.prefetch_related(
             Prefetch(
                 "event_records",
-                queryset=EventRecord.objects.filter(
-                    id__in=Subquery(
-                        EventRecord.objects.filter(device_id=OuterRef("device_id"))
-                        .exclude(event_type="telemetry")
-                        .order_by("-timestamp")
-                        .values_list("id", flat=True)[:1]
-                    )
-                ),
+                queryset=EventRecord.objects.exclude(event_type="telemetry").order_by("-timestamp"),
                 to_attr="_latest_event",
             )
         )
