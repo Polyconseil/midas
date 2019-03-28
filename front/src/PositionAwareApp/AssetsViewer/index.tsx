@@ -39,8 +39,8 @@ const CARSTATION_ICON = L.icon({
   popupAnchor: [12, -24]
 });
 
-const BIKESTATION_ICON = L.icon({
-  iconUrl: "/bikestation_picto.svg",
+const BICYCLESTATION_ICON = L.icon({
+  iconUrl: "/bicyclestation_picto.svg",
 
   iconAnchor: [12, 30],
   iconSize: [43, 43],
@@ -123,7 +123,7 @@ class AssetsViewer extends React.Component<IPositionRouteProps> {
             ? BICYCLE_ICON
             : vehicle.type === "car station"
             ? CARSTATION_ICON
-            : BIKESTATION_ICON
+            : BICYCLESTATION_ICON
       })
         .bindPopup(popupHTML)
         .addTo(map)
