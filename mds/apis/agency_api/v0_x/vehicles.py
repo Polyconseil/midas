@@ -17,6 +17,7 @@ from mds.apis import utils
 
 
 class DeviceSerializer(serializers.Serializer):
+    """Expose devices as described in the spec."""
     device_id = serializers.UUIDField(
         source="id", help_text="Provided by Operator to uniquely identify a vehicle."
     )
@@ -60,6 +61,7 @@ class DeviceSerializer(serializers.Serializer):
 
 
 class DeviceRegisterSerializer(serializers.Serializer):
+    """Receive a new device to create from a provider."""
     device_id = serializers.UUIDField(
         source="id", help_text="Provided by Operator to uniquely identify a vehicle."
     )
@@ -96,6 +98,7 @@ class DeviceRegisterSerializer(serializers.Serializer):
 
 
 class GPSSerializer(serializers.Serializer):
+    """GPS data inside a telemetry frame."""
     lat = serializers.FloatField()
     lng = serializers.FloatField()
     altitude = serializers.FloatField(required=False, help_text="in meters")
@@ -142,6 +145,7 @@ def gps_to_gis_point(gps_data):
 
 
 class DeviceTelemetrySerializer(serializers.Serializer):
+    """Telemetry frame from events and telemetry endpoints."""
     device_id = serializers.UUIDField()
     gps = GPSSerializer()
     timestamp = utils.UnixTimestampMilliseconds(
@@ -157,6 +161,7 @@ class DeviceTelemetrySerializer(serializers.Serializer):
 
 
 class DeviceEventSerializer(serializers.Serializer):
+    """Receive a new event pushed by a provider."""
     event_type = serializers.ChoiceField(
         choices=enums.choices(enums.EVENT_TYPE), help_text="Vehicle event."
     )
@@ -190,6 +195,7 @@ class DeviceEventSerializer(serializers.Serializer):
 
 
 class DeviceEventResponseSerializer(serializers.Serializer):
+    """Response format for the event endpoint."""
     device_id = serializers.UUIDField()
     status = serializers.ChoiceField(
         source="updated_status", choices=enums.choices(enums.DEVICE_STATUS)
@@ -197,6 +203,7 @@ class DeviceEventResponseSerializer(serializers.Serializer):
 
 
 class DeviceTelemetryInputSerializer(serializers.Serializer):
+    """Receive a new telemetry pushed by a provider."""
     data = DeviceTelemetrySerializer(many=True)
 
     def create(self, validated_data):
@@ -272,6 +279,7 @@ class DeviceViewSet(
 
     @action(detail=True, methods=["post", "options"])
     def event(self, request, id):
+        """Endpoint to receive an event from a provider."""
         provider_id = request.user.provider_id
         device = models.Device.objects.filter(provider_id=provider_id, id=id).last()
         if not device:
@@ -295,6 +303,7 @@ class DeviceViewSet(
 
     @action(detail=False, methods=["post", "options"])
     def telemetry(self, request):
+        """Endpoint to receive a telemetry from a provider."""
         context = self.get_serializer_context()  # adds the request to the context
         context["request_or_response"] = "request"
         provider_id = request.user.provider_id
