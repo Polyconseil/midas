@@ -98,7 +98,7 @@ class DeviceRegisterSerializer(serializers.Serializer):
 
 
 class GPSSerializer(serializers.Serializer):
-    """GPS data inside a telemetry frame."""
+    """GPS data inside the telemetry frame sent by the provider."""
     lat = serializers.FloatField()
     lng = serializers.FloatField()
     altitude = serializers.FloatField(required=False, help_text="in meters")
@@ -145,7 +145,7 @@ def gps_to_gis_point(gps_data):
 
 
 class DeviceTelemetrySerializer(serializers.Serializer):
-    """Telemetry frame from events and telemetry endpoints."""
+    """Telemetry frame from event and telemetry endpoints."""
     device_id = serializers.UUIDField()
     gps = GPSSerializer()
     timestamp = utils.UnixTimestampMilliseconds(
