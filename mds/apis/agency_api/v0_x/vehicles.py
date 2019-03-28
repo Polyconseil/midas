@@ -17,7 +17,7 @@ from mds.apis import utils
 
 
 class DeviceSerializer(serializers.Serializer):
-    """Expose devices as described in the spec."""
+    """Expose devices as described in the Agency spec."""
     device_id = serializers.UUIDField(
         source="id", help_text="Provided by Operator to uniquely identify a vehicle."
     )
