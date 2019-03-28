@@ -4,7 +4,11 @@ Changelog
 0.5.10 (unreleased)
 -------------------
 
+<<<<<<< HEAD
 - Fix the slowness when retrieving a device via private vehicle API
+=======
+- Change battery in DeviceSerializer to use dn_battery_pct in device model
+>>>>>>>     changed how we calculate battery field in device serializer to take the dn value in the model
 
 
 0.5.9 (2019-03-28)
