@@ -29,6 +29,7 @@ DEVICE_CATEGORY = enum.Enum(
         ("bike", pgettext_lazy("Device category", "Bike")),
         ("scooter", pgettext_lazy("Device category", "Scooter")),
         ("car", pgettext_lazy("Device category", "Car")),
+        ("bicycle", pgettext_lazy("Device category", "Bicycle"))
     ],
 )
 DEVICE_PROPULSION = enum.Enum(
