@@ -219,7 +219,7 @@ function randomVehicle(): IVehicleResponse {
     };
   }
   if (Math.random() > 0.2) {
-    const provider = Math.random() > 0.5 ? "JUMP" : "Metro Bike";
+    const provider = Math.random() > 0.5 ? "JUMP" : "Metro Bicycle";
     let origin = [34.02495, -118.478006];
     let radius = 0.04;
     if (provider !== "JUMP" && Math.random() > 0.5) {
@@ -250,7 +250,7 @@ function randomVehicle(): IVehicleResponse {
       position: randomPosition(origin, 0.04),
       status: "available"
     },
-    provider_id: "Metro Bike",
+    provider_id: "Metro Bicycle",
     type: "bike station",
     unique_id: uniqueId(),
     extra: {

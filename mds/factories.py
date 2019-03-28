@@ -570,7 +570,7 @@ class Provider(factory.DjangoModelFactory):
         django_get_or_create = ["name"]
 
     name = factory.Iterator(
-        ["Lime", "BlueLA", "Metro Bike", "LongProviderNameCompanyLtdSarlGmoLgbtq"]
+        ["Lime", "BlueLA", "Metro Bicycle", "LongProviderNameCompanyLtdSarlGmoLgbtq"]
     )
     base_api_url = "http://provider"
     api_configuration = {"trailing_slash": False}
@@ -681,7 +681,7 @@ class ProviderStatusChange(factory.DictFactory):
     """Excepted status change from the provider API."""
 
     provider_id = factory.Faker("uuid4")
-    provider_name = factory.Iterator(["Lime", "BlueLA", "Metro Bike"])
+    provider_name = factory.Iterator(["Lime", "BlueLA", "Metro Bicycle"])
     device_id = factory.Faker("uuid4")
     vehicle_id = factory.Sequence(str)
     vehicle_type = factory.Iterator(c.name for c in enums.DEVICE_CATEGORY)
