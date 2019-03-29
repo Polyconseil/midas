@@ -9,7 +9,7 @@ from django import forms, utils
 from django.contrib.gis.db import models as gis_models
 from django.contrib.postgres import fields as pg_fields
 from django.db import models
-from django.db.models import OuterRef, Subquery, Prefetch
+from django.db.models import Prefetch
 from django.utils import timezone
 
 from rest_framework.utils import encoders
@@ -110,16 +110,16 @@ class Provider(models.Model):
 
 class DeviceQueryset(models.QuerySet):
     def with_latest_events(self):
-        prefetchedEvents = Prefetch(
+        prefetched_events = Prefetch(
             "event_records",
+            # Excluding telemetry because MDS Agency separates event from telemetry and the "latest_event" does not count telemetries as events
             queryset=EventRecord.objects.exclude(event_type="telemetry").order_by(
                 "-timestamp"
             ),
             to_attr="_latest_events",
         )
-        #Here, we can't limit the query set, so in order to limit, we have to use a property latest_event (go see the property in the model)
-        #Excluding telemetry because MDS Agency separates event from telemetry and the "latest_event" does not count telemetries as events
-        prefetch_related = self.prefetch_related(prefetchedEvents)
+        # Here, we can't limit the query set, so in order to limit, we have to use a property latest_event (go see the property in the model)
+        prefetch_related = self.prefetch_related(prefetched_events)
         return prefetch_related
 
 
@@ -164,13 +164,13 @@ class Device(models.Model):
     def latest_event(self):
         if hasattr(self, "_latest_events"):
             # don't do a query in this case, the telemetry was prefetched.
-            return self._latest_event.first()
-        latestEvent = (
+            return self._latest_events[0] if self._latest_events else None
+        latest_events = (
             EventRecord.objects.filter(device_id=self.id)
             .exclude(event_type="telemetry")
             .order_by("-timestamp")
         )
-        return latestEvent.first()
+        return latest_events.first()
 
     @property
     def gps_point_as_geojson(self):

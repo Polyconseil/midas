@@ -4,21 +4,15 @@ Changelog
 0.5.10 (unreleased)
 -------------------
 
-<<<<<<< HEAD
 - Fix the slowness when retrieving a device via private vehicle API
-=======
-- Change battery in DeviceSerializer to use dn_battery_pct in device model
->>>>>>>     changed how we calculate battery field in device serializer to take the dn value in the model
+- Fix with_latest_events query that is taking too much time, used in Agency API
 
 
 0.5.9 (2019-03-28)
 ------------------
 
 - Fix polling when the batch does not contain any valid data.
-- Change the query of with_latest_events that is taking too much time
-- Remove with_latest_events in deviceQuerySet in prv API (still used in agency_api)
-- Fix naming of dn_battery_pct to battery_pct in deviceTelemetrySerializer to be consistent with provider API
-- Change battery in DeviceSerializer to use dn_battery_pct in device model
+
 
 0.5.8 (2019-03-26)
 ------------------
