@@ -685,7 +685,7 @@ class ProviderStatusChange(factory.DictFactory):
                 {
                     "type": "Point",
                     "coordinates": factory.LazyFunction(
-                        lambda: list(get_random_point(district10).coords)
+                        lambda: list(utils.get_random_point(district10).coords)
                     ),
                 }
             ),
