@@ -224,6 +224,7 @@ class Command(management.BaseCommand):
         status_changes = self.validate_status_changes(status_changes, provider)
         if not status_changes:
             # None were valid, we won't ask that series again
+            # (provided status changes are ordered by event_time ascending)
             return last_event_time_polled
 
         self.create_missing_providers(status_changes)
