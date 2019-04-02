@@ -4,7 +4,7 @@ Changelog
 0.5.12 (unreleased)
 -------------------
 
-- Fix translations which none of them were working
+- Fix translations: none of them were working
 
 
 0.5.11 (2019-03-29)
