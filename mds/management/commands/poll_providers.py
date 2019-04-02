@@ -240,7 +240,9 @@ class Command(management.BaseCommand):
             try:
                 status_change["event_time"] = int(status_change["event_time"])
             except (KeyError, ValueError):
-                logger.warning("status_change %s has no valid event_time", status_change)
+                logger.warning(
+                    "status_change %s has no valid event_time", status_change
+                )
                 continue
             validated_status_changes.append(status_change)
 
@@ -252,7 +254,9 @@ class Command(management.BaseCommand):
 
         for status_change in status_changes:
             status_change["provider_id"] = uuid.UUID(status_change["provider_id"])
-            status_change["device_id"] = device_id = uuid.UUID(status_change["device_id"])
+            status_change["device_id"] = device_id = uuid.UUID(
+                status_change["device_id"]
+            )
 
             # The list of event types and even the naming don't match between
             # the provider and agency APIs, so translate one to the other
