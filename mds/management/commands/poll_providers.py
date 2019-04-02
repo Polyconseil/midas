@@ -217,20 +217,20 @@ class Command(management.BaseCommand):
             return timezone.now()
 
         # What is the latest event recorded in that series? (order is not asserted in the specs)
-        last_start_time_polled = utils.from_mds_timestamp(
+        last_event_time_polled = utils.from_mds_timestamp(
             max(status_change["event_time"] for status_change in status_changes)
         )
 
         status_changes = self.validate_status_changes(status_changes, provider)
         if not status_changes:
             # None were valid, we won't ask that series again
-            return last_start_time_polled
+            return last_event_time_polled
 
         self.create_missing_providers(status_changes)
         self.create_missing_devices(status_changes)
         self.create_event_records(status_changes)
 
-        return last_start_time_polled
+        return last_event_time_polled
 
     def validate_event_times(self, status_changes):
         """I need this one done before validating the rest of the data."""
