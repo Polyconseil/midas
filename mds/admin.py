@@ -1,5 +1,6 @@
 from django.contrib import admin
 from . import models
+import re
 
 
 @admin.register(models.Provider)
@@ -10,15 +11,39 @@ class ProviderAdmin(admin.ModelAdmin):
 
 @admin.register(models.Device)
 class DeviceAdmin(admin.ModelAdmin):
-    list_display = ["id", "provider", "identification_number", "model"]
-    list_filter = ["provider", "model"]
+    list_display = ["id", "provider", "identification_number", "category"]
+    list_filter = ["provider", "model", "category"]
+    search_fields = ["id", "identification_number"]
 
 
 @admin.register(models.EventRecord)
 class EventRecordAdmin(admin.ModelAdmin):
-    list_display = ["timestamp", "device", "event_type"]
+    list_display = ["timestamp", "provider", "deviceId", "event_type"]
     list_filter = ["device__provider", "event_type"]
-    ordering = ["-timestamp"]
+    list_select_related = ("device__provider",)
+    search_fields = ["device__id", "device__identification_number"]
+
+    def get_search_results(self, request, queryset, search_term):
+        if not search_term:
+            return super().get_search_results(request, queryset, search_term)
+        custom_queryset = get_devices_queryset_search_results(self, search_term)
+        return super().get_search_results(request, custom_queryset, search_term)
+
+    def provider(self, obj):
+        return obj.device.provider.name
+
+    def deviceId(self, obj):
+        return obj.device.id
+
+
+def get_devices_queryset_search_results(
+    self, search_term
+):  # to use when searching for devices as a relationship to self.model
+    custom_queryset = self.model.objects.select_related("device__provider")
+    if re.search(".-.{4}", search_term):  # cheap check if it is a uuid
+        return custom_queryset.filter(device_id=search_term)
+    else:  # for now, only two research fields wanted
+        return custom_queryset.filter(device__identification_number=search_term)
 
 
 @admin.register(models.Area)
