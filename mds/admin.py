@@ -1,6 +1,15 @@
 from django.contrib import admin
 from . import models
-import re
+
+from uuid import UUID
+
+
+def is_uuid(uuid_string, version=4):
+    try:
+        uid = UUID(uuid_string, version=version)
+        return uid.hex == uuid_string.replace("-", "")
+    except ValueError:
+        return False
 
 
 @admin.register(models.Provider)
@@ -40,7 +49,7 @@ def get_devices_queryset_search_results(
     self, search_term
 ):  # to use when searching for devices as a relationship to self.model
     custom_queryset = self.model.objects.select_related("device__provider")
-    if re.search(".-.{4}", search_term):  # cheap check if it is a uuid
+    if is_uuid(search_term):  # cheap check if it is a uuid
         return custom_queryset.filter(device_id=search_term)
     else:  # for now, only two research fields wanted
         return custom_queryset.filter(device__identification_number=search_term)
