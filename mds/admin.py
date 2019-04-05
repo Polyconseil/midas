@@ -27,7 +27,7 @@ class DeviceAdmin(admin.ModelAdmin):
 
 @admin.register(models.EventRecord)
 class EventRecordAdmin(admin.ModelAdmin):
-    list_display = ["timestamp", "provider", "deviceId", "event_type"]
+    list_display = ["timestamp", "provider", "device_id", "event_type"]
     list_filter = ["device__provider", "event_type"]
     list_select_related = ("device__provider",)
     search_fields = ["device__id", "device__identification_number"]
@@ -41,17 +41,16 @@ class EventRecordAdmin(admin.ModelAdmin):
     def provider(self, obj):
         return obj.device.provider.name
 
-    def deviceId(self, obj):
+    def device_id(self, obj):
         return obj.device.id
 
 
-def get_devices_queryset_search_results(
-    self, search_term
-):  # to use when searching for devices as a relationship to self.model
+# to use when searching for devices in get_search_results as a relationship to self.model
+def get_devices_queryset_search_results(self, search_term):
     custom_queryset = self.model.objects.select_related("device__provider")
-    if is_uuid(search_term):  # cheap check if it is a uuid
+    if is_uuid(search_term):
         return custom_queryset.filter(device_id=search_term)
-    else:  # for now, only two research fields wanted
+    else:
         return custom_queryset.filter(device__identification_number=search_term)
 
 

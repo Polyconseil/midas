@@ -5,7 +5,7 @@ Changelog
 -------------------
 
 - Embed compiled translations in releases
-- Added new filters when listing on django admin site
+- Added new functionalities when listing on django admin site
 
 
 0.5.11 (2019-03-29)
