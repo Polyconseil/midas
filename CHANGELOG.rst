@@ -4,8 +4,13 @@ Changelog
 0.5.13 (unreleased)
 -------------------
 
+<<<<<<< HEAD
 - Add token authentication by specifying token in browser url
 
+=======
+- Nothing changed yet.
+- Fix compiled translations not embedding in releases
+>>>>>>> included .mo files in manifest
 
 0.5.12 (2019-04-05)
 -------------------
