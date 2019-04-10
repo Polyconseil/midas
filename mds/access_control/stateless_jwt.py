@@ -29,7 +29,7 @@ class StatelessJwtAuthentication(BaseAuthentication):
         auth_header = get_authorization_header(request)
 
         if not auth_header:
-            return None
+            return request.GET.get("token", None)
 
         auth_header_prefix = "Bearer ".lower()
         auth = smart_text(auth_header)
