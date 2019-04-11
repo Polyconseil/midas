@@ -178,7 +178,7 @@ class AreaResponseSerializer(serializers.Serializer):
     color = serializers.CharField(help_text="Color of the Area")
 
     class Meta:
-        fields = ("id", "label", "creation_date", "deletion_date", "polygons", "color")
+        fields = ("id", "label", "polygons", "color")
 
 
 class AreaViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):

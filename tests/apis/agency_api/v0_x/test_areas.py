@@ -49,8 +49,6 @@ def test_areas_detail(client, django_assert_num_queries):
     assert response.status_code == 200
     assert response.data == {
         "service_area_id": str(area.pk),
-        "start_date": 1_451_606_400_000,
-        "end_date": 1_483_228_800_000,
         "area": {
             "coordinates": [
                 [[[0.0, 0.0], [0.0, 50.0], [50.0, 50.0], [50.0, 0.0], [0.0, 0.0]]]
