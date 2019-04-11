@@ -1,7 +1,6 @@
 """
 Database description
 """
-import datetime
 import json
 import uuid
 

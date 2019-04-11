@@ -7,7 +7,6 @@ from mds import enums
 from mds import models
 from mds.access_control.permissions import require_scopes
 from mds.access_control.scopes import SCOPE_AGENCY_API
-from mds.apis import utils
 
 
 class MultiPolygonField(serializers.Field):
