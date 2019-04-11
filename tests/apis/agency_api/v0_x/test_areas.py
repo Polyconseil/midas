@@ -20,9 +20,7 @@ def test_areas_metadata(client):
 @pytest.mark.django_db
 def test_areas_detail(client, django_assert_num_queries):
     provider = factories.Provider(name="Test provider")
-    area = factories.Area(
-        providers=[provider],
-    )
+    area = factories.Area(providers=[provider])
     other_provider = factories.Provider(name="Test other provider")
 
     response = client.get("/mds/v0.x/service_areas/%s/" % area.pk)

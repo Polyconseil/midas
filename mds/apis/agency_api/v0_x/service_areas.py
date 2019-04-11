@@ -37,7 +37,7 @@ class AreaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Area
-        fields = ("service_area_id", "start_date", "end_date", "area", "type")
+        fields = ("service_area_id", "area", "type")
 
 
 class AreaViewSet(viewsets.ReadOnlyModelViewSet):
