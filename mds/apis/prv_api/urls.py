@@ -15,9 +15,11 @@ def get_prv_router():
     been called on the router.
     """
     prv_router = routers.DefaultRouter()
-    prv_router.register(r"providers", providers.ProviderViewSet)
-    prv_router.register(r"service_areas", service_areas.AreaViewSet)
-    prv_router.register(r"polygons", service_areas.PolygonViewSet)
+    prv_router.register(r"providers", providers.ProviderViewSet, basename="provider")
+    prv_router.register(
+        r"service_areas", service_areas.AreaViewSet, basename="service_area"
+    )
+    prv_router.register(r"polygons", service_areas.PolygonViewSet, basename="polygon")
     prv_router.register(r"vehicles", vehicles.DeviceViewSet, basename="device")
     return prv_router
 

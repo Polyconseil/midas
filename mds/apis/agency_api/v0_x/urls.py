@@ -10,7 +10,9 @@ from . import vehicles
 
 
 agency_router = routers.DefaultRouter()
-agency_router.register(r"service_areas", service_areas.AreaViewSet)
+agency_router.register(
+    r"service_areas", service_areas.AreaViewSet, basename="service_area"
+)
 agency_router.register(r"vehicles", vehicles.DeviceViewSet, basename="device")
 
 
