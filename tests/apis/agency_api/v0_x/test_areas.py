@@ -21,8 +21,6 @@ def test_areas_metadata(client):
 def test_areas_detail(client, django_assert_num_queries):
     provider = factories.Provider(name="Test provider")
     area = factories.Area(
-        creation_date=datetime.datetime(2016, 1, 1, tzinfo=datetime.timezone.utc),
-        deletion_date=datetime.datetime(2017, 1, 1, tzinfo=datetime.timezone.utc),
         providers=[provider],
     )
     other_provider = factories.Provider(name="Test other provider")
