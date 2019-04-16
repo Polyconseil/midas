@@ -1,7 +1,5 @@
-import json
 import random
 
-from rest_framework import serializers
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -15,57 +13,7 @@ from mds.apis import utils
 
 from rest_framework import filters
 
-
-class PolygonRequestSerializer(serializers.ModelSerializer):
-    """What we expect for a geographic polygon.
-    """
-
-    label = serializers.CharField(help_text="Name of the polygon")
-    geom = utils.PolygonSerializer(help_text="GeoJSON Polygon")
-    areas = serializers.PrimaryKeyRelatedField(many=True, queryset=models.Area.objects)
-
-    class Meta:
-        fields = ("geom", "label", "areas")
-        model = models.Polygon
-
-    def create(self, validated_data):
-        instance = self.Meta.model(
-            label=validated_data["label"], geom=json.dumps(validated_data["geom"])
-        )
-        instance.save()
-        return instance
-
-    def update(self, instance, validated_data):
-        if validated_data.get("label"):
-            instance.label = validated_data["label"]
-        if validated_data.get("geom"):
-            instance.geom = json.dumps(validated_data["geom"])
-        if validated_data.get("areas"):
-            areas = validated_data.pop("areas", [])
-            instance.areas.set(areas)
-        instance.save()
-        return instance
-
-
-class PolygonResponseSerializer(serializers.Serializer):
-    """A representation of a geographic polygon.
-    """
-
-    id = serializers.UUIDField(help_text="Unique Polygon identifier (UUID)")
-    label = serializers.CharField(help_text="Name of the polygon")
-    geom = utils.PolygonSerializer(help_text="GeoJSON Polygon")
-    areas = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-
-    class Meta:
-        fields = ("id", "label", "geom", "areas")
-
-
-class PolygonsImportRequestSerializer(serializers.Serializer):
-
-    polygons = PolygonRequestSerializer(many=True)
-
-    class Meta:
-        fields = "polygons"
+from . import serializers
 
 
 class PolygonViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
@@ -75,20 +23,20 @@ class PolygonViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
     ordering_fields = ("label",)
     ordering = "label"
     lookup_field = "id"
-    serializer_class = PolygonResponseSerializer
+    serializer_class = serializers.PolygonResponseSerializer
     serializers_mapping = {
-        "list": {"response": PolygonResponseSerializer},
-        "retrieve": {"response": PolygonResponseSerializer},
+        "list": {"response": serializers.PolygonResponseSerializer},
+        "retrieve": {"response": serializers.PolygonResponseSerializer},
         "create": {
-            "request": PolygonRequestSerializer,
+            "request": serializers.PolygonRequestSerializer,
             "response": utils.EmptyResponseSerializer,
         },
         "update": {
-            "request": PolygonRequestSerializer,
+            "request": serializers.PolygonRequestSerializer,
             "response": utils.EmptyResponseSerializer,
         },
         "import_polygons": {
-            "request": PolygonsImportRequestSerializer,
+            "request": serializers.PolygonsImportRequestSerializer,
             "response": utils.EmptyResponseSerializer,
         },
     }
@@ -132,55 +80,6 @@ class PolygonViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
         return Response({"message": "ok"})
 
 
-class AreaRequestSerializer(serializers.ModelSerializer):
-    """A service area, composed of a group of Polygons.
-    """
-
-    label = serializers.CharField(help_text="Name of the Area")
-    polygons = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=models.Polygon.objects
-    )
-    color = serializers.CharField(required=False, help_text="Color of the Area")
-
-    class Meta:
-        fields = ("label", "polygons", "color")
-        model = models.Area
-
-    def create(self, validated_data):
-        instance = self.Meta.model(
-            label=validated_data["label"], color=validated_data["color"]
-        )
-        instance.save()
-        polygons = validated_data.get("polygons", [])
-        instance.polygons.set(polygons)
-        instance.save()
-        return instance
-
-    def update(self, instance, validated_data):
-        if validated_data.get("label"):
-            instance.label = validated_data["label"]
-        if validated_data.get("color"):
-            instance.color = validated_data["color"]
-        if "polygons" in validated_data:
-            polygons = validated_data.get("polygons", [])
-            instance.polygons.set(polygons)
-        instance.save()
-        return instance
-
-
-class AreaResponseSerializer(serializers.Serializer):
-    """A service area, composed of a group of Polygons.
-    """
-
-    id = serializers.UUIDField(help_text="Unique Area identifier (UUID)")
-    label = serializers.CharField(help_text="Name of the Area")
-    polygons = PolygonResponseSerializer(many=True)
-    color = serializers.CharField(help_text="Color of the Area")
-
-    class Meta:
-        fields = ("id", "label", "polygons", "color")
-
-
 class AreaViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
     permission_classes = (require_scopes(SCOPE_PRV_API),)
     queryset = models.Area.objects.prefetch_related("polygons").all()
@@ -188,16 +87,16 @@ class AreaViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
     ordering_fields = ("label",)
     ordering = "label"
     lookup_field = "id"
-    serializer_class = AreaResponseSerializer
+    serializer_class = serializers.AreaResponseSerializer
     serializers_mapping = {
-        "list": {"response": AreaResponseSerializer},
-        "retrieve": {"response": AreaResponseSerializer},
+        "list": {"response": serializers.AreaResponseSerializer},
+        "retrieve": {"response": serializers.AreaResponseSerializer},
         "create": {
-            "request": AreaRequestSerializer,
+            "request": serializers.AreaRequestSerializer,
             "response": utils.EmptyResponseSerializer,
         },
         "update": {
-            "request": AreaRequestSerializer,
+            "request": serializers.AreaRequestSerializer,
             "response": utils.EmptyResponseSerializer,
         },
     }
