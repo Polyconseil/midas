@@ -94,7 +94,9 @@ class OAuth2Store(threading.local):
     @staticmethod
     def _decrypt_token(encrypted):
         try:
-            encoded = fernet.Fernet(settings.POLLER_TOKEN_ENCRYPTION_KEY).decrypt(encrypted)
+            encoded = fernet.Fernet(settings.POLLER_TOKEN_ENCRYPTION_KEY).decrypt(
+                encrypted
+            )
         except fernet.InvalidToken:  # The encryption key, not our token!
             return None
         else:
