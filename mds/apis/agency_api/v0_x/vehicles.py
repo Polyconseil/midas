@@ -13,7 +13,6 @@ from django.utils import timezone
 from mds import db_helpers
 from mds import enums
 from mds import models
-from mds import utils
 from mds.access_control.permissions import require_scopes
 from mds.access_control.scopes import SCOPE_AGENCY_API
 from mds.apis import utils as apis_utils
