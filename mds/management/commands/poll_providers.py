@@ -12,7 +12,6 @@ import uuid
 
 from django.conf import settings
 from django.contrib.gis import geos
-from django.core import management
 from django.core.cache import caches
 from django.db import connection
 from django.db import transaction
@@ -26,6 +25,7 @@ from retrying import retry
 from semantic_version import Version
 
 from mds import enums
+from mds import management
 from mds import models
 from mds import utils
 
