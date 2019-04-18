@@ -157,8 +157,11 @@ POLLER_TOKEN_CACHE = "default"
 
 POLLER_TOKEN_ENCRYPTION_KEY = CONFIG.getstr(
     "poller.token_encryption_key",
-    "8DhMPDYWFewVYz5m-zfwv4ebx4p4pF6-GvFQz8AOiRA=" if DEBUG else None,
-).encode("ascii")
+    # You obviously need to change it in production! I need one for tests
+    "8DhMPDYWFewVYz5m-zfwv4ebx4p4pF6-GvFQz8AOiRA=",
+).encode(  # Must be bytes
+    "ascii"
+)
 if len(base64.urlsafe_b64decode(POLLER_TOKEN_ENCRYPTION_KEY)) != 32:
     raise ImproperlyConfigured(
         "The encryption key must be a URL-safe base64-encoded 32-byte key."
