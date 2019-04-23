@@ -8,6 +8,7 @@ import os
 from django.core.exceptions import ImproperlyConfigured
 
 from corsheaders.defaults import default_headers
+from cryptography import fernet
 import getconf
 
 from mds.access_control.auth_means import (
@@ -156,9 +157,7 @@ MIGRATION_MODULES = {
 POLLER_TOKEN_CACHE = "default"
 
 POLLER_TOKEN_ENCRYPTION_KEY = CONFIG.getstr(
-    "poller.token_encryption_key",
-    # You obviously need to change it in production! I need one for tests
-    "8DhMPDYWFewVYz5m-zfwv4ebx4p4pF6-GvFQz8AOiRA=",
+    "poller.token_encryption_key", fernet.Fernet.generate_key()  # Reset on each restart
 ).encode(  # Must be bytes
     "ascii"
 )
