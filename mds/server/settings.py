@@ -155,13 +155,4 @@ MIGRATION_MODULES = {
 
 # Poller configuration
 POLLER_TOKEN_CACHE = "default"
-
-POLLER_TOKEN_ENCRYPTION_KEY = CONFIG.getstr(
-    "poller.token_encryption_key", fernet.Fernet.generate_key()  # Reset on each restart
-).encode(  # Must be bytes
-    "ascii"
-)
-if len(base64.urlsafe_b64decode(POLLER_TOKEN_ENCRYPTION_KEY)) != 32:
-    raise ImproperlyConfigured(
-        "The encryption key must be a URL-safe base64-encoded 32-byte key."
-    )
+POLLER_TOKEN_ENCRYPTION_KEY = fernet.Fernet.generate_key()  # Reset on each restart
