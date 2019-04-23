@@ -1,11 +1,8 @@
 """
 Django settings
 """
-import base64
 import itertools
 import os
-
-from django.core.exceptions import ImproperlyConfigured
 
 from corsheaders.defaults import default_headers
 from cryptography import fernet
