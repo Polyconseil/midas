@@ -20,6 +20,7 @@ class ProviderSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
+            "colors",
             "logo_b64",
             "base_api_url",
             "device_category",
