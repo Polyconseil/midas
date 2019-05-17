@@ -109,7 +109,9 @@ class Provider(models.Model):
         verbose_name="Agency API Configuration",
     )
     colors = pg_fields.JSONField(
-        default=dict, verbose_name="colors for distinguishing provider icons"
+        default=dict,
+        blank=True,
+        verbose_name="colors for distinguishing provider icons",
     )
 
     def __str__(self):
