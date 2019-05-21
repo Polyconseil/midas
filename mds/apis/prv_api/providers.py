@@ -14,6 +14,7 @@ class ProviderSerializer(serializers.ModelSerializer):
     logo_b64 = serializers.CharField(
         required=False, help_text="Logo of provider base64 encoded"
     )
+    colors = serializers.DictField()
 
     class Meta:
         model = models.Provider
