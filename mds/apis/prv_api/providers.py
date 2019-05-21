@@ -12,6 +12,7 @@ class ProviderColorsSerializer(serializers.Serializer):
 
 
 class ProviderSerializer(serializers.ModelSerializer):
+
     id = serializers.UUIDField(
         required=True, help_text="Unique provider identifier (UUID)"
     )
