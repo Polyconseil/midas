@@ -6,6 +6,11 @@ from mds.access_control.permissions import require_scopes
 from mds.access_control.scopes import SCOPE_PRV_API
 
 
+class ProviderColorsSerializer(serializers.Serializer):
+    primary = serializers.CharField(required=False)
+    secondary = serializers.CharField(required=False)
+
+
 class ProviderSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(
         required=True, help_text="Unique provider identifier (UUID)"
@@ -14,7 +19,14 @@ class ProviderSerializer(serializers.ModelSerializer):
     logo_b64 = serializers.CharField(
         required=False, help_text="Logo of provider base64 encoded"
     )
-    colors = serializers.DictField()
+    colors = ProviderColorsSerializer(
+        default=dict, help_text="colors for distinguishing providers on map"
+    )
+
+    def create(self, validated_data):
+        instance = self.Meta.model(**validated_data)
+        instance.save()
+        return instance
 
     class Meta:
         model = models.Provider
