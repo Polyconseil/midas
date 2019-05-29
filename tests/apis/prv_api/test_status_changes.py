@@ -64,12 +64,17 @@ def setup():
         event_type=enums.EVENT_TYPE.telemetry.name,
     )
     # This one is too old
-    factories.EventRecord(device=device1, timestamp=now - datetime.timedelta(hours=1))
+    factories.EventRecord(
+        device=device1,
+        timestamp=now - datetime.timedelta(hours=1),
+        saved_at=now - datetime.timedelta(hours=1),
+    )
 
     # Add an event on the second device
     factories.EventRecord(
         device=device2,
         timestamp=now,
+        saved_at=now,
         event_type=enums.EVENT_TYPE.trip_start.name,
         properties={
             "trip_id": None,
