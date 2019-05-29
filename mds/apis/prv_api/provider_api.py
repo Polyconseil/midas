@@ -7,7 +7,7 @@ from mds.apis import utils as apis_utils
 
 
 class DeviceStatusChangesSerializer(serializers.ModelSerializer):
-    recorded = apis_utils.UnixTimestampMilliseconds(source="start_recorded")
+    recorded = apis_utils.UnixTimestampMilliseconds(source="saved_at")
     associated_trip = serializers.CharField(source="properties.trip_id")
     device_id = serializers.CharField(source="device.id")
     event_location = serializers.SerializerMethodField()
