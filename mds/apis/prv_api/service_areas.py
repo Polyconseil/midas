@@ -115,8 +115,8 @@ class PolygonViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
             polygons_to_create = []
             for polygon in polygons:
                 geom = polygon.get("geom", None)
-                areas = []
                 if geom and polygon["type"] in ['Polygon', 'MultiPolygon']:
+                    areas = []
                     for area_label in polygon.get("areas", []):
                         defaults = {"color": "#%06x" % random.randint(0, 0xFFFFFF)}
                         # Create new Area if doesn't exist (based on label)
