@@ -30,7 +30,8 @@ class PolygonRequestSerializer(serializers.ModelSerializer):
         model = models.Polygon
 
     def create(self, validated_data):
-        geo_object = geos.GEOSGeometry(json.dumps(validated_data["geom"]))
+        geom = json.dumps(validated_data["geom"])
+        geo_object = geos.GEOSGeometry(geom)
         instance = self.Meta.model(
             label=validated_data["label"], geom=geos.MultiPolygon([geo_object])
         )
@@ -38,7 +39,8 @@ class PolygonRequestSerializer(serializers.ModelSerializer):
         return instance
 
     def update(self, instance, validated_data):
-        geo_object = geos.GEOSGeometry(json.dumps(validated_data["geom"]))
+        geom = json.dumps(validated_data["geom"])
+        geo_object = geos.GEOSGeometry(geom)
         if validated_data.get("label"):
             instance.label = validated_data["label"]
         if validated_data.get("geom"):
@@ -114,18 +116,19 @@ class PolygonViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
             for polygon in polygons:
                 geom = polygon.get("geom", None)
                 areas = []
-                for area_label in polygon.get("areas", []):
-                    defaults = {"color": "#%06x" % random.randint(0, 0xFFFFFF)}
-                    # Create new Area if doesn't exist (based on label)
-                    area = models.Area.objects.get_or_create(
-                        label=area_label, defaults=defaults
-                    )[0]
-                    areas.append(area)
-                poly = models.Polygon(
-                    label=polygon.get("label", ""), geom=geos.GEOSGeometry(str(geom))
-                )
-                poly.areas.set([a.id for a in areas])
-                polygons_to_create.append(poly)
+                if geom and polygon["type"] in ['Polygon', 'MultiPolygon']:
+                    for area_label in polygon.get("areas", []):
+                        defaults = {"color": "#%06x" % random.randint(0, 0xFFFFFF)}
+                        # Create new Area if doesn't exist (based on label)
+                        area = models.Area.objects.get_or_create(
+                            label=area_label, defaults=defaults
+                        )[0]
+                        areas.append(area)
+                    poly = models.Polygon(
+                        label=polygon.get("label", ""), geom=geos.GEOSGeometry(str(geom))
+                    )
+                    poly.areas.set([a.id for a in areas])
+                    polygons_to_create.append(poly)
             models.Polygon.objects.bulk_create(polygons_to_create)
         except IntegrityError as ex:
             return Response(exception=ex, status=500)
