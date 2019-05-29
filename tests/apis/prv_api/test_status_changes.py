@@ -126,7 +126,7 @@ def status_changes_fixtures():
 
 @pytest.mark.django_db
 def test_device_list_auth(client, django_assert_num_queries, status_changes_fixtures):
-    now, expected_event_device1, expected_event_device2 = status_changes_fixtures
+    now, provider, expected_event_device1, expected_event_device2 = status_changes_fixtures
 
     # test auth
     response = client.get("/prv/provider_api/status_changes")
