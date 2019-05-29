@@ -49,6 +49,7 @@ def status_changes_fixtures():
     factories.EventRecord(
         device=device1,
         timestamp=now,
+        saved_at=now,
         event_type=enums.EVENT_TYPE.maintenance.name,
         properties={
             "trip_id": "b3da2d46-065f-4036-903c-49d796f09357",
@@ -62,6 +63,7 @@ def status_changes_fixtures():
     factories.EventRecord(
         device=device1,
         timestamp=now - datetime.timedelta(seconds=1),
+        saved_at=now - datetime.timedelta(seconds=1),
         event_type=enums.EVENT_TYPE.telemetry.name,
     )
     # This one is too old
@@ -87,6 +89,7 @@ def status_changes_fixtures():
     )
 
     expected_event_device1 = {
+        "recorded": utils.to_mds_timestamp(now),
         "provider_id": str(provider.id),
         "provider_name": "Test provider",
         "device_id": uuid1,
@@ -104,6 +107,7 @@ def status_changes_fixtures():
         "associated_trip": "b3da2d46-065f-4036-903c-49d796f09357",
     }
     expected_event_device2 = {
+        "recorded": utils.to_mds_timestamp(now),
         "provider_id": str(provider2.id),
         "provider_name": "Test another provider",
         "device_id": uuid2,
