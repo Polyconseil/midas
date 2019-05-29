@@ -8,7 +8,8 @@ from mds.access_control.scopes import SCOPE_PRV_API
 from tests.auth_helpers import BASE_NUM_QUERIES, auth_header
 
 
-def setup():
+@pytest.fixture
+def status_changes_fixtures():
     now = timezone.now()
 
     uuid1 = "aaaaaaa1-1342-413b-8e89-db802b2f83f6"
@@ -124,8 +125,8 @@ def setup():
 
 
 @pytest.mark.django_db
-def test_device_list_auth(client, django_assert_num_queries):
-    now, expected_event_device1, expected_event_device2 = setup()
+def test_device_list_auth(client, django_assert_num_queries, status_changes_fixtures):
+    now, expected_event_device1, expected_event_device2 = status_changes_fixtures
 
     # test auth
     response = client.get("/prv/provider_api/status_changes")
@@ -133,8 +134,12 @@ def test_device_list_auth(client, django_assert_num_queries):
 
 
 @pytest.mark.django_db
-def test_device_list_basic_time(client, django_assert_num_queries):
-    now, provider, expected_event_device1, expected_event_device2 = setup()
+def test_device_list_basic_time(
+    client, django_assert_num_queries, status_changes_fixtures
+):
+    now, provider, expected_event_device1, expected_event_device2 = (
+        status_changes_fixtures
+    )
 
     start_time = utils.to_mds_timestamp(now - datetime.timedelta(minutes=30))
     n = BASE_NUM_QUERIES
@@ -171,8 +176,12 @@ def test_device_list_basic_time(client, django_assert_num_queries):
 
 
 @pytest.mark.django_db
-def test_device_list_basic_recorded(client, django_assert_num_queries):
-    now, provider, expected_event_device1, expected_event_device2 = setup()
+def test_device_list_basic_recorded(
+    client, django_assert_num_queries, status_changes_fixtures
+):
+    now, provider, expected_event_device1, expected_event_device2 = (
+        status_changes_fixtures
+    )
 
     # test auth
     response = client.get("/prv/provider_api/status_changes")
