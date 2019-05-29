@@ -8,8 +8,7 @@ from mds.access_control.scopes import SCOPE_PRV_API
 from tests.auth_helpers import BASE_NUM_QUERIES, auth_header
 
 
-@pytest.mark.django_db
-def test_device_list_basic(client, django_assert_num_queries):
+def setup():
     now = timezone.now()
 
     uuid1 = "aaaaaaa1-1342-413b-8e89-db802b2f83f6"
@@ -115,9 +114,22 @@ def test_device_list_basic(client, django_assert_num_queries):
         },
         "associated_trip": None,
     }
+
+    return now, provider, expected_event_device1, expected_event_device2
+
+
+@pytest.mark.django_db
+def test_device_list_auth(client, django_assert_num_queries):
+    now, expected_event_device1, expected_event_device2 = setup()
+
     # test auth
     response = client.get("/prv/provider_api/status_changes")
     assert response.status_code == 401
+
+
+@pytest.mark.django_db
+def test_device_list_basic_time(client, django_assert_num_queries):
+    now, provider, expected_event_device1, expected_event_device2 = setup()
 
     start_time = utils.to_mds_timestamp(now - datetime.timedelta(minutes=30))
     n = BASE_NUM_QUERIES
@@ -147,6 +159,48 @@ def test_device_list_basic(client, django_assert_num_queries):
     # Also test endpoint work with a trailing slash
     response = client.get(
         "/prv/provider_api/status_changes/?start_time=%s&take=1" % start_time,
+        **auth_header(SCOPE_PRV_API, provider_id=provider.id),
+    )
+    data = response.data["data"]["status_changes"]
+    assert len(data) == 1
+
+
+@pytest.mark.django_db
+def test_device_list_basic_recorded(client, django_assert_num_queries):
+    now, provider, expected_event_device1, expected_event_device2 = setup()
+
+    # test auth
+    response = client.get("/prv/provider_api/status_changes")
+    assert response.status_code == 401
+
+    start_recorded = utils.to_mds_timestamp(now - datetime.timedelta(minutes=30))
+    n = BASE_NUM_QUERIES
+    n += 1  # query on events
+    n += 1  # count on events
+    with django_assert_num_queries(n):
+        response = client.get(
+            "/prv/provider_api/status_changes?start_recorded=%s" % start_recorded,
+            **auth_header(SCOPE_PRV_API, provider_id=provider.id),
+        )
+    assert response.status_code == 200
+
+    data = response.data["data"]["status_changes"]
+    assert len(data) == 2
+
+    assert expected_event_device1 in data
+    assert expected_event_device2 in data
+
+    # Test pagination: retrieve only given number of events
+    response = client.get(
+        "/prv/provider_api/status_changes?start_recorded=%s&take=1" % start_recorded,
+        **auth_header(SCOPE_PRV_API, provider_id=provider.id),
+    )
+    data = response.data["data"]["status_changes"]
+    assert len(data) == 1
+
+    # Also test endpoint work with a trailing slash
+    response = client.get(
+        "/prv/provider_api/status_changes/?start_recorded=%s&take=1" % start_recorded,
         **auth_header(SCOPE_PRV_API, provider_id=provider.id),
     )
     data = response.data["data"]["status_changes"]
