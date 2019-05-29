@@ -29,19 +29,17 @@ class PolygonRequestSerializer(serializers.ModelSerializer):
         model = models.Polygon
 
     def create(self, validated_data):
-        geo_object = geos.GEOSGeometry(validated_data["geom"])
         instance = self.Meta.model(
-            label=validated_data["label"], geom=geos.MultiPolygon([geo_object])
+            label=validated_data["label"], geom=geos.GEOSGeometry(str(validated_data["geom"]))
         )
         instance.save()
         return instance
 
     def update(self, instance, validated_data):
-        geo_object = geos.GEOSGeometry(validated_data["geom"])
         if validated_data.get("label"):
             instance.label = validated_data["label"]
         if validated_data.get("geom"):
-            instance.geom = geos.MultiPolygon([geo_object])
+            instance.geom = geos.GEOSGeometry(str(validated_data["geom"]))
         if validated_data.get("areas"):
             areas = validated_data.pop("areas", [])
             instance.areas.set(areas)
@@ -122,7 +120,7 @@ class PolygonViewSet(utils.MultiSerializerViewSetMixin, viewsets.ModelViewSet):
                         )[0]
                         areas.append(area)
                     poly = models.Polygon(
-                        label=polygon.get("label", ""), geom=geos.GEOSGeometry(geom)
+                        label=polygon.get("label", ""), geom=geos.GEOSGeometry(str(geom))
                     )
                     poly.areas.set([a.id for a in areas])
                     polygons_to_create.append(poly)
