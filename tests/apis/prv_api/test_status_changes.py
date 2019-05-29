@@ -113,7 +113,7 @@ def status_changes_fixtures():
         "device_id": uuid2,
         "vehicle_id": "3CCCCC",
         "propulsion_type": ["electric"],
-        "event_type_reason": "trip_start",
+        "event_type_reason": "user_pick_up",
         "event_type": "trip",
         "vehicle_type": "scooter",
         "event_time": utils.to_mds_timestamp(now),
@@ -157,7 +157,6 @@ def test_device_list_basic_time(
             **auth_header(SCOPE_PRV_API, provider_id=provider.id),
         )
     assert response.status_code == 200
-
     data = response.data["data"]["status_changes"]
     assert len(data) == 2
 
