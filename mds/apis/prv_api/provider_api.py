@@ -13,7 +13,7 @@ class DeviceStatusChangesSerializer(serializers.ModelSerializer):
     event_location = serializers.SerializerMethodField()
     event_time = apis_utils.UnixTimestampMilliseconds(source="timestamp")
     event_type = serializers.SerializerMethodField()
-    event_type_reason = serializers.CharField(source="event_type")
+    event_type_reason = serializers.SerializerMethodField()
     propulsion_type = serializers.ListSerializer(
         source="device.propulsion",
         child=serializers.ChoiceField(choices=enums.choices(enums.DEVICE_PROPULSION)),
@@ -57,6 +57,9 @@ class DeviceStatusChangesSerializer(serializers.ModelSerializer):
     def get_event_type(self, obj):
         return enums.EVENT_TYPE_TO_DEVICE_STATUS[obj.event_type]
 
+    def get_event_type_reason(self, obj):
+        return enums.AGENCY_EVENT_TO_PROVIDER_REASON[obj.event_type]
+
 
 class CustomPagination(pagination.PageNumberPagination):
     page_size = 5000
@@ -94,7 +97,7 @@ class ProviderApiViewSet(viewsets.ViewSet):
 
         # We support either recorded or time search but not both at the same time
         if start_recorded:
-            order_by = "start_recorded"
+            order_by = "saved_at"
             start_recorded = utils.from_mds_timestamp(int(start_recorded))
             events = events.filter(saved_at__gte=start_recorded)
         else:
