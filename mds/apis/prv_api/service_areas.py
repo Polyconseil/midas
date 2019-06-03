@@ -16,7 +16,6 @@ from mds.apis import utils
 from rest_framework import filters
 
 
-
 class PolygonRequestSerializer(serializers.ModelSerializer):
     """What we expect for a geographic polygon.
     """
@@ -30,7 +29,7 @@ class PolygonRequestSerializer(serializers.ModelSerializer):
         model = models.Polygon
 
     def create(self, validated_data):
-        #import ipdb; ipdb.set_trace()
+        # import ipdb; ipdb.set_trace()
         instance = self.Meta.model(
             label=validated_data["label"],
             geom=utils.get_geos_multipolygon(str(validated_data["geom"])),

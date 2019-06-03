@@ -166,11 +166,12 @@ class DateTimeRangeOverlapFilter(filters.IsoDateTimeFromToRangeFilter):
 
 # Others #########################################################
 
+
 def get_geos_multipolygon(geom_str_repr):
     """
       Retrieve a GEOS MultiPolygon from string
     """
     geos_obj = geos.GEOSGeometry(geom_str_repr)
     if geos_obj and not isinstance(geos_obj, geos.MultiPolygon):
-      return geos.MultiPolygon(geos_obj)
+        return geos.MultiPolygon(geos_obj)
     return geos_obj
