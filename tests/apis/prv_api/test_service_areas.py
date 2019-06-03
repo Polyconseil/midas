@@ -1,5 +1,6 @@
 import uuid
 import pytest
+import json
 
 from django.contrib.gis import geos
 
@@ -151,7 +152,7 @@ def test_all_polygons_get(client):
 def test_polygon_creation(client):
     response = client.post(
         POLY_BASE_URL,
-        data={"label": "test", "geom": MOCK_GEOJSON, "areas": []},
+        data={"label": "test", "geom": json.dumps(MOCK_GEOJSON), "areas": []},
         content_type="application/json",
         **auth_header(SCOPE_PRV_API),
     )
