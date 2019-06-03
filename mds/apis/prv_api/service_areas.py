@@ -5,7 +5,6 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from django.contrib.gis import geos
 from django.db import IntegrityError
 
 from mds import models
@@ -29,7 +28,6 @@ class PolygonRequestSerializer(serializers.ModelSerializer):
         model = models.Polygon
 
     def create(self, validated_data):
-        # import ipdb; ipdb.set_trace()
         instance = self.Meta.model(
             label=validated_data["label"],
             geom=utils.get_geos_multipolygon(str(validated_data["geom"])),
