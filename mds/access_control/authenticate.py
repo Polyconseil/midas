@@ -24,6 +24,7 @@ class RemoteUser:
         self._id = sub
         self._scopes = scopes
         self._provider_id = provider_id
+        self._user = None
 
     def __str__(self):
         return "RemoteUser {}".format(self._id)
@@ -38,7 +39,11 @@ class RemoteUser:
 
     @property
     def is_staff(self):
-        return False
+        return 'admin' in self.scopes
+
+    @property
+    def is_superadmin(self):
+        return 'superadmin' in self.scopes
 
     @property
     def scopes(self):

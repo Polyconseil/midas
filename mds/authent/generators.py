@@ -50,6 +50,13 @@ def _generate_payload(application, token_duration, user):
     if user:
         payload["sub"] = "user:%s" % user.username
         payload["name"] = user.get_full_name() or user.username
+
+        user_scope = ['prv_api']
+        if user.is_staff:
+            user_scope.append('admin')
+        if user.is_superuser:
+            user_scope.append('superadmin')
+        payload["scope"] = user_scope
     else:
         payload["sub"] = ("application:%s" % application.client_id,)
     if application.owner:
