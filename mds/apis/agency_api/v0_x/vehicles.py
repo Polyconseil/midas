@@ -299,6 +299,9 @@ class DeviceViewSet(
     def create(self, *args, **kwargs):
         return self._create(*args, **kwargs)
 
+    def on_event_create(self, events):
+        """Hook to trigger computations on new events."""
+
     @action(detail=True, methods=["post", "options"])
     def event(self, request, id):
         """Endpoint to receive an event from a provider."""
@@ -318,6 +321,7 @@ class DeviceViewSet(
         )
         request_serializer.is_valid(raise_exception=True)
         instance = request_serializer.save()
+        self.on_event_create([instance])
         response_serializer = self.get_serializer(
             instance=instance, context={"request_or_response": "response"}
         )
@@ -333,6 +337,8 @@ class DeviceViewSet(
         serializer = self.get_serializer(data=request.data, context=context)
         serializer.is_valid(raise_exception=True)
         instance = serializer.save()
+        # XXX This won't work, we don't get any object from this serializer
+        self.on_event_create(instance)
         response_serializer = self.get_serializer(
             instance=instance, context={"request_or_response": "response"}
         )
