@@ -4,6 +4,7 @@ Pulling data for registered providers
 This is the opposite of provider pushing their data to the agency API.
 """
 import datetime
+import enum
 import logging
 import urllib.parse
 import uuid
@@ -25,6 +26,10 @@ from .settings import PROVIDER_POLLER_LIMIT_DAYS
 
 
 ACCEPTED_MDS_VERSIONS = ["0.2", "0.3"]
+START_TIME_FIELD_MAPPING = enum.Enum(
+    "start_time field to event_time_field",
+    [("start_recorded", "recorded"), ("start_time", "event_time")],
+)
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +65,7 @@ class StatusChangesPoller:
         start_time_field = self.provider.api_configuration.get(
             "start_time_field", "start_time"
         )
+
         if self.provider.last_start_time_polled:
             params[start_time_field] = utils.to_mds_timestamp(
                 self.provider.last_start_time_polled
@@ -93,7 +99,6 @@ class StatusChangesPoller:
                 last_start_time_polled = self._process_status_changes(status_changes)
                 self.provider.last_start_time_polled = last_start_time_polled
                 self.provider.save(update_fields=["last_start_time_polled"])
-
             next_url = body.get("links", {}).get("next")
 
     @retry(stop_max_attempt_number=2)
@@ -159,8 +164,12 @@ class StatusChangesPoller:
             return timezone.now()
 
         # do not rely on expected order
+        start_time_field = self.provider.api_configuration.get(
+            "start_time_field", "start_time"
+        )
+        event_time_field = START_TIME_FIELD_MAPPING[start_time_field].value
         last_event_time_polled = utils.from_mds_timestamp(
-            max(status_change["event_time"] for status_change in status_changes)
+            max(status_change[event_time_field] for status_change in status_changes)
         )
 
         status_changes = self._validate_status_changes(status_changes)
