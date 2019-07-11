@@ -49,7 +49,7 @@ class StatusChangesPoller:
         if not self.provider.base_api_url:
             logger.debug("Provider %s has no URL, skipping.", self.provider.name)
             return
-
+        logger.debug(f"Polling {self.provider.name}")
         self._poll_status_changes()
 
     def _poll_status_changes(self):
@@ -58,15 +58,18 @@ class StatusChangesPoller:
             next_url += "/"
 
         params = {}
-
         # Start where we left, it's all based on providers sorting by start_time
         # (but we would miss telemetries older than start_time saved after we polled).
         # For those that support it, use the recorded time field or equivalent.
         start_time_field = self.provider.api_configuration.get(
             "start_time_field", "start_time"
         )
-
+        logger.debug(f"start_time_field: {start_time_field}")
         if self.provider.last_start_time_polled:
+            logger.debug(
+                "last_start_time_polled of provider: "
+                + str(self.provider.last_start_time_polled)
+            )
             params[start_time_field] = utils.to_mds_timestamp(
                 self.provider.last_start_time_polled
             )
@@ -74,6 +77,10 @@ class StatusChangesPoller:
         elif PROVIDER_POLLER_LIMIT_DAYS:
             params[start_time_field] = utils.to_mds_timestamp(
                 timezone.now() - datetime.timedelta(PROVIDER_POLLER_LIMIT_DAYS)
+            )
+            logger.debug(
+                "No last_start_time_polled on provider, starting from: "
+                + str(timezone.now() - datetime.timedelta(PROVIDER_POLLER_LIMIT_DAYS))
             )
 
         # Provider-specific params to optimise polling
@@ -164,13 +171,16 @@ class StatusChangesPoller:
             return timezone.now()
 
         # do not rely on expected order
+        logger.debug(f"{len(status_changes)} status changes")
         start_time_field = self.provider.api_configuration.get(
             "start_time_field", "start_time"
         )
         event_time_field = START_TIME_FIELD_MAPPING[start_time_field].value
+        logger.debug(f"event_time_field: {event_time_field}")
         last_event_time_polled = utils.from_mds_timestamp(
             max(status_change[event_time_field] for status_change in status_changes)
         )
+        logger.debug(f"last_event_time_polled: {last_event_time_polled}")
 
         status_changes = self._validate_status_changes(status_changes)
         if not status_changes:
