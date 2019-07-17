@@ -6,7 +6,7 @@ This is the opposite of provider pushing their data to the agency API.
 import datetime
 import enum
 import logging
-import urllib.parse
+from urllib.parse import parse_qs, urlencode, urljoin, urlparse
 import uuid
 
 from django.contrib.gis import geos
@@ -53,7 +53,7 @@ class StatusChangesPoller:
         self._poll_status_changes()
 
     def _poll_status_changes(self):
-        next_url = urllib.parse.urljoin(self.provider.base_api_url, "status_changes")
+        next_url = urljoin(self.provider.base_api_url, "status_changes")
         if self.provider.api_configuration.get("trailing_slash"):
             next_url += "/"
 
@@ -65,7 +65,10 @@ class StatusChangesPoller:
             "start_time_field", "start_time"
         )
         logger.debug(f"start_time_field: {start_time_field}")
-        if self.provider.last_start_time_polled:
+        if isinstance(self.provider.skip, int):
+            logger.warning(f"skipping {self.provider.skip} data points...")
+            params["skip"] = self.provider.skip
+        elif self.provider.last_start_time_polled:
             logger.debug(
                 "last_start_time_polled of provider: "
                 + str(self.provider.last_start_time_polled)
@@ -90,10 +93,11 @@ class StatusChangesPoller:
             pass
 
         if params:
-            next_url = "%s?%s" % (next_url, urllib.parse.urlencode(params))
+            next_url = "%s?%s" % (next_url, urlencode(params))
 
         # Pagination
         while next_url:
+            logger.debug(f"fetching data from next_url: {next_url}")
             body = self._get_body(next_url)
             # Translate older versions of data
             translated_data = translate_data(body["data"], body["version"])
@@ -105,7 +109,19 @@ class StatusChangesPoller:
             with transaction.atomic():
                 last_start_time_polled = self._process_status_changes(status_changes)
                 self.provider.last_start_time_polled = last_start_time_polled
-                self.provider.save(update_fields=["last_start_time_polled"])
+                update_fields = ["last_start_time_polled"]
+
+                if isinstance(self.provider.skip, int):
+                    next_url = body.get("links", {}).get("next")
+                    query_params = parse_qs(urlparse(next_url).query)
+                    default_skip = self.provider.skip + len(status_changes)
+                    self.provider.skip = int(
+                        query_params.get("skip", [default_skip])[0]
+                    )
+                    update_fields.append("skip")
+
+                self.provider.save(update_fields=update_fields)
+
             next_url = body.get("links", {}).get("next")
 
     @retry(stop_max_attempt_number=2)
