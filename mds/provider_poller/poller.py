@@ -66,7 +66,7 @@ class StatusChangesPoller:
         )
         logger.debug(f"start_time_field: {start_time_field}")
         if isinstance(self.provider.skip, int):
-            logger.warning(f"skipping {self.provider.skip} data points...")
+            logger.debug(f"skipping {self.provider.skip} data points...")
             params["skip"] = self.provider.skip
         elif self.provider.last_start_time_polled:
             logger.debug(
@@ -97,7 +97,6 @@ class StatusChangesPoller:
 
         # Pagination
         while next_url:
-            logger.debug(f"fetching data from next_url: {next_url}")
             body = self._get_body(next_url)
             # Translate older versions of data
             translated_data = translate_data(body["data"], body["version"])
