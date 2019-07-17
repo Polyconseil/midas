@@ -124,6 +124,9 @@ class Provider(models.Model):
     # So we cannot just rely on checking the latest event record saved.
     last_start_time_polled = models.DateTimeField(blank=True, null=True)
 
+    # Some providers accept `skip` as a query param
+    skip = models.PositiveIntegerField(blank=True, null=True)
+
     # The following fields are for the provider pushing data to us
     agency_api_authentication = pg_fields.JSONField(
         default=agency_api_authentication_default,
