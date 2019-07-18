@@ -88,6 +88,7 @@ class ProviderApiViewSet(viewsets.ViewSet):
 
     @decorators.action(detail=False, methods=["get"])
     def status_changes(self, request, *args, **kwargs):
+        skip = request.query_params.get("skip")
         start_recorded = request.query_params.get("start_recorded")
         start_time = request.query_params.get("start_time")
         end_time = request.query_params.get("end_time")
@@ -99,8 +100,11 @@ class ProviderApiViewSet(viewsets.ViewSet):
             event_type__in=event_types
         )
 
-        # We support either recorded or time search but not both at the same time
-        if start_recorded:
+        # We support either recorded, time search or offset but not at the same time
+        if skip:
+            order_by = "id"
+            events = events.filter(id__gte=int(skip))
+        elif start_recorded:
             order_by = "saved_at"
             start_recorded = utils.from_mds_timestamp(int(start_recorded))
             events = events.filter(saved_at__gte=start_recorded)
