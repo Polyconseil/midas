@@ -104,6 +104,8 @@ class StatusChangesPoller:
             if not status_changes:
                 break
 
+            next_url = body.get("links", {}).get("next")
+
             # A transaction for each "page" of data
             with transaction.atomic():
                 last_start_time_polled = self._process_status_changes(status_changes)
@@ -111,7 +113,6 @@ class StatusChangesPoller:
                 update_fields = ["last_start_time_polled"]
 
                 if isinstance(self.provider.skip, int):
-                    next_url = body.get("links", {}).get("next")
                     query_params = parse_qs(urlparse(next_url).query)
                     default_skip = self.provider.skip + len(status_changes)
                     self.provider.skip = int(
@@ -120,8 +121,6 @@ class StatusChangesPoller:
                     update_fields.append("skip")
 
                 self.provider.save(update_fields=update_fields)
-
-            next_url = body.get("links", {}).get("next")
 
     @retry(stop_max_attempt_number=2)
     def _get_body(self, url):
