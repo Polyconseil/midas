@@ -59,7 +59,7 @@ class DeviceStatusChangesSerializer(serializers.ModelSerializer):
         }
 
     def get_event_type(self, obj):
-        return enums.EVENT_TYPE_TO_DEVICE_STATUS[obj.event_type]
+        return enums.PROVIDER_REASON_TO_PROVIDER_EVENT_TYPE[self.get_event_type_reason(obj)]
 
     def get_event_type_reason(self, obj):
         return enums.AGENCY_EVENT_TO_PROVIDER_REASON[obj.event_type]
