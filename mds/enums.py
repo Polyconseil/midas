@@ -60,7 +60,6 @@ EVENT_TYPE = enum.Enum(
         ("rebalance_pick_up", pgettext_lazy("Event type", "Rebalance pick up")),
         ("maintenance_pick_up", pgettext_lazy("Event type", "Maintenance pick up")),
         ("deregister", pgettext_lazy("Event type", "Deregister")),
-        ("provider_drop_off", pgettext_lazy("Event type", "Vehicle moved for rebalancing")),
         # this last event is not in the MDS spec
         ("telemetry", pgettext_lazy("Event type", "Received telemetry")),
         # This may be added in a revision of the agency API specs
