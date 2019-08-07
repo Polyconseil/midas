@@ -1,4 +1,4 @@
-from enums import EVENT_TYPE
+from mds.enums import EVENT_TYPE
 
 # Mappings between Provider and Agency
 #
