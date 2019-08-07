@@ -122,7 +122,7 @@ def status_changes_fixtures():
         "vehicle_id": "3CCCCC",
         "propulsion_type": ["electric"],
         "event_type_reason": "user_pick_up",
-        "event_type": "trip",
+        "event_type": "reserved",
         "vehicle_type": "scooter",
         "event_time": utils.to_mds_timestamp(now),
         "event_location": {
