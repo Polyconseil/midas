@@ -28,7 +28,8 @@ PROVIDER_REASON_TO_AGENCY_EVENT = {
 }
 
 # Converts an Agency event to a Provider event_type_reason
-# Try to stay consistent with https://github.com/CityOfLosAngeles/mds-core/blob/master/packages/mds-provider/utils.ts
+# Try to stay consistent with
+# https://github.com/CityOfLosAngeles/mds-core/blob/master/packages/mds-provider/utils.ts
 AGENCY_EVENT_TO_PROVIDER_REASON = {
     EVENT_TYPE.service_start.name: "service_start",
     EVENT_TYPE.cancel_reservation.name: "user_drop_off",
