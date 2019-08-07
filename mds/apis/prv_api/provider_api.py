@@ -98,11 +98,9 @@ class ProviderApiViewSet(viewsets.ViewSet):
         start_time = request.query_params.get("start_time")
         end_time = request.query_params.get("end_time")
 
-        # Only forward events that were first retrieved though providers'
-        # `status_changes' endpoint
-        event_types = enums.PROVIDER_REASON_TO_AGENCY_EVENT.values()
+        # Only forward events that are actual events and not telemetry
         events = models.EventRecord.objects.select_related("device__provider").filter(
-            event_type__in=event_types
+            event_type__not=enums.EVENT_TYPE.telemetry.name
         )
 
         # We support either recorded, time search or offset but not at the same time

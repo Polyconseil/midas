@@ -310,9 +310,7 @@ class StatusChangesPoller:
                 # Ignore just that status change to avoid rejecting the whole batch
                 continue
             try:
-                agency_event_type = PROVIDER_REASON_TO_AGENCY_EVENT[
-                    event_type_reason
-                ]
+                agency_event_type = PROVIDER_REASON_TO_AGENCY_EVENT[event_type_reason]
             except KeyError:  # Spec violation!
                 logger.warning(
                     'Device %s has unknown "%s" event_type_reason',
