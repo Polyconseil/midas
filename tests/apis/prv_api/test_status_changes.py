@@ -74,6 +74,7 @@ def status_changes_fixtures():
         device=device1,
         timestamp=now - datetime.timedelta(hours=1),
         saved_at=now - datetime.timedelta(hours=1),
+        event_type=enums.EVENT_TYPE.reserve.name,
     )
 
     # Add an event on the second device
@@ -252,7 +253,7 @@ def test_device_list_basic_skip(
     assert response.status_code == 200
 
     data = response.data["data"]["status_changes"]
-    assert len(data) == 2
+    assert len(data) == 3
 
     assert expected_event_device1 in data
     assert expected_event_device2 in data
