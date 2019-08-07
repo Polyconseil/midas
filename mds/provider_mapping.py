@@ -15,14 +15,16 @@ PROVIDER_REASON_TO_AGENCY_EVENT = {
     "user_drop_off": EVENT_TYPE.trip_end.name,
     "rebalance_drop_off": EVENT_TYPE.rebalance_drop_off.name,
     "maintenance_drop_off": EVENT_TYPE.maintenance_drop_off.name,
+    # TODO when updating Agency API
+    # "agency_drop_off": EVENT_TYPE.XXX.name
     "user_pick_up": EVENT_TYPE.trip_start.name,
     "maintenance": EVENT_TYPE.maintenance.name,
     "low_battery": EVENT_TYPE.low_battery.name,
     "service_end": EVENT_TYPE.service_end.name,
     "rebalance_pick_up": EVENT_TYPE.rebalance_pick_up.name,
     "maintenance_pick_up": EVENT_TYPE.maintenance_pick_up.name,
-    # This may be aded in a revision of the provider API specs
-    "battery_charged": EVENT_TYPE.battery_charged.name,
+    # TODO when updating Agency API
+    # "agency_pick_up": EVENT_TYPE.XXX.name
 }
 
 # Converts an Agency event to a Provider event_type_reason
