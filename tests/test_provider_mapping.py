@@ -1,5 +1,3 @@
-import pytest
-
 from mds.provider_mapping import (
     PROVIDER_REASON_TO_AGENCY_EVENT,
     AGENCY_EVENT_TO_PROVIDER_REASON,
