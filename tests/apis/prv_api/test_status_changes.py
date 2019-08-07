@@ -266,7 +266,7 @@ def test_device_list_basic_skip(
     assert response.status_code == 200
 
     data = response.data["data"]["status_changes"]
-    assert len(data) == 1
+    assert len(data) == 2
 
     assert expected_event_device1 not in data
     assert expected_event_device2 in data
