@@ -4,6 +4,10 @@ from mds import enums, models, utils
 from mds.access_control.permissions import require_scopes
 from mds.access_control.scopes import SCOPE_PRV_API
 from mds.apis import utils as apis_utils
+from mds.provider_mapping import (
+    AGENCY_EVENT_TO_PROVIDER_REASON,
+    PROVIDER_REASON_TO_PROVIDER_EVENT_TYPE,
+)
 
 
 class DeviceStatusChangesSerializer(serializers.ModelSerializer):
@@ -60,10 +64,10 @@ class DeviceStatusChangesSerializer(serializers.ModelSerializer):
 
     def get_event_type(self, obj):
         reason = self.get_event_type_reason(obj)
-        return enums.PROVIDER_REASON_TO_PROVIDER_EVENT_TYPE[reason]
+        return PROVIDER_REASON_TO_PROVIDER_EVENT_TYPE[reason]
 
     def get_event_type_reason(self, obj):
-        return enums.AGENCY_EVENT_TO_PROVIDER_REASON[obj.event_type]
+        return AGENCY_EVENT_TO_PROVIDER_REASON[obj.event_type]
 
 
 class CustomPagination(pagination.PageNumberPagination):
