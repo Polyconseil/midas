@@ -102,8 +102,11 @@ class ProviderApiViewSet(viewsets.ViewSet):
         start_time = request.query_params.get("start_time")
         end_time = request.query_params.get("end_time")
 
-        # Only forward events that are actual events and not telemetry
         events = models.EventRecord.objects.select_related("device__provider").filter(
+            # Only forward events that are can be polled from a "provider API"
+            # Use the `provider -> agency` event mapping to exclude
+            # stored events (we cast to "agency" format) that are
+            # purely "agency" and have no "provider" equivalent
             event_type__in=PROVIDER_REASON_TO_AGENCY_EVENT.values()
         )
 
