@@ -6,7 +6,6 @@ from mds.access_control.scopes import SCOPE_PRV_API
 from mds.apis import utils as apis_utils
 from mds.provider_mapping import (
     AGENCY_EVENT_TO_PROVIDER_REASON,
-    PROVIDER_REASON_TO_AGENCY_EVENT,
     PROVIDER_REASON_TO_PROVIDER_EVENT_TYPE,
 )
 
