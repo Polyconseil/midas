@@ -103,7 +103,7 @@ class ProviderApiViewSet(viewsets.ViewSet):
         end_time = request.query_params.get("end_time")
 
         events = models.EventRecord.objects.select_related("device__provider").filter(
-            # Only forward events that are can be polled from a "provider API"
+            # Only forward events that can be polled from a "provider API"
             # Use the `provider -> agency` event mapping to exclude
             # stored events (we cast to "agency" format) that are
             # purely "agency" and have no "provider" equivalent
