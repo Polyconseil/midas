@@ -6,6 +6,7 @@ from mds.access_control.scopes import SCOPE_PRV_API
 from mds.apis import utils as apis_utils
 from mds.provider_mapping import (
     AGENCY_EVENT_TO_PROVIDER_REASON,
+    PROVIDER_REASON_TO_AGENCY_EVENT,
     PROVIDER_REASON_TO_PROVIDER_EVENT_TYPE,
 )
 
@@ -102,8 +103,8 @@ class ProviderApiViewSet(viewsets.ViewSet):
         end_time = request.query_params.get("end_time")
 
         # Only forward events that are actual events and not telemetry
-        events = models.EventRecord.objects.select_related("device__provider").exclude(
-            event_type=enums.EVENT_TYPE.telemetry.name
+        events = models.EventRecord.objects.select_related("device__provider").filter(
+            event_type__in=PROVIDER_REASON_TO_AGENCY_EVENT.values()
         )
 
         # We support either recorded, time search or offset but not at the same time
