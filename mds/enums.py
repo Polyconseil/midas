@@ -44,26 +44,28 @@ DEVICE_PROPULSION = enum.Enum(
 EVENT_TYPE = enum.Enum(
     "Event type",
     [
-        ("agency_drop_off", pgettext_lazy("Event type", "Agency drop off")),
-        ("agency_pick_up", pgettext_lazy("Event type", "Agency pick up")),
+        ("register", pgettext_lazy("Event type", "Register")),
         ("service_start", pgettext_lazy("Event type", "Service start")),
-        ("trip_end", pgettext_lazy("Event type", "Trip end")),
+        ("service_end", pgettext_lazy("Event type", "Service end")),
         ("provider_drop_off", pgettext_lazy("Event type", "Provider drop off")),
         ("provider_pick_up", pgettext_lazy("Event type", "Provider pick up")),
-        ("rebalance_drop_off", pgettext_lazy("Event type", "Rebalance drop off")),
-        ("maintenance_drop_off", pgettext_lazy("Event type", "Maintenance drop off")),
-        ("cancel_reservation", pgettext_lazy("Event type", "Cancel reservation")),
+        ("agency_drop_off", pgettext_lazy("Event type", "Agency drop off")),
+        ("agency_pick_up", pgettext_lazy("Event type", "Agency pick up")),
         ("reserve", pgettext_lazy("Event type", "Reserve")),
+        ("cancel_reservation", pgettext_lazy("Event type", "Cancel reservation")),
         ("trip_start", pgettext_lazy("Event type", "Trip start")),
         ("trip_enter", pgettext_lazy("Event type", "Trip enter")),
         ("trip_leave", pgettext_lazy("Event type", "Trip leave")),
-        ("register", pgettext_lazy("Event type", "Register")),
+        ("trip_end", pgettext_lazy("Event type", "Trip end")),
+        ("deregister", pgettext_lazy("Event type", "Deregister")),
+        # The following events are not in the list of agency events:
+        # https://github.com/CityOfLosAngeles/mobility-data-specification/tree/dev/agency
+        ("rebalance_drop_off", pgettext_lazy("Event type", "Rebalance drop off")),
+        ("maintenance_drop_off", pgettext_lazy("Event type", "Maintenance drop off")),
         ("low_battery", pgettext_lazy("Event type", "Low battery")),
         ("maintenance", pgettext_lazy("Event type", "Maintenance")),
-        ("service_end", pgettext_lazy("Event type", "Service end")),
         ("rebalance_pick_up", pgettext_lazy("Event type", "Rebalance pick up")),
         ("maintenance_pick_up", pgettext_lazy("Event type", "Maintenance pick up")),
-        ("deregister", pgettext_lazy("Event type", "Deregister")),
         # this last event is not in the MDS spec
         ("telemetry", pgettext_lazy("Event type", "Received telemetry")),
         # This may be added in a revision of the agency API specs
