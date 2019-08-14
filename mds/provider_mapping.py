@@ -14,6 +14,7 @@ from mds.enums import EVENT_TYPE, EVENT_TYPE_REASON
 PROVIDER_REASON_TO_AGENCY_EVENT = {
     "agency_drop_off": (EVENT_TYPE.agency_drop_off.name,),
     "agency_pick_up": (EVENT_TYPE.agency_pick_up.name,),
+    "city_pick_up": (EVENT_TYPE.city_pick_up.name,),
     "low_battery": (EVENT_TYPE.service_end.name, EVENT_TYPE_REASON.low_battery.name),
     "maintenance": (EVENT_TYPE.service_end.name, EVENT_TYPE_REASON.maintenance.name),
     # There is no equivalent on the agency side of maintenance_drop_off. This is the closest
@@ -43,6 +44,7 @@ PROVIDER_REASON_TO_AGENCY_EVENT = {
 AGENCY_EVENT_TO_PROVIDER_REASON = {
     (EVENT_TYPE.agency_drop_off.name,): "agency_drop_off",
     (EVENT_TYPE.agency_pick_up.name,): "agency_pick_up",
+    (EVENT_TYPE.city_pick_up.name,): "city_pick_up",
     # (EVENT_TYPE.battery_charged.name,): "maintenance_drop_off", # Not used anymore
     (EVENT_TYPE.cancel_reservation.name,): "user_drop_off",
     (EVENT_TYPE.deregister.name,): "service_end",
@@ -75,6 +77,7 @@ AGENCY_EVENT_TO_PROVIDER_REASON = {
 PROVIDER_REASON_TO_PROVIDER_EVENT_TYPE = {
     "agency_drop_off": "available",
     "agency_pick_up": "removed",
+    "city_pick_up": "removed",
     "low_battery": "unavailable",
     "maintenance": "unavailable",
     "maintenance_drop_off": "available",

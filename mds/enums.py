@@ -44,13 +44,13 @@ DEVICE_PROPULSION = enum.Enum(
 EVENT_TYPE = enum.Enum(
     "Event type",
     [
+        # The first events are the one listed in the MDS spec.
         ("register", pgettext_lazy("Event type", "Register")),
         ("service_start", pgettext_lazy("Event type", "Service start")),
         ("service_end", pgettext_lazy("Event type", "Service end")),
         ("provider_drop_off", pgettext_lazy("Event type", "Provider drop off")),
         ("provider_pick_up", pgettext_lazy("Event type", "Provider pick up")),
-        ("agency_drop_off", pgettext_lazy("Event type", "Agency drop off")),
-        ("agency_pick_up", pgettext_lazy("Event type", "Agency pick up")),
+        ("city_pick_up", pgettext_lazy("Event type", "City pick up")),
         ("reserve", pgettext_lazy("Event type", "Reserve")),
         ("cancel_reservation", pgettext_lazy("Event type", "Cancel reservation")),
         ("trip_start", pgettext_lazy("Event type", "Trip start")),
@@ -60,6 +60,8 @@ EVENT_TYPE = enum.Enum(
         ("deregister", pgettext_lazy("Event type", "Deregister")),
         # The following events are not in the list of agency events:
         # https://github.com/CityOfLosAngeles/mobility-data-specification/tree/dev/agency
+        ("agency_drop_off", pgettext_lazy("Event type", "Agency drop off")),
+        ("agency_pick_up", pgettext_lazy("Event type", "Agency pick up")),
         ("rebalance_drop_off", pgettext_lazy("Event type", "Rebalance drop off")),
         ("maintenance_drop_off", pgettext_lazy("Event type", "Maintenance drop off")),
         ("low_battery", pgettext_lazy("Event type", "Low battery")),
