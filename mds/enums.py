@@ -44,7 +44,8 @@ DEVICE_PROPULSION = enum.Enum(
 EVENT_TYPE = enum.Enum(
     "Event type",
     [
-        # The first events are the one listed in the MDS spec.
+        # The first events are the one listed in the MDS agency API, in order:
+        # https://github.com/CityOfLosAngeles/mobility-data-specification/tree/dev/agency
         ("register", pgettext_lazy("Event type", "Register")),
         ("service_start", pgettext_lazy("Event type", "Service start")),
         ("service_end", pgettext_lazy("Event type", "Service end")),
@@ -58,61 +59,39 @@ EVENT_TYPE = enum.Enum(
         ("trip_leave", pgettext_lazy("Event type", "Trip leave")),
         ("trip_end", pgettext_lazy("Event type", "Trip end")),
         ("deregister", pgettext_lazy("Event type", "Deregister")),
-        # The following events are not in the list of agency events:
-        # https://github.com/CityOfLosAngeles/mobility-data-specification/tree/dev/agency
-        ("agency_drop_off", pgettext_lazy("Event type", "Agency drop off")),
-        ("agency_pick_up", pgettext_lazy("Event type", "Agency pick up")),
+        # event_type_reason(s) listed in the provider API but not in the agency API
+        # https://github.com/CityOfLosAngeles/mobility-data-specification/tree/dev/provider
+        ("user_drop_off", pgettext_lazy("Event type", "User drop off")),
         ("rebalance_drop_off", pgettext_lazy("Event type", "Rebalance drop off")),
         ("maintenance_drop_off", pgettext_lazy("Event type", "Maintenance drop off")),
-        ("low_battery", pgettext_lazy("Event type", "Low battery")),
+        ("agency_drop_off", pgettext_lazy("Event type", "Agency drop off")),
+        ("user_pick_up", pgettext_lazy("Event type", "User pick up")),
         ("maintenance", pgettext_lazy("Event type", "Maintenance")),
+        ("low_battery", pgettext_lazy("Event type", "Low battery")),
         ("rebalance_pick_up", pgettext_lazy("Event type", "Rebalance pick up")),
         ("maintenance_pick_up", pgettext_lazy("Event type", "Maintenance pick up")),
-        # this last event is not in the MDS spec
+        ("agency_pick_up", pgettext_lazy("Event type", "Agency pick up")),
+        # this last event is in neither of the MDS spec
         ("telemetry", pgettext_lazy("Event type", "Received telemetry")),
         # This may be added in a revision of the agency API specs
         ("battery_charged", pgettext_lazy("Event type", "Battery charged")),
     ],
 )
 
+# available here: https://github.com/CityOfLosAngeles/mobility-data-specification/tree/dev/agency
 EVENT_TYPE_REASON = enum.Enum(
     "Event type reason",
     [
-        ("charge", pgettext_lazy("Event type reason", "Charge")),  # not used
-        (
-            "decommissioned",
-            pgettext_lazy("Event type reason", "Decommissioned"),
-        ),  # not used
-        ("compliance", pgettext_lazy("Event type reason", "Compliance")),  # not used
         ("low_battery", pgettext_lazy("Event type reason", "Low battery")),
         ("maintenance", pgettext_lazy("Event type reason", "Maintenance")),
-        ("missing", pgettext_lazy("Event type reason", "Missing")),  # not used
-        ("off_hours", pgettext_lazy("Event type reason", "Off hours")),  # not used
+        ("compliance", pgettext_lazy("Event type reason", "Compliance")),
+        ("off_hours", pgettext_lazy("Event type reason", "Off hours")),
         ("rebalance", pgettext_lazy("Event type reason", "Rebalance")),
+        ("charge", pgettext_lazy("Event type reason", "Charge")),
+        ("missing", pgettext_lazy("Event type reason", "Missing")),
+        ("decommissioned", pgettext_lazy("Event type reason", "Decommissioned")),
     ],
 )
-
-
-EVENT_TYPE_TO_DEVICE_STATUS = {
-    EVENT_TYPE.service_start.name: DEVICE_STATUS.available.name,
-    EVENT_TYPE.trip_end.name: DEVICE_STATUS.available.name,
-    EVENT_TYPE.rebalance_drop_off.name: DEVICE_STATUS.available.name,
-    EVENT_TYPE.maintenance_drop_off.name: DEVICE_STATUS.available.name,
-    EVENT_TYPE.cancel_reservation.name: DEVICE_STATUS.available.name,
-    EVENT_TYPE.reserve.name: DEVICE_STATUS.reserved.name,
-    EVENT_TYPE.trip_start.name: DEVICE_STATUS.trip.name,
-    EVENT_TYPE.trip_enter.name: DEVICE_STATUS.trip.name,
-    EVENT_TYPE.trip_leave.name: DEVICE_STATUS.elsewhere.name,
-    EVENT_TYPE.register.name: DEVICE_STATUS.unavailable.name,
-    EVENT_TYPE.low_battery.name: DEVICE_STATUS.unavailable.name,
-    EVENT_TYPE.maintenance.name: DEVICE_STATUS.unavailable.name,
-    EVENT_TYPE.service_end.name: DEVICE_STATUS.removed.name,
-    EVENT_TYPE.rebalance_pick_up.name: DEVICE_STATUS.removed.name,
-    EVENT_TYPE.maintenance_pick_up.name: DEVICE_STATUS.removed.name,
-    EVENT_TYPE.deregister.name: DEVICE_STATUS.inactive.name,
-    EVENT_TYPE.telemetry.name: DEVICE_STATUS.unknown.name,
-    # EVENT_TYPE.battery_charged.name: DEVICE_STATUS.available.name,
-}
 
 EVENT_SOURCE = enum.Enum(
     "Event source",

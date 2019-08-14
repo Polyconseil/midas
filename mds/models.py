@@ -16,6 +16,7 @@ from django.utils import timezone
 from rest_framework.utils import encoders
 
 from . import enums
+from . import provider_mapping
 
 
 class UnboundedCharField(models.TextField):
@@ -278,7 +279,7 @@ class EventRecord(models.Model):
 
     @property
     def updated_status(self):
-        return enums.EVENT_TYPE_TO_DEVICE_STATUS.get(
+        return provider_mapping.PROVIDER_EVENT_TYPE_REASON_TO_EVENT_TYPE.get(
             self.event_type, enums.DEVICE_STATUS.unknown.name
         )
 
