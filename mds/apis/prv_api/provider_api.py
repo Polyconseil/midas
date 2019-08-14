@@ -70,7 +70,7 @@ class DeviceStatusChangesSerializer(serializers.ModelSerializer):
         return PROVIDER_EVENT_TYPE_REASON_TO_EVENT_TYPE[reason]
 
     def get_event_type_reason(self, obj):
-        return AGENCY_EVENT_TO_PROVIDER_REASON[obj.event_type]
+        return AGENCY_EVENT_TO_PROVIDER_REASON[(obj.event_type,)]
 
 
 class CustomPagination(pagination.PageNumberPagination):
@@ -101,9 +101,11 @@ class ProviderApiViewSet(viewsets.ViewSet):
         start_time = request.query_params.get("start_time")
         end_time = request.query_params.get("end_time")
 
+        # Only forward events that can be polled from a "provider API"
         events = models.EventRecord.objects.select_related("device__provider").filter(
-            # Only forward events that can be polled from a "provider API"
-            event_type__in=AGENCY_EVENT_TO_PROVIDER_REASON.keys()
+            event_type__in=[
+                event_type for event_type, *_ in AGENCY_EVENT_TO_PROVIDER_REASON.keys()
+            ]
         )
 
         # We support either recorded, time search or offset but not at the same time
