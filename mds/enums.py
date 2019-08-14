@@ -44,6 +44,8 @@ DEVICE_PROPULSION = enum.Enum(
 EVENT_TYPE = enum.Enum(
     "Event type",
     [
+        ("agency_drop_off", pgettext_lazy("Event type", "Agency drop off")),
+        ("agency_pick_up", pgettext_lazy("Event type", "Agency pick up")),
         ("service_start", pgettext_lazy("Event type", "Service start")),
         ("trip_end", pgettext_lazy("Event type", "Trip end")),
         ("rebalance_drop_off", pgettext_lazy("Event type", "Rebalance drop off")),

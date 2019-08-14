@@ -15,22 +15,22 @@ PROVIDER_REASON_TO_AGENCY_EVENT = {
     "user_drop_off": EVENT_TYPE.trip_end.name,
     "rebalance_drop_off": EVENT_TYPE.rebalance_drop_off.name,
     "maintenance_drop_off": EVENT_TYPE.maintenance_drop_off.name,
-    # TODO when updating Agency API
-    # "agency_drop_off": EVENT_TYPE.XXX.name
+    "agency_drop_off": EVENT_TYPE.agency_drop_off.name,
     "user_pick_up": EVENT_TYPE.trip_start.name,
     "maintenance": EVENT_TYPE.maintenance.name,
     "low_battery": EVENT_TYPE.low_battery.name,
     "service_end": EVENT_TYPE.service_end.name,
     "rebalance_pick_up": EVENT_TYPE.rebalance_pick_up.name,
     "maintenance_pick_up": EVENT_TYPE.maintenance_pick_up.name,
-    # TODO when updating Agency API
-    # "agency_pick_up": EVENT_TYPE.XXX.name
+    "agency_pick_up": EVENT_TYPE.agency_pick_up.name,
 }
 
 # Converts an Agency event to a Provider event_type_reason
 # Try to stay consistent with
 # https://github.com/CityOfLosAngeles/mds-core/blob/master/packages/mds-provider/utils.ts
 AGENCY_EVENT_TO_PROVIDER_REASON = {
+    EVENT_TYPE.agency_drop_off.name: "agency_drop_off",
+    EVENT_TYPE.agency_pick_up.name: "agency_pick_up",
     EVENT_TYPE.service_start.name: "service_start",
     EVENT_TYPE.cancel_reservation.name: "user_drop_off",
     EVENT_TYPE.trip_end.name: "user_drop_off",
@@ -56,12 +56,12 @@ PROVIDER_REASON_TO_PROVIDER_EVENT_TYPE = {
     "user_drop_off": "available",
     "rebalance_drop_off": "available",
     "maintenance_drop_off": "available",
-    "agency_drop_off": "available",  # Doesn't exist in agency yet
+    "agency_drop_off": "available",
     "user_pick_up": "reserved",
     "low_battery": "unavailable",
     "maintenance": "unavailable",
     "service_end": "removed",
     "rebalance_pick_up": "removed",
     "maintenance_pick_up": "removed",
-    "agency_pick_up": "removed",  # Doesn't exist in agency yet
+    "agency_pick_up": "removed",
 }
