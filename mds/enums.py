@@ -48,6 +48,8 @@ EVENT_TYPE = enum.Enum(
         ("agency_pick_up", pgettext_lazy("Event type", "Agency pick up")),
         ("service_start", pgettext_lazy("Event type", "Service start")),
         ("trip_end", pgettext_lazy("Event type", "Trip end")),
+        ("provider_drop_off", pgettext_lazy("Event type", "Provider drop off")),
+        ("provider_pick_up", pgettext_lazy("Event type", "Provider pick up")),
         ("rebalance_drop_off", pgettext_lazy("Event type", "Rebalance drop off")),
         ("maintenance_drop_off", pgettext_lazy("Event type", "Maintenance drop off")),
         ("cancel_reservation", pgettext_lazy("Event type", "Cancel reservation")),
@@ -66,6 +68,15 @@ EVENT_TYPE = enum.Enum(
         ("telemetry", pgettext_lazy("Event type", "Received telemetry")),
         # This may be added in a revision of the agency API specs
         ("battery_charged", pgettext_lazy("Event type", "Battery charged")),
+    ],
+)
+
+EVENT_TYPE_REASON = enum.Enum(
+    "Event type reason",
+    [
+        ("low_battery", pgettext_lazy("Event type reason", "Low battery")),
+        ("maintenance", pgettext_lazy("Event type reason", "Maintenance")),
+        ("rebalance", pgettext_lazy("Event type reason", "Rebalance")),
     ],
 )
 
