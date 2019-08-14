@@ -43,7 +43,7 @@ PROVIDER_REASON_TO_AGENCY_EVENT = {
 AGENCY_EVENT_TO_PROVIDER_REASON = {
     (EVENT_TYPE.agency_drop_off.name,): "agency_drop_off",
     (EVENT_TYPE.agency_pick_up.name,): "agency_pick_up",
-    (EVENT_TYPE.battery_charged.name,): "maintenance_drop_off",
+    # (EVENT_TYPE.battery_charged.name,): "maintenance_drop_off", # Not used anymore
     (EVENT_TYPE.cancel_reservation.name,): "user_drop_off",
     (EVENT_TYPE.deregister.name,): "service_end",
     (EVENT_TYPE.service_end.name, EVENT_TYPE_REASON.low_battery.name): "low_battery",

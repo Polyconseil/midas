@@ -99,7 +99,7 @@ EVENT_TYPE_TO_DEVICE_STATUS = {
     EVENT_TYPE.maintenance_pick_up.name: DEVICE_STATUS.removed.name,
     EVENT_TYPE.deregister.name: DEVICE_STATUS.inactive.name,
     EVENT_TYPE.telemetry.name: DEVICE_STATUS.unknown.name,
-    EVENT_TYPE.battery_charged.name: DEVICE_STATUS.available.name,
+    # EVENT_TYPE.battery_charged.name: DEVICE_STATUS.available.name,
 }
 
 EVENT_SOURCE = enum.Enum(
