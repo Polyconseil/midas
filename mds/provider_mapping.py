@@ -13,22 +13,23 @@ from mds.enums import DEVICE_STATUS, EVENT_TYPE, EVENT_TYPE_REASON
 # and event_type_reason (when needed), order by key as in:
 # https://github.com/CityOfLosAngeles/mobility-data-specification/tree/dev/provider
 PROVIDER_REASON_TO_AGENCY_EVENT = {
-    ########## available ##########
+    # available #
     "service_start": (EVENT_TYPE.service_start.name,),
     "user_drop_off": (EVENT_TYPE.trip_end.name,),
     "rebalance_drop_off": (EVENT_TYPE.provider_drop_off.name,),
-    # There is no equivalent on the agency side of maintenance_drop_off. This is the closest
+    # There is no equivalent on the agency side of maintenance_drop_off.
+    # This is the closest
     "maintenance_drop_off": (
         EVENT_TYPE.provider_drop_off.name,
         EVENT_TYPE_REASON.maintenance.name,
     ),
     "agency_drop_off": (EVENT_TYPE.agency_drop_off.name,),
-    ########## reserved ##########
+    # reserved #
     "user_pick_up": (EVENT_TYPE.trip_start.name,),
-    ########## unavailable ##########
+    # unavailable #
     "maintenance": (EVENT_TYPE.service_end.name, EVENT_TYPE_REASON.maintenance.name),
     "low_battery": (EVENT_TYPE.service_end.name, EVENT_TYPE_REASON.low_battery.name),
-    ########## removed ##########
+    # removed #
     "service_end": (EVENT_TYPE.service_end.name,),
     # There is no equivalent on the agency side of rebalance_pick_up.
     "rebalance_pick_up": (
@@ -95,18 +96,18 @@ AGENCY_EVENT_TO_PROVIDER_REASON = {
 # Inside the Provider API, maps the event_type_reason to the corresponding event_type
 # https://github.com/CityOfLosAngeles/mobility-data-specification/tree/dev/provider
 PROVIDER_EVENT_TYPE_REASON_TO_EVENT_TYPE = {
-    ########## available ##########
+    # available #
     EVENT_TYPE.service_start.name: DEVICE_STATUS.available.name,
     EVENT_TYPE.user_drop_off.name: DEVICE_STATUS.available.name,
     EVENT_TYPE.rebalance_drop_off.name: DEVICE_STATUS.available.name,
     EVENT_TYPE.maintenance_drop_off.name: DEVICE_STATUS.available.name,
     EVENT_TYPE.agency_drop_off.name: DEVICE_STATUS.available.name,
-    ########## reserved ##########
+    # reserved #
     EVENT_TYPE.user_pick_up.name: DEVICE_STATUS.reserved.name,
-    ########## unavailable ##########
+    # unavailable #
     EVENT_TYPE.maintenance.name: DEVICE_STATUS.unavailable.name,
     EVENT_TYPE.low_battery.name: DEVICE_STATUS.unavailable.name,
-    ########## removed ##########
+    # removed #
     EVENT_TYPE.service_end.name: DEVICE_STATUS.removed.name,
     EVENT_TYPE.rebalance_pick_up.name: DEVICE_STATUS.removed.name,
     EVENT_TYPE.maintenance_pick_up.name: DEVICE_STATUS.removed.name,

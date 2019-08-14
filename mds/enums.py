@@ -78,7 +78,7 @@ EVENT_TYPE = enum.Enum(
     ],
 )
 
-# available here: https://github.com/CityOfLosAngeles/mobility-data-specification/tree/dev/agency
+# see: https://github.com/CityOfLosAngeles/mobility-data-specification/tree/dev/agency
 EVENT_TYPE_REASON = enum.Enum(
     "Event type reason",
     [
