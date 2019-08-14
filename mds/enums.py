@@ -74,8 +74,16 @@ EVENT_TYPE = enum.Enum(
 EVENT_TYPE_REASON = enum.Enum(
     "Event type reason",
     [
+        ("charge", pgettext_lazy("Event type reason", "Charge")),  # not used
+        (
+            "decommissioned",
+            pgettext_lazy("Event type reason", "Decommissioned"),
+        ),  # not used
+        ("compliance", pgettext_lazy("Event type reason", "Compliance")),  # not used
         ("low_battery", pgettext_lazy("Event type reason", "Low battery")),
         ("maintenance", pgettext_lazy("Event type reason", "Maintenance")),
+        ("missing", pgettext_lazy("Event type reason", "Missing")),  # not used
+        ("off_hours", pgettext_lazy("Event type reason", "Off hours")),  # not used
         ("rebalance", pgettext_lazy("Event type reason", "Rebalance")),
     ],
 )
