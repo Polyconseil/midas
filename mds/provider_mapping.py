@@ -60,22 +60,16 @@ PROVIDER_REASON_TO_AGENCY_EVENT = {
 }
 
 OLD_PROVIDER_REASON_TO_AGENCY_EVENT = {
-    PROVIDER_EVENT_TYPE_REASON.service_start.name: EVENT_TYPE.service_start.name,
-    PROVIDER_EVENT_TYPE_REASON.user_drop_off.name: EVENT_TYPE.trip_end.name,
-    PROVIDER_EVENT_TYPE_REASON.rebalance_drop_off.name:
-        PROVIDER_EVENT_TYPE_REASON.rebalance_drop_off.name,
-    PROVIDER_EVENT_TYPE_REASON.maintenance_drop_off.name:
-        PROVIDER_EVENT_TYPE_REASON.maintenance_drop_off.name,
-    PROVIDER_EVENT_TYPE_REASON.user_pick_up.name: EVENT_TYPE.trip_start.name,
-    PROVIDER_EVENT_TYPE_REASON.maintenance.name:
-        PROVIDER_EVENT_TYPE_REASON.maintenance.name,
-    PROVIDER_EVENT_TYPE_REASON.low_battery.name:
-        PROVIDER_EVENT_TYPE_REASON.low_battery.name,
-    PROVIDER_EVENT_TYPE_REASON.service_end.name: EVENT_TYPE.service_end.name,
-    PROVIDER_EVENT_TYPE_REASON.rebalance_pick_up.name:
-        PROVIDER_EVENT_TYPE_REASON.rebalance_pick_up.name,
-    PROVIDER_EVENT_TYPE_REASON.maintenance_pick_up.name:
-        PROVIDER_EVENT_TYPE_REASON.maintenance_pick_up.name,
+    "service_start": EVENT_TYPE.service_start.name,
+    "user_drop_off": EVENT_TYPE.trip_end.name,
+    "rebalance_drop_off": PROVIDER_EVENT_TYPE_REASON.rebalance_drop_off.name,
+    "maintenance_drop_off": PROVIDER_EVENT_TYPE_REASON.maintenance_drop_off.name,
+    "user_pick_up": EVENT_TYPE.trip_start.name,
+    "maintenance": PROVIDER_EVENT_TYPE_REASON.maintenance.name,
+    "low_battery": PROVIDER_EVENT_TYPE_REASON.low_battery.name,
+    "service_end": EVENT_TYPE.service_end.name,
+    "rebalance_pick_up": PROVIDER_EVENT_TYPE_REASON.rebalance_pick_up.name,
+    "maintenance_pick_up": PROVIDER_EVENT_TYPE_REASON.maintenance_pick_up.name,
 }
 
 OLD_TO_NEW_AGENCY_EVENT = {
@@ -188,31 +182,23 @@ AGENCY_EVENT_TO_PROVIDER_REASON = {
 }
 
 OLD_AGENCY_EVENT_TO_PROVIDER_REASON = {
-    EVENT_TYPE.service_start.name: PROVIDER_EVENT_TYPE_REASON.service_start.name,
-    EVENT_TYPE.cancel_reservation.name: PROVIDER_EVENT_TYPE_REASON.user_drop_off.name,
-    EVENT_TYPE.trip_end.name: PROVIDER_EVENT_TYPE_REASON.user_drop_off.name,
-    PROVIDER_EVENT_TYPE_REASON.rebalance_drop_off.name:
-        PROVIDER_EVENT_TYPE_REASON.rebalance_drop_off.name,
-    PROVIDER_EVENT_TYPE_REASON.maintenance_drop_off.name:
-        PROVIDER_EVENT_TYPE_REASON.maintenance_drop_off.name,
-    EVENT_TYPE.battery_charged.name:
-        PROVIDER_EVENT_TYPE_REASON.maintenance_drop_off.name,
-    EVENT_TYPE.reserve.name: PROVIDER_EVENT_TYPE_REASON.user_pick_up.name,
-    EVENT_TYPE.trip_start.name: PROVIDER_EVENT_TYPE_REASON.user_pick_up.name,
-    EVENT_TYPE.trip_enter.name: PROVIDER_EVENT_TYPE_REASON.user_pick_up.name,
-    EVENT_TYPE.trip_leave.name:
-        PROVIDER_EVENT_TYPE_REASON.user_pick_up.name,  # This is on really bad...
-    PROVIDER_EVENT_TYPE_REASON.low_battery.name:
-        PROVIDER_EVENT_TYPE_REASON.low_battery.name,
-    PROVIDER_EVENT_TYPE_REASON.maintenance.name:
-        PROVIDER_EVENT_TYPE_REASON.maintenance.name,
-    EVENT_TYPE.deregister.name: PROVIDER_EVENT_TYPE_REASON.service_end.name,
-    EVENT_TYPE.service_end.name: PROVIDER_EVENT_TYPE_REASON.service_end.name,
-    EVENT_TYPE.register.name: PROVIDER_EVENT_TYPE_REASON.service_end.name,
-    PROVIDER_EVENT_TYPE_REASON.rebalance_pick_up.name:
-        PROVIDER_EVENT_TYPE_REASON.rebalance_pick_up.name,
-    PROVIDER_EVENT_TYPE_REASON.maintenance_pick_up.name:
-        PROVIDER_EVENT_TYPE_REASON.maintenance_pick_up.name,
+    EVENT_TYPE.service_start.name: "service_start",
+    EVENT_TYPE.cancel_reservation.name: "user_drop_off",
+    EVENT_TYPE.trip_end.name: "user_drop_off",
+    PROVIDER_EVENT_TYPE_REASON.rebalance_drop_off.name: "rebalance_drop_off",
+    PROVIDER_EVENT_TYPE_REASON.maintenance_drop_off.name: "maintenance_drop_off",
+    EVENT_TYPE.battery_charged.name: "maintenance_drop_off",
+    EVENT_TYPE.reserve.name: "user_pick_up",
+    EVENT_TYPE.trip_start.name: "user_pick_up",
+    EVENT_TYPE.trip_enter.name: "user_pick_up",
+    EVENT_TYPE.trip_leave.name: "user_pick_up",  # This is on really bad...
+    PROVIDER_EVENT_TYPE_REASON.low_battery.name: "low_battery",
+    PROVIDER_EVENT_TYPE_REASON.maintenance.name: "maintenance",
+    EVENT_TYPE.deregister.name: "service_end",
+    EVENT_TYPE.service_end.name: "service_end",
+    EVENT_TYPE.register.name: "service_end",
+    PROVIDER_EVENT_TYPE_REASON.rebalance_pick_up.name: "rebalance_pick_up",
+    PROVIDER_EVENT_TYPE_REASON.maintenance_pick_up.name: "maintenance_pick_up",
 }
 
 # Inside the Provider API, maps the event_type_reason to the corresponding event_type
