@@ -59,15 +59,31 @@ EVENT_TYPE = enum.Enum(
         ("trip_leave", pgettext_lazy("Event type", "Trip leave")),
         ("trip_end", pgettext_lazy("Event type", "Trip end")),
         ("deregister", pgettext_lazy("Event type", "Deregister")),
-        # event_type_reason(s) listed in the provider API but not in the agency API
-        # https://github.com/CityOfLosAngeles/mobility-data-specification/tree/dev/provider
+        # this last event is in neither of the MDS spec
+        ("telemetry", pgettext_lazy("Event type", "Received telemetry")),
+        # This may be added in a revision of the agency API specs
+        ("battery_charged", pgettext_lazy("Event type", "Battery charged")),
+    ],
+)
+
+# event_type_reason(s) listed in the provider API but not in the agency API
+# https://github.com/CityOfLosAngeles/mobility-data-specification/tree/dev/provider
+PROVIDER_EVENT_TYPE_REASON = enum.Enum(
+    "Provider event type reason",
+    [
+        # available #
+        ("service_start", pgettext_lazy("Event type", "Service start")),
         ("user_drop_off", pgettext_lazy("Event type", "User drop off")),
         ("rebalance_drop_off", pgettext_lazy("Event type", "Rebalance drop off")),
         ("maintenance_drop_off", pgettext_lazy("Event type", "Maintenance drop off")),
         ("agency_drop_off", pgettext_lazy("Event type", "Agency drop off")),
+        # reserved #
         ("user_pick_up", pgettext_lazy("Event type", "User pick up")),
+        # unavailable #
         ("maintenance", pgettext_lazy("Event type", "Maintenance")),
         ("low_battery", pgettext_lazy("Event type", "Low battery")),
+        # removed #
+        ("service_end", pgettext_lazy("Event type", "Service end")),
         ("rebalance_pick_up", pgettext_lazy("Event type", "Rebalance pick up")),
         ("maintenance_pick_up", pgettext_lazy("Event type", "Maintenance pick up")),
         ("agency_pick_up", pgettext_lazy("Event type", "Agency pick up")),

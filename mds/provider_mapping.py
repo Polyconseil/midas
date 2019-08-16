@@ -1,4 +1,9 @@
-from mds.enums import DEVICE_STATUS, EVENT_TYPE, EVENT_TYPE_REASON
+from mds.enums import (
+    DEVICE_STATUS,
+    EVENT_TYPE,
+    EVENT_TYPE_REASON,
+    PROVIDER_EVENT_TYPE_REASON,
+)
 
 # Mappings between Provider and Agency
 #
@@ -23,7 +28,7 @@ PROVIDER_REASON_TO_AGENCY_EVENT = {
         EVENT_TYPE.provider_drop_off.name,
         EVENT_TYPE_REASON.maintenance.name,
     ),
-    "agency_drop_off": (EVENT_TYPE.agency_drop_off.name,),
+    "agency_drop_off": (PROVIDER_EVENT_TYPE_REASON.agency_drop_off.name,),
     # reserved #
     "user_pick_up": (EVENT_TYPE.trip_start.name,),
     # unavailable #
@@ -88,8 +93,8 @@ AGENCY_EVENT_TO_PROVIDER_REASON = {
     (EVENT_TYPE.deregister.name, EVENT_TYPE_REASON.missing.name): "service_end",
     (EVENT_TYPE.deregister.name, EVENT_TYPE_REASON.decommissioned.name): "service_end",
     # Not in the MDS agency spec: probably not used
-    (EVENT_TYPE.agency_drop_off.name,): "agency_drop_off",  # not used
-    (EVENT_TYPE.agency_pick_up.name,): "agency_pick_up",  # not used
+    (PROVIDER_EVENT_TYPE_REASON.agency_drop_off.name,): "agency_drop_off",  # not used
+    (PROVIDER_EVENT_TYPE_REASON.agency_pick_up.name,): "agency_pick_up",  # not used
     (EVENT_TYPE.battery_charged.name,): "maintenance_drop_off",  # not used
 }
 
@@ -97,19 +102,22 @@ AGENCY_EVENT_TO_PROVIDER_REASON = {
 # https://github.com/CityOfLosAngeles/mobility-data-specification/tree/dev/provider
 PROVIDER_EVENT_TYPE_REASON_TO_EVENT_TYPE = {
     # available #
-    EVENT_TYPE.service_start.name: DEVICE_STATUS.available.name,
-    EVENT_TYPE.user_drop_off.name: DEVICE_STATUS.available.name,
-    EVENT_TYPE.rebalance_drop_off.name: DEVICE_STATUS.available.name,
-    EVENT_TYPE.maintenance_drop_off.name: DEVICE_STATUS.available.name,
-    EVENT_TYPE.agency_drop_off.name: DEVICE_STATUS.available.name,
+    PROVIDER_EVENT_TYPE_REASON.service_start.name: DEVICE_STATUS.available.name,
+    PROVIDER_EVENT_TYPE_REASON.user_drop_off.name: DEVICE_STATUS.available.name,
+    PROVIDER_EVENT_TYPE_REASON.rebalance_drop_off.name: DEVICE_STATUS.available.name,
+    PROVIDER_EVENT_TYPE_REASON.maintenance_drop_off.name: DEVICE_STATUS.available.name,
+    PROVIDER_EVENT_TYPE_REASON.agency_drop_off.name: DEVICE_STATUS.available.name,
     # reserved #
-    EVENT_TYPE.user_pick_up.name: DEVICE_STATUS.reserved.name,
+    PROVIDER_EVENT_TYPE_REASON.user_pick_up.name: DEVICE_STATUS.reserved.name,
     # unavailable #
-    EVENT_TYPE.maintenance.name: DEVICE_STATUS.unavailable.name,
-    EVENT_TYPE.low_battery.name: DEVICE_STATUS.unavailable.name,
+    PROVIDER_EVENT_TYPE_REASON.maintenance.name: DEVICE_STATUS.unavailable.name,
+    PROVIDER_EVENT_TYPE_REASON.low_battery.name: DEVICE_STATUS.unavailable.name,
     # removed #
-    EVENT_TYPE.service_end.name: DEVICE_STATUS.removed.name,
-    EVENT_TYPE.rebalance_pick_up.name: DEVICE_STATUS.removed.name,
-    EVENT_TYPE.maintenance_pick_up.name: DEVICE_STATUS.removed.name,
-    EVENT_TYPE.agency_pick_up.name: DEVICE_STATUS.removed.name,
+    PROVIDER_EVENT_TYPE_REASON.service_end.name: DEVICE_STATUS.removed.name,
+    PROVIDER_EVENT_TYPE_REASON.rebalance_pick_up.name: DEVICE_STATUS.removed.name,
+    PROVIDER_EVENT_TYPE_REASON.maintenance_pick_up.name: DEVICE_STATUS.removed.name,
+    PROVIDER_EVENT_TYPE_REASON.agency_pick_up.name: DEVICE_STATUS.removed.name,
+    # others #
+    PROVIDER_EVENT_TYPE_REASON.telemetry.name: DEVICE_STATUS.unknown.name,
+    PROVIDER_EVENT_TYPE_REASON.battery_charged.name: DEVICE_STATUS.available.name,
 }

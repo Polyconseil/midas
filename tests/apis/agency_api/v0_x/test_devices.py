@@ -71,7 +71,7 @@ def test_device_list_basic(client, django_assert_num_queries):
     factories.EventRecord(
         device=device,
         saved_at=today + datetime.timedelta(seconds=10),
-        event_type=enums.EVENT_TYPE.maintenance_drop_off.name,
+        event_type=enums.EVENT_TYPE.provider_drop_off.name,
         timestamp=today - datetime.timedelta(seconds=5),
     )
 
