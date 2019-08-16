@@ -63,7 +63,7 @@ AGENCY_EVENT_TO_PROVIDER_REASON = {
     (
         EVENT_TYPE.provider_drop_off.name,
         EVENT_TYPE_REASON.maintenance.name,
-    ): "maintenance_drop_off",  # In the provider spec
+    ): "maintenance_drop_off",  # Not in the Agency spec but in the provider spec
     (EVENT_TYPE.provider_pick_up.name,): "service_end",
     (
         EVENT_TYPE.provider_pick_up.name,
