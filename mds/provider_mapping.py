@@ -72,35 +72,6 @@ OLD_PROVIDER_REASON_TO_AGENCY_EVENT = {
     "maintenance_pick_up": PROVIDER_EVENT_TYPE_REASON.maintenance_pick_up.name,
 }
 
-OLD_TO_NEW_AGENCY_EVENT = {
-    (EVENT_TYPE.service_start.name,): (EVENT_TYPE.service_start.name,),
-    (EVENT_TYPE.trip_end.name,): (EVENT_TYPE.trip_end.name,),
-    (PROVIDER_EVENT_TYPE_REASON.rebalance_drop_off.name,): (
-        EVENT_TYPE.provider_drop_off.name,
-    ),
-    (PROVIDER_EVENT_TYPE_REASON.maintenance_drop_off.name,): (
-        EVENT_TYPE.provider_drop_off.name,
-        EVENT_TYPE_REASON.maintenance.name,
-    ),
-    (EVENT_TYPE.trip_start.name,): (EVENT_TYPE.trip_start.name,),
-    (PROVIDER_EVENT_TYPE_REASON.maintenance.name,): (
-        EVENT_TYPE.service_end.name,
-        EVENT_TYPE_REASON.maintenance.name,
-    ),
-    (PROVIDER_EVENT_TYPE_REASON.low_battery.name,): (
-        EVENT_TYPE.service_end.name,
-        EVENT_TYPE_REASON.low_battery.name,
-    ),
-    (EVENT_TYPE.service_end.name,): (EVENT_TYPE.service_end.name,),
-    (PROVIDER_EVENT_TYPE_REASON.rebalance_pick_up.name,): (
-        EVENT_TYPE.provider_pick_up.name,
-        EVENT_TYPE_REASON.rebalance.name,
-    ),
-    (PROVIDER_EVENT_TYPE_REASON.maintenance_pick_up.name,): (
-        EVENT_TYPE.provider_pick_up.name,
-        EVENT_TYPE_REASON.maintenance.name,
-    ),
-}
 
 # Converts an Agency event to a Provider event_type_reason
 # Try to stay consistent with
@@ -224,3 +195,59 @@ PROVIDER_EVENT_TYPE_REASON_TO_EVENT_TYPE = {
     PROVIDER_EVENT_TYPE_REASON.telemetry.name: DEVICE_STATUS.unknown.name,
     PROVIDER_EVENT_TYPE_REASON.battery_charged.name: DEVICE_STATUS.available.name,
 }
+
+
+OLD_TO_NEW_AGENCY_EVENT = {
+    (EVENT_TYPE.service_start.name,): (EVENT_TYPE.service_start.name,),
+    (EVENT_TYPE.trip_end.name,): (EVENT_TYPE.trip_end.name,),
+    (PROVIDER_EVENT_TYPE_REASON.rebalance_drop_off.name,): (
+        EVENT_TYPE.provider_drop_off.name,
+    ),
+    (PROVIDER_EVENT_TYPE_REASON.maintenance_drop_off.name,): (
+        EVENT_TYPE.provider_drop_off.name,
+        EVENT_TYPE_REASON.maintenance.name,
+    ),
+    (EVENT_TYPE.trip_start.name,): (EVENT_TYPE.trip_start.name,),
+    (PROVIDER_EVENT_TYPE_REASON.maintenance.name,): (
+        EVENT_TYPE.service_end.name,
+        EVENT_TYPE_REASON.maintenance.name,
+    ),
+    (PROVIDER_EVENT_TYPE_REASON.low_battery.name,): (
+        EVENT_TYPE.service_end.name,
+        EVENT_TYPE_REASON.low_battery.name,
+    ),
+    (EVENT_TYPE.service_end.name,): (EVENT_TYPE.service_end.name,),
+    (PROVIDER_EVENT_TYPE_REASON.rebalance_pick_up.name,): (
+        EVENT_TYPE.provider_pick_up.name,
+        EVENT_TYPE_REASON.rebalance.name,
+    ),
+    (PROVIDER_EVENT_TYPE_REASON.maintenance_pick_up.name,): (
+        EVENT_TYPE.provider_pick_up.name,
+        EVENT_TYPE_REASON.maintenance.name,
+    ),
+}
+
+
+def get_new_event_from_old(old_event):
+    """
+    Maps an old agency event to the new agency event.
+    """
+    if isinstance(old_event, str):
+        old_event = (old_event,)
+    return OLD_TO_NEW_AGENCY_EVENT.get(old_event, old_event)
+
+
+def get_old_event_from_new(event):
+    """
+    Maps an new agency event to the old one.
+    """
+    old_event = (
+        [
+            old_evt
+            for old_evt, new_evt in OLD_TO_NEW_AGENCY_EVENT.items()
+            if new_evt == event
+        ]
+        + [event]  # if the event is not in the mapping
+    )[0]
+
+    return old_event

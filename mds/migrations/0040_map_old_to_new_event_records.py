@@ -9,6 +9,8 @@ from mds.provider_mapping import (
     OLD_PROVIDER_REASON_TO_AGENCY_EVENT,
     OLD_TO_NEW_AGENCY_EVENT,
     PROVIDER_REASON_TO_AGENCY_EVENT,
+    get_new_event_from_old,
+    get_old_event_from_new,
 )
 
 
@@ -44,7 +46,7 @@ def fill_event_type_and_reason(apps, schema_editor):
             continue
 
         event = (agency_event,)
-        new_agency_event = OLD_TO_NEW_AGENCY_EVENT.get(event, event)
+        new_agency_event = get_new_event_from_old(event)
         event_type, event_type_reason = (
             new_agency_event
             if len(new_agency_event) == 2
@@ -73,14 +75,7 @@ def reverse_fill_event_type_and_reason(apps, schema_editor):
             # that are in both mappings (service_end, service_start, trip_end and trip_start)
             continue
 
-        old_event = (
-            [
-                old_event
-                for old_event, new_event in OLD_TO_NEW_AGENCY_EVENT.items()
-                if new_event == agency_event
-            ]
-            + [agency_event]  # if the event is not in the mapping
-        )[0][0]
+        old_event = get_old_event_from_new(agency_event)[0]
 
         event_type, event_type_reason = (
             agency_event if len(agency_event) == 2 else agency_event + (None,)
