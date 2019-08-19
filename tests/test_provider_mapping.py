@@ -69,7 +69,8 @@ def test_migration_idempotent():
 
 def test_migration_reverse():
     """
-    Checks that applying the reverse old_to_new mapping to the new events returns the old events.
+    Checks that applying the reverse old_to_new mapping to the new events
+    returns the old events.
     old_to_new_a ^-1 ○ old_to_new_a (old) = old
     """
     for old_event, _ in OLD_TO_NEW_AGENCY_EVENT.items():
