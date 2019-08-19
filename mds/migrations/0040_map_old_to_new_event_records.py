@@ -79,7 +79,7 @@ def reverse_fill_event_type_and_reason(apps, schema_editor):
                 for old_event, new_event in OLD_TO_NEW_AGENCY_EVENT.items()
                 if new_event == agency_event
             ]
-            + [agency_event]
+            + [agency_event]  # if the event is not in the mapping
         )[0][0]
 
         event_type, event_type_reason = (
