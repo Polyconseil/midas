@@ -1,3 +1,5 @@
+import logging
+
 from rest_framework import mixins
 from rest_framework import serializers
 from rest_framework import status
@@ -14,6 +16,8 @@ from mds import enums, models, provider_mapping
 from mds.access_control.permissions import require_scopes
 from mds.access_control.scopes import SCOPE_AGENCY_API
 from mds.apis import utils as apis_utils
+
+logger = logging.getLogger(__name__)
 
 
 class DeviceSerializer(serializers.Serializer):
@@ -207,7 +211,9 @@ class DeviceEventSerializer(serializers.Serializer):
             event = (event_type, event_type_reason)
             if event not in provider_mapping.AGENCY_EVENT_TO_PROVIDER_REASON.keys():
                 # This should be avoided if possible
-                pass
+                logger.exception(
+                    f"The event ({event[0]}, {event[1]}) is not in the mapping."
+                )
             return event
 
     def create(self, validated_data):
