@@ -8,6 +8,7 @@ from mds.provider_mapping import (
     AGENCY_EVENT_TO_PROVIDER_REASON,
     PROVIDER_EVENT_TYPE_REASON_TO_EVENT_TYPE,
     OLD_AGENCY_EVENT_TO_PROVIDER_REASON,
+    get_provider_reason_from_both_mappings,
 )
 
 
@@ -71,12 +72,7 @@ class DeviceStatusChangesSerializer(serializers.ModelSerializer):
         return PROVIDER_EVENT_TYPE_REASON_TO_EVENT_TYPE[reason]
 
     def get_event_type_reason(self, obj):
-        event = (
-            (obj.event_type, obj.event_type_reason)
-            if isinstance(obj.event_type_reason, str)
-            else (obj.event_type,)
-        )
-        return AGENCY_EVENT_TO_PROVIDER_REASON.get(event)
+        return get_provider_reason_from_both_mappings(obj)
 
 
 class CustomPagination(pagination.PageNumberPagination):

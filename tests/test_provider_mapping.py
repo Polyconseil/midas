@@ -1,3 +1,6 @@
+import pytest
+
+from mds import enums, factories
 from mds.provider_mapping import (
     AGENCY_EVENT_TO_PROVIDER_REASON,
     OLD_AGENCY_EVENT_TO_PROVIDER_REASON,
@@ -6,7 +9,9 @@ from mds.provider_mapping import (
     OLD_TO_NEW_AGENCY_EVENT,
     get_new_event_from_old,
     get_old_event_from_new,
+    get_provider_reason_from_both_mappings,
 )
+
 
 # This file tests the different functions of this old and new mapping:
 # Old:
@@ -88,3 +93,67 @@ def test_migration_reverse_2():
         old_agency_event = get_old_event_from_new(new_event)
         new_agency_event = get_new_event_from_old(old_agency_event)
         assert new_agency_event == new_event
+
+
+@pytest.fixture
+def device():
+    uuid1 = "aaaaaaa1-1342-413b-8e89-db802b2f83f6"
+    provider = factories.Provider(name="Test provider")
+    return factories.Device(
+        id=uuid1,
+        provider=provider,
+        identification_number="1AAAAA",
+        model="Testa_Model_S",
+        category="car",
+        propulsion=["combustion"],
+        dn_status="available",
+        dn_gps_point="Point(40 15.0)",
+        dn_battery_pct=0.5,
+    )
+
+
+@pytest.mark.django_db
+def test_get_provider_reason_from_both_mappings_old_objects(device):
+    """
+        Checks that the function to get the provider_reason from the EventRecord
+        works as expected for old objects.
+        """
+    obj = factories.EventRecord(
+        device=device,
+        event_type=enums.PROVIDER_EVENT_TYPE_REASON.rebalance_drop_off.name,
+    )
+    provider_reason = get_provider_reason_from_both_mappings(obj)
+    assert provider_reason in OLD_AGENCY_EVENT_TO_PROVIDER_REASON.values()
+    assert provider_reason == enums.PROVIDER_EVENT_TYPE_REASON.rebalance_drop_off.name
+
+
+@pytest.mark.django_db
+def test_get_provider_reason_from_both_mappings_new_objects(device):
+    """
+    Checks that the function to get the provider_reason from the EventRecord
+    works as expected for new objects.
+    """
+    obj = factories.EventRecord(
+        device=device,
+        event_type=enums.PROVIDER_EVENT_TYPE_REASON.service_end.name,
+        event_type_reason=enums.EVENT_TYPE_REASON.maintenance.name,
+    )
+    provider_reason = get_provider_reason_from_both_mappings(obj)
+    assert provider_reason in AGENCY_EVENT_TO_PROVIDER_REASON.values()
+    assert provider_reason == enums.PROVIDER_EVENT_TYPE_REASON.maintenance.name
+
+
+@pytest.mark.django_db
+def test_get_provider_reason_from_both_mappings_new_objects_not_in_old(device):
+    """
+    Checks that the function to get the provider_reason from the EventRecord
+    uses the old mapping for events that are not in the new mapping.
+    """
+    obj = factories.EventRecord(
+        device=device,
+        event_type=enums.PROVIDER_EVENT_TYPE_REASON.rebalance_pick_up.name,
+    )
+    provider_reason = get_provider_reason_from_both_mappings(obj)
+    assert provider_reason in AGENCY_EVENT_TO_PROVIDER_REASON.values()
+    assert provider_reason == enums.PROVIDER_EVENT_TYPE_REASON.rebalance_pick_up.name
+
