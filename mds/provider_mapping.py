@@ -194,6 +194,15 @@ PROVIDER_EVENT_TYPE_REASON_TO_EVENT_TYPE = {
     # others #
     PROVIDER_EVENT_TYPE_REASON.telemetry.name: DEVICE_STATUS.unknown.name,
     PROVIDER_EVENT_TYPE_REASON.battery_charged.name: DEVICE_STATUS.available.name,
+    # old agency api
+    EVENT_TYPE.provider_drop_off.name: DEVICE_STATUS.available.name,
+    EVENT_TYPE.provider_pick_up.name: DEVICE_STATUS.removed.name,
+    EVENT_TYPE.register.name: DEVICE_STATUS.removed.name,
+    EVENT_TYPE.trip_leave.name: DEVICE_STATUS.removed.name,
+    EVENT_TYPE.deregister.name: DEVICE_STATUS.removed.name,
+    EVENT_TYPE.reserve.name: DEVICE_STATUS.reserved.name,
+    EVENT_TYPE.trip_enter.name: DEVICE_STATUS.reserved.name,
+    EVENT_TYPE.cancel_reservation.name: DEVICE_STATUS.available.name,
 }
 
 
