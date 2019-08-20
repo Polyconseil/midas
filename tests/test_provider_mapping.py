@@ -157,3 +157,30 @@ def test_get_provider_reason_from_both_mappings_new_objects_not_in_old(device):
     assert provider_reason in AGENCY_EVENT_TO_PROVIDER_REASON.values()
     assert provider_reason == enums.PROVIDER_EVENT_TYPE_REASON.rebalance_pick_up.name
 
+
+@pytest.mark.django_db
+def test_get_provider_reason_from_both_mappings_for_old_mapping(device):
+    """
+    Checks that the mapping are consistent for objects stored in the old format.
+    """
+    for reason, agency_event in OLD_PROVIDER_REASON_TO_AGENCY_EVENT.items():
+        obj = factories.EventRecord(device=device, event_type=agency_event)
+        provider_reason = get_provider_reason_from_both_mappings(obj)
+        assert provider_reason == reason
+
+
+@pytest.mark.django_db
+def test_get_provider_reason_from_both_mappings_for_new_mapping(device):
+    """
+    Checks that the mapping are consistent for objects stored in the new format.
+    """
+    for reason, agency_event in PROVIDER_REASON_TO_AGENCY_EVENT.items():
+        event_type, event_type_reason = (
+            agency_event if len(agency_event) == 2 else agency_event + (None,)
+        )
+        obj = factories.EventRecord(
+            device=device, event_type=event_type, event_type_reason=event_type_reason
+        )
+        provider_reason = get_provider_reason_from_both_mappings(obj)
+        assert provider_reason == reason
+
