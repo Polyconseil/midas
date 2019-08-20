@@ -115,9 +115,9 @@ def device():
 @pytest.mark.django_db
 def test_get_provider_reason_from_both_mappings_old_objects(device):
     """
-        Checks that the function to get the provider_reason from the EventRecord
-        works as expected for old objects.
-        """
+    Checks that the function to get the provider_reason from the EventRecord
+    works as expected for old objects.
+    """
     obj = factories.EventRecord(
         device=device,
         event_type=enums.PROVIDER_EVENT_TYPE_REASON.rebalance_drop_off.name,
@@ -183,4 +183,3 @@ def test_get_provider_reason_from_both_mappings_for_new_mapping(device):
         )
         provider_reason = get_provider_reason_from_both_mappings(obj)
         assert provider_reason == reason
-
