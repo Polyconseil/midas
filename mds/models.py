@@ -259,7 +259,9 @@ class EventRecord(models.Model):
     device = models.ForeignKey(
         Device, related_name="event_records", on_delete=models.CASCADE
     )
-    event_type = UnboundedCharField(choices=enums.choices(enums.EVENT_TYPE))
+    event_type = UnboundedCharField(
+        choices=enums.choices(enums.EVENT_TYPE) + enums.choices(enums.OLD_EVENT_TYPE)
+    )
     event_type_reason = UnboundedCharField(
         choices=enums.choices(enums.EVENT_TYPE_REASON), blank=True, null=True
     )

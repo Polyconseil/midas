@@ -66,6 +66,22 @@ EVENT_TYPE = enum.Enum(
     ],
 )
 
+
+# To make sure we still support the old version of the Agency API
+# when we receive events.
+OLD_EVENT_TYPE = enum.Enum(
+    "Event type",
+    [
+        ("rebalance_drop_off", pgettext_lazy("Event type", "Rebalance drop off")),
+        ("maintenance_drop_off", pgettext_lazy("Event type", "Maintenance drop off")),
+        ("low_battery", pgettext_lazy("Event type", "Low battery")),
+        ("maintenance", pgettext_lazy("Event type", "Maintenance")),
+        ("rebalance_pick_up", pgettext_lazy("Event type", "Rebalance pick up")),
+        ("maintenance_pick_up", pgettext_lazy("Event type", "Maintenance pick up")),
+    ],
+)
+
+
 # event_type_reason(s) listed in the provider API but not in the agency API
 # https://github.com/CityOfLosAngeles/mobility-data-specification/tree/dev/provider
 PROVIDER_EVENT_TYPE_REASON = enum.Enum(
