@@ -98,9 +98,9 @@ def reverse_fill_event_type_and_reason(apps, schema_editor):
 
 class Migration(migrations.Migration):
     atomic = False
-    deploy_phase = "0039_eventrecord_event_type_reason"
+    deploy_phase = "post_deploy"
 
-    dependencies = [("mds", "0039_eventrecord_event_type_reason")]
+    dependencies = [("mds", "0038_eventrecord_event_type_reason")]
 
     operations = [
         migrations.RunPython(

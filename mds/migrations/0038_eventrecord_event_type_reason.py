@@ -6,7 +6,7 @@ import mds.models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("mds", "0038_change_event_record_event_type_options")]
+    dependencies = [("mds", "0037_remove_provider_last_start_time_polled")]
 
     operations = [
         migrations.AddField(
