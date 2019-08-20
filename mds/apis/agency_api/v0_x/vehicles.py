@@ -173,6 +173,8 @@ class DeviceEventSerializer(serializers.Serializer):
     event_type_reason = serializers.ChoiceField(
         choices=enums.choices(enums.EVENT_TYPE_REASON),
         help_text="Vehicle event type reason.",
+        required=False,
+        allow_null=True,
     )
     timestamp = apis_utils.UnixTimestampMilliseconds(
         help_text="Timestamp of the last event update"
