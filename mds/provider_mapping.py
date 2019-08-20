@@ -253,25 +253,29 @@ def get_old_event_from_new(event):
     return old_event
 
 
-def get_provider_reason_from_both_mappings(obj):
+def get_provider_reason_from_both_mappings(event_record):
     """
     Takes an EventRecord as input (stored with the Agency nomenclature),
     and returns the provider event_type_reason.
     Supports both the old and the new mapping.
     """
-    assert hasattr(obj, "event_type")
     use_old_mapping = True
+    try:
+        event = (event_record.event_type,)
+    except AttributeError:
+        raise ValueError("Not a valid EventRecord object")
 
-    event = (obj.event_type,)
-    if hasattr(obj, "event_type_reason"):
-        if isinstance(obj.event_type_reason, str):
-            event = (obj.event_type, obj.event_type_reason)
+    try:
+        if isinstance(event_record.event_type_reason, str):
+            event = (event_record.event_type, event_record.event_type_reason)
             use_old_mapping = False
         else:
-            if (obj.event_type,) in AGENCY_EVENT_TO_PROVIDER_REASON.keys():
+            if (event_record.event_type,) in AGENCY_EVENT_TO_PROVIDER_REASON.keys():
                 use_old_mapping = False
+    except AttributeError:
+        pass
 
     if use_old_mapping:
-        return OLD_AGENCY_EVENT_TO_PROVIDER_REASON[obj.event_type]
+        return OLD_AGENCY_EVENT_TO_PROVIDER_REASON[event_record.event_type]
     else:
         return AGENCY_EVENT_TO_PROVIDER_REASON[event]
