@@ -10,8 +10,7 @@ from django.contrib.gis.geos import Point
 from django.db.utils import IntegrityError
 
 from mds import db_helpers
-from mds import enums
-from mds import models
+from mds import enums, models, provider_mapping
 from mds.access_control.permissions import require_scopes
 from mds.access_control.scopes import SCOPE_AGENCY_API
 from mds.apis import utils as apis_utils
@@ -171,6 +170,10 @@ class DeviceEventSerializer(serializers.Serializer):
     event_type = serializers.ChoiceField(
         choices=enums.choices(enums.EVENT_TYPE), help_text="Vehicle event."
     )
+    event_type_reason = serializers.ChoiceField(
+        choices=enums.choices(enums.EVENT_TYPE_REASON),
+        help_text="Vehicle event type reason.",
+    )
     timestamp = apis_utils.UnixTimestampMilliseconds(
         help_text="Timestamp of the last event update"
     )
@@ -186,13 +189,35 @@ class DeviceEventSerializer(serializers.Serializer):
         ),
     )
 
+    def get_event(self, validated_data):
+        # We first check whether the provider uses the old or the new agency
+        # event_type(s) and event_type_reason(s).
+        # A provider uses the old version if agency_api_version == "draft" in its
+        # api_configuration.
+        provider_id = self.context["request"].user.provider_id
+        provider = models.Provider.objects.get(id=provider_id)
+        old_version = provider.api_configuration.get("agency_api_version") == "draft"
+        event_type = validated_data.get("event_type")
+        event_type_reason = validated_data.get("event_type_reason")
+        if old_version:
+            return (event_type, None)
+        else:
+            event = (event_type, event_type_reason)
+            if event not in provider_mapping.AGENCY_EVENT_TO_PROVIDER_REASON.keys():
+                # This should be avoided if possible
+                pass
+            return event
+
     def create(self, validated_data):
+        event_type, event_type_reason = self.get_event(validated_data)
+
         device = self.context["device"]
         event_record = models.EventRecord(
             timestamp=validated_data["timestamp"],
             point=gps_to_gis_point(validated_data["telemetry"].get("gps", {})),
             device_id=device.id,
-            event_type=validated_data["event_type"],
+            event_type=event_type,
+            event_type_reason=event_type_reason,
             properties={
                 "telemetry": validated_data["telemetry"],
                 "trip_id": validated_data.get("trip_id"),
