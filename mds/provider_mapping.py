@@ -234,6 +234,14 @@ OLD_TO_NEW_AGENCY_EVENT = {
         EVENT_TYPE.provider_pick_up.name,
         EVENT_TYPE_REASON.maintenance.name,
     ),
+    (EVENT_TYPE.trip_enter.name,): (EVENT_TYPE.trip_enter.name,),
+    (EVENT_TYPE.cancel_reservation.name,): (EVENT_TYPE.cancel_reservation.name,),
+    (EVENT_TYPE.telemetry.name,): (EVENT_TYPE.telemetry.name,),
+    (EVENT_TYPE.reserve.name,): (EVENT_TYPE.reserve.name,),
+    (EVENT_TYPE.deregister.name,): (EVENT_TYPE.deregister.name,),
+    (EVENT_TYPE.battery_charged.name,): (EVENT_TYPE.battery_charged.name,),
+    (EVENT_TYPE.trip_leave.name,): (EVENT_TYPE.trip_leave.name,),
+    (EVENT_TYPE.register.name,): (EVENT_TYPE.register.name,),
 }
 
 
