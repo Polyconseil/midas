@@ -46,7 +46,7 @@ PROVIDER_REASON_TO_AGENCY_EVENT = {
         EVENT_TYPE_REASON.low_battery.name,
     ),
     # removed #
-    PROVIDER_EVENT_TYPE_REASON.service_end.name: (EVENT_TYPE.service_end.name,),
+    PROVIDER_EVENT_TYPE_REASON.service_end.name: (EVENT_TYPE.provider_pick_up.name,),
     # There is no equivalent on the agency side of rebalance_pick_up.
     PROVIDER_EVENT_TYPE_REASON.rebalance_pick_up.name: (
         EVENT_TYPE.provider_pick_up.name,
@@ -225,7 +225,7 @@ OLD_TO_NEW_AGENCY_EVENT = {
         EVENT_TYPE.service_end.name,
         EVENT_TYPE_REASON.low_battery.name,
     ),
-    (EVENT_TYPE.service_end.name,): (EVENT_TYPE.service_end.name,),
+    (EVENT_TYPE.service_end.name,): (EVENT_TYPE.provider_pick_up.name,),
     (PROVIDER_EVENT_TYPE_REASON.rebalance_pick_up.name,): (
         EVENT_TYPE.provider_pick_up.name,
         EVENT_TYPE_REASON.rebalance.name,
