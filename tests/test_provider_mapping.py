@@ -10,6 +10,7 @@ from mds.provider_mapping import (
     get_new_event_from_old,
     get_old_event_from_new,
     get_provider_reason_from_both_mappings,
+    get_same_mapping_event,
 )
 
 
@@ -93,6 +94,26 @@ def test_migration_reverse_2():
         old_agency_event = get_old_event_from_new(new_event)
         new_agency_event = get_new_event_from_old(old_agency_event)
         assert new_agency_event == new_event
+
+
+def test_get_same_mapping_event():
+    """
+    Checks that the function to optimise the migration's performance returns
+    the events that we do not want to update
+    """
+    assert get_same_mapping_event() == [
+        ("service_start",),
+        ("trip_end",),
+        ("trip_start",),
+        ("trip_enter",),
+        ("cancel_reservation",),
+        ("telemetry",),
+        ("reserve",),
+        ("deregister",),
+        ("battery_charged",),
+        ("trip_leave",),
+        ("register",),
+    ]
 
 
 @pytest.fixture

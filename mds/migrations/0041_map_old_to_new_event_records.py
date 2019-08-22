@@ -11,6 +11,7 @@ from mds.provider_mapping import (
     PROVIDER_REASON_TO_AGENCY_EVENT,
     get_new_event_from_old,
     get_old_event_from_new,
+    get_same_mapping_event,
 )
 
 
@@ -40,20 +41,21 @@ def fill_event_type_and_reason(apps, schema_editor):
     EventRecord = apps.get_model("mds", "EventRecord")
 
     for agency_event in OLD_PROVIDER_REASON_TO_AGENCY_EVENT.values():
-        if agency_event in [x[0] for x in PROVIDER_REASON_TO_AGENCY_EVENT.values()]:
+        new_agency_event = get_new_event_from_old(agency_event)
+        if new_agency_event in get_same_mapping_event():
             # We do not want to apply the migration for the events
-            # that are in both mappings (service_end, service_start, trip_end and trip_start)
+            # that are in both mappings
             continue
 
-        event = (agency_event,)
-        new_agency_event = get_new_event_from_old(event)
         event_type, event_type_reason = (
             new_agency_event
             if len(new_agency_event) == 2
             else new_agency_event + (None,)
         )
 
-        qs = EventRecord.objects.filter(Q(event_type=agency_event))
+        qs = EventRecord.objects.filter(
+            Q(event_type=agency_event) & Q(event_type_reason__isnull=True)
+        )
 
         def fill(qs):
             if event_type_reason:
@@ -68,11 +70,9 @@ def reverse_fill_event_type_and_reason(apps, schema_editor):
     EventRecord = apps.get_model("mds", "EventRecord")
 
     for agency_event in PROVIDER_REASON_TO_AGENCY_EVENT.values():
-        if agency_event in [
-            (event_type,) for event_type in OLD_PROVIDER_REASON_TO_AGENCY_EVENT.values()
-        ]:
+        if agency_event in get_same_mapping_event():
             # We do not want to apply the reverse migration to the events
-            # that are in both mappings (service_end, service_start, trip_end and trip_start)
+            # that are in both mappings
             continue
 
         old_event = get_old_event_from_new(agency_event)[0]

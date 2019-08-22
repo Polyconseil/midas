@@ -70,6 +70,7 @@ OLD_PROVIDER_REASON_TO_AGENCY_EVENT = {
     "service_end": EVENT_TYPE.service_end.name,
     "rebalance_pick_up": PROVIDER_EVENT_TYPE_REASON.rebalance_pick_up.name,
     "maintenance_pick_up": PROVIDER_EVENT_TYPE_REASON.maintenance_pick_up.name,
+    "agency_pick_up": PROVIDER_EVENT_TYPE_REASON.agency_pick_up.name,
 }
 
 
@@ -234,6 +235,7 @@ OLD_TO_NEW_AGENCY_EVENT = {
         EVENT_TYPE.provider_pick_up.name,
         EVENT_TYPE_REASON.maintenance.name,
     ),
+    (PROVIDER_EVENT_TYPE_REASON.agency_pick_up.name,): (EVENT_TYPE.city_pick_up.name,),
     (EVENT_TYPE.trip_enter.name,): (EVENT_TYPE.trip_enter.name,),
     (EVENT_TYPE.cancel_reservation.name,): (EVENT_TYPE.cancel_reservation.name,),
     (EVENT_TYPE.telemetry.name,): (EVENT_TYPE.telemetry.name,),
@@ -296,3 +298,12 @@ def get_provider_reason_from_both_mappings(event_record):
         return OLD_AGENCY_EVENT_TO_PROVIDER_REASON[event_record.event_type]
     else:
         return AGENCY_EVENT_TO_PROVIDER_REASON[event]
+
+
+def get_same_mapping_event():
+    """
+    Returns the list of event type reasons that do are not supposed to change
+    during the migration.
+    """
+    return [e for e in OLD_TO_NEW_AGENCY_EVENT.keys() if e == get_new_event_from_old(e)]
+
