@@ -171,6 +171,7 @@ OLD_AGENCY_EVENT_TO_PROVIDER_REASON = {
     EVENT_TYPE.register.name: "service_end",
     PROVIDER_EVENT_TYPE_REASON.rebalance_pick_up.name: "rebalance_pick_up",
     PROVIDER_EVENT_TYPE_REASON.maintenance_pick_up.name: "maintenance_pick_up",
+    PROVIDER_EVENT_TYPE_REASON.agency_pick_up.name: "agency_pick_up",
 }
 
 # Inside the Provider API, maps the event_type_reason to the corresponding event_type
@@ -306,4 +307,3 @@ def get_same_mapping_event():
     during the migration.
     """
     return [e for e in OLD_TO_NEW_AGENCY_EVENT.keys() if e == get_new_event_from_old(e)]
-
