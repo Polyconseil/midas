@@ -16,7 +16,6 @@ from django.utils import timezone
 from rest_framework.utils import encoders
 
 from . import enums
-from . import provider_mapping
 
 
 class UnboundedCharField(models.TextField):

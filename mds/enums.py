@@ -157,6 +157,9 @@ EVENT_TYPE_TO_DEVICE_STATUS = {
     EVENT_TYPE.trip_leave.name: DEVICE_STATUS.elsewhere.name,
     EVENT_TYPE.trip_end.name: DEVICE_STATUS.available.name,
     EVENT_TYPE.deregister.name: DEVICE_STATUS.inactive.name,
+    # Other events
+    EVENT_TYPE.telemetry.name: DEVICE_STATUS.unknown.name,
+    EVENT_TYPE.battery_charged.name: DEVICE_STATUS.available.name,
     # Old events
     OLD_EVENT_TYPE.rebalance_drop_off.name: DEVICE_STATUS.available.name,
     OLD_EVENT_TYPE.maintenance_drop_off.name: DEVICE_STATUS.available.name,
@@ -164,7 +167,4 @@ EVENT_TYPE_TO_DEVICE_STATUS = {
     OLD_EVENT_TYPE.maintenance.name: DEVICE_STATUS.unavailable.name,
     OLD_EVENT_TYPE.rebalance_pick_up.name: DEVICE_STATUS.removed.name,
     OLD_EVENT_TYPE.maintenance_pick_up.name: DEVICE_STATUS.removed.name,
-    # Other events
-    EVENT_TYPE.telemetry.name: DEVICE_STATUS.unknown.name,
-    EVENT_TYPE.battery_charged.name: DEVICE_STATUS.available.name,
 }
