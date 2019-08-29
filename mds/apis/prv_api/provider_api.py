@@ -103,10 +103,7 @@ class ProviderApiViewSet(viewsets.ViewSet):
         end_time = request.query_params.get("end_time")
 
         events = models.EventRecord.objects.select_related("device__provider").filter(
-            # Only forward events that can be polled from a "provider API"
-            # We don't want to filter out the old or the new events though.
-            event_type__in=API_PROVIDER_EVENTS
-        )
+            event_type__in=API_PROVIDER_EVENTS)
 
         # We support either recorded, time search or offset but not at the same time
         if skip:
