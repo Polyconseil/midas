@@ -248,6 +248,10 @@ OLD_TO_NEW_AGENCY_EVENT = {
 }
 
 
+API_PROVIDER_EVENTS = [x[0] for x in AGENCY_EVENT_TO_PROVIDER_REASON]
+API_PROVIDER_EVENTS.extend(OLD_AGENCY_EVENT_TO_PROVIDER_REASON.keys())
+
+
 def get_new_event_from_old(old_event):
     """
     Maps an old agency event to the new agency event.

@@ -5,9 +5,8 @@ from mds.access_control.permissions import require_scopes
 from mds.access_control.scopes import SCOPE_PRV_API
 from mds.apis import utils as apis_utils
 from mds.provider_mapping import (
-    AGENCY_EVENT_TO_PROVIDER_REASON,
+    API_PROVIDER_EVENTS,
     PROVIDER_EVENT_TYPE_REASON_TO_EVENT_TYPE,
-    OLD_AGENCY_EVENT_TO_PROVIDER_REASON,
     get_provider_reason_from_both_mappings,
 )
 
@@ -106,8 +105,7 @@ class ProviderApiViewSet(viewsets.ViewSet):
         events = models.EventRecord.objects.select_related("device__provider").filter(
             # Only forward events that can be polled from a "provider API"
             # We don't want to filter out the old or the new events though.
-            event_type__in=[x[0] for x in AGENCY_EVENT_TO_PROVIDER_REASON.keys()]
-            + list(OLD_AGENCY_EVENT_TO_PROVIDER_REASON.keys())
+            event_type__in=API_PROVIDER_EVENTS
         )
 
         # We support either recorded, time search or offset but not at the same time
