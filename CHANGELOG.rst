@@ -1,10 +1,22 @@
 Changelog
 =========
 
-0.5.43 (unreleased)
--------------------
+0.6.1 (unreleased)
+------------------
 
 - Nothing changed yet.
+
+
+0.6.0 (2019-09-02)
+------------------
+
+- Dropped private API not used in django-mds.
+
+
+0.5.43 (2019-08-30)
+-------------------
+
+- Update Agency to Provider Mapping for service_end events.
 
 
 0.5.42 (2019-08-26)
