@@ -211,7 +211,7 @@ class DeviceEventSerializer(serializers.Serializer):
             event = (
                 (event_type, event_type_reason) if event_type_reason else (event_type,)
             )
-            if event not in provider_mapping.AGENCY_EVENT_TO_PROVIDER_REASON.keys():
+            if event not in provider_mapping.AGENCY_EVENT_TO_PROVIDER_REASON:
                 # This should be avoided if possible
                 msg = f"The event ({event[0]}, {event[1]}) is not in the mapping."
                 logger.warning(msg)
