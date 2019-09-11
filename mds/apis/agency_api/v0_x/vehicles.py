@@ -72,7 +72,7 @@ class DeviceRegisterSerializer(serializers.Serializer):
         source="id", help_text="Provided by Operator to uniquely identify a vehicle."
     )
     provider_id = serializers.UUIDField(
-        help_text="Provided id issued by the city.", required=False
+        help_text="Provider id issued by the city.", required=False
     )
     vehicle_id = serializers.CharField(
         source="identification_number",
