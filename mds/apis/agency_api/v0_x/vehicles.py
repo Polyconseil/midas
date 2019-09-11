@@ -71,6 +71,9 @@ class DeviceRegisterSerializer(serializers.Serializer):
     device_id = serializers.UUIDField(
         source="id", help_text="Provided by Operator to uniquely identify a vehicle."
     )
+    provider_id = serializers.UUIDField(
+        help_text="Provided id issued by the city.", required=False
+    )
     vehicle_id = serializers.CharField(
         source="identification_number",
         help_text="Vehicle Identification Number (vehicle_id) visible on vehicle.",
@@ -93,7 +96,20 @@ class DeviceRegisterSerializer(serializers.Serializer):
     model = serializers.CharField(required=False, help_text="Vehicle Model.")
 
     def create(self, validated_data):
-        provider_id = self.context["request"].user.provider_id
+        data_broker_id = self.context["request"].user.provider_id
+
+        try:
+            provider_id = str(validated_data.pop("provider_id"))
+        except KeyError:
+            provider_id = data_broker_id
+
+        if data_broker_id != provider_id:
+            msg = "%s is trying to register a device with the provider id %s" % (
+                data_broker_id,
+                provider_id,
+            )
+            logger.warning(msg)
+
         try:
             return models.Device.objects.create(
                 provider_id=provider_id, **validated_data
@@ -331,8 +347,9 @@ class DeviceViewSet(
     @action(detail=True, methods=["post", "options"])
     def event(self, request, id):
         """Endpoint to receive an event from a provider."""
-        provider_id = request.user.provider_id
-        device = models.Device.objects.filter(provider_id=provider_id, id=id).last()
+        data_broker_id = request.user.provider_id
+        # We do not filter by provider_id here
+        device = models.Device.objects.filter(id=id).last()
         if not device:
             return Response(
                 data={
@@ -342,7 +359,14 @@ class DeviceViewSet(
                 status=404,
             )
 
-        provider = models.Provider.objects.get(pk=provider_id)
+        if device.provider_id != data_broker_id:
+            msg = "%s is trying to push an event with the provider id %s" % (
+                data_broker_id,
+                device.provider_id,
+            )
+            logger.warning(msg)
+
+        provider = models.Provider.objects.get(pk=device.provider_id)
         request_serializer = self.get_serializer(
             data=request.data,
             context={
