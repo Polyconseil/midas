@@ -539,6 +539,7 @@ def test_create_device_missing_provider(client):
     provider = factories.Provider(id=uuid.UUID("aaaa0000-61fd-4cce-8113-81af1de90942"))
     device_id = uuid.UUID("bbbb0000-61fd-4cce-8113-81af1de90942")
     data = {
+        "device_id": str(device_id),
         "event_type": "trip_leave",
         "event_type_reason": None,
         "telemetry": {
