@@ -96,13 +96,16 @@ class DeviceRegisterSerializer(serializers.Serializer):
     model = serializers.CharField(required=False, help_text="Vehicle Model.")
 
     def create(self, validated_data):
-        data_broker_id = self.context["request"].user.provider_id
-        provider_id = str(validated_data.pop("provider_id", data_broker_id))
+        user = self.context["request"].user
+        provider_id = str(validated_data.pop("provider_id", user.provider_id))
 
-        if data_broker_id != provider_id:
-            logger.info(
-                "%s is trying to register a device with the provider id %s"
-                % (data_broker_id, provider_id)
+        if not provider_id:
+            logger.warning("Trying to register a device without provider_id")
+
+        if provider_id not in user.aggregator_for:
+            logger.warning(
+                "%s is trying to push an event with the provider id %s"
+                % (user.provider_id, provider_id)
             )
 
         try:
@@ -353,20 +356,18 @@ class DeviceViewSet(
                 status=404,
             )
 
-        data_broker_id = request.user.provider_id
-        if device.provider_id != data_broker_id:
-            logger.info(
+        if str(device.provider_id) not in request.user.aggregator_for:
+            logger.warning(
                 "%s is trying to push an event with the provider id %s"
-                % (data_broker_id, device.provider_id)
+                % (request.user.provider_id, str(device.provider_id))
             )
 
-        provider = models.Provider.objects.get(pk=device.provider_id)
         request_serializer = self.get_serializer(
             data=request.data,
             context={
                 "device": device,
                 "request_or_response": "request",
-                "provider": provider,
+                "provider": device.provider,
             },
         )
         request_serializer.is_valid(raise_exception=True)
