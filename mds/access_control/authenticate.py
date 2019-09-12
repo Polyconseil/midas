@@ -102,7 +102,7 @@ def build_user(payload: Dict) -> RemoteUser:
 
     # See https://tools.ietf.org/html/rfc6749#section-3.3
     scopes = set(payload["scope"].split(" "))
-    aggregator_for = set(payload["aggregator_for"].split(" "))
+    aggregator_for = set(payload.get("aggregator_for", "").split(" "))
 
     return RemoteUser(
         payload["sub"], scopes, aggregator_for, payload.get("app_owner", None)
