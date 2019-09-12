@@ -100,7 +100,7 @@ class DeviceRegisterSerializer(serializers.Serializer):
         provider_id = str(validated_data.pop("provider_id", data_broker_id))
 
         if data_broker_id != provider_id:
-            logger.warning(
+            logger.info(
                 "%s is trying to register a device with the provider id %s"
                 % (data_broker_id, provider_id)
             )
@@ -342,8 +342,9 @@ class DeviceViewSet(
     @action(detail=True, methods=["post", "options"])
     def event(self, request, id):
         """Endpoint to receive an event from a provider."""
-        device = models.Device.objects.get(pk=id)
-        if not device:
+        try:
+            device = models.Device.objects.get(pk=id)
+        except models.Device.DoesNotExist:
             return Response(
                 data={
                     "message": f"No device found for device_id: {id}",
@@ -354,7 +355,7 @@ class DeviceViewSet(
 
         data_broker_id = request.user.provider_id
         if device.provider_id != data_broker_id:
-            logger.warning(
+            logger.info(
                 "%s is trying to push an event with the provider id %s"
                 % (data_broker_id, device.provider_id)
             )
