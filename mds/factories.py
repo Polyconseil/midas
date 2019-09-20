@@ -1,5 +1,6 @@
 import datetime
 import zlib
+import random
 
 import factory
 
@@ -715,7 +716,7 @@ class Policy(factory.django.DjangoModelFactory):
         lambda policy: policy.start_date + datetime.timedelta(days=30)
     )
     published_date = factory.SelfAttribute("start_date")
-    fixed_price = 20000
+    fixed_price = factory.LazyFunction(lambda: random.randint(0, 20000))
     rules = factory.List(
         [
             {
