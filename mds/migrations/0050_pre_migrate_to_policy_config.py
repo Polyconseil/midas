@@ -18,6 +18,6 @@ def migrate_to_policy_config(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [("mds", "0048_pre_add_policy_config")]
+    dependencies = [("mds", "0049_pre_add_policy_config")]
 
     operations = [migrations.RunPython(migrate_to_policy_config, migrations.RunPython.noop)]

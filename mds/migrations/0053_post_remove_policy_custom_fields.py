@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mds', '0049_pre_migrate_to_policy_config'),
+        ('mds', '0052_required_compliance_lag'),
     ]
 
     operations = [

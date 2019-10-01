@@ -7,7 +7,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mds', '0047_add_daily_penalty_20190924_0933'),
+        ('mds', '0048_add_compliance_lag'),
     ]
 
     operations = [
