@@ -41,7 +41,7 @@ class MultiSerializerViewSetMixin:
         return serializer.save()
 
     def perform_update(self, serializer):
-        serializer.save()
+        return serializer.save()
 
     def _create(self, request, *args, **kwargs):
         """Patch of rest_framework.mixins.CreateModelMixin.create.
