@@ -24,11 +24,11 @@ def test_policy_active():
     yesterday = timezone.now() - datetime.timedelta(1)
     tomorrow = timezone.now() + datetime.timedelta(1)
 
-    _unpublished_policy = factories.Policy(published_date=None)
+    unpublished_policy = factories.Policy(published_date=None)  # noqa: F841
     old_policy = factories.Policy(
         start_date=yesterday, end_date=yesterday, published_date=yesterday
     )
-    _obsolete_policy = factories.Policy(
+    obsolete_policy = factories.Policy(  # noqa: F841
         start_date=yesterday,
         end_date=tomorrow + datetime.timedelta(seconds=1),  # Not included
         published_date=yesterday,

@@ -67,27 +67,27 @@ def test_policy_list_basic(client, django_assert_num_queries):
 @pytest.mark.django_db
 def test_policy_list_range(client):
     # Policy from last year
-    _past = factories.Policy(
+    past = factories.Policy(  # noqa: F841
         name="past",
         start_date=timezone.now() - datetime.timedelta(days=365),
         end_date=timezone.now() - datetime.timedelta(days=350),
         published=True,
     )
-    # Policy with lower and upper bound (half of the lifespan)
-    _bound = factories.Policy(
+    # Policy with lower and upper bounds (half of the lifespan)
+    bound = factories.Policy(  # noqa: F841
         name="bound",
         start_date=timezone.now() - datetime.timedelta(days=15),
         end_date=timezone.now() + datetime.timedelta(days=15),
         published=True,
     )
     # Same but no upper bound
-    _ongoing = factories.Policy(
+    ongoing = factories.Policy(  # noqa: F841
         name="ongoing",
         start_date=timezone.now() - datetime.timedelta(days=15),
         published=True,
     )
     # Policy for next year
-    _future = factories.Policy(
+    future = factories.Policy(  # noqa: F841
         name="future",
         start_date=timezone.now() + datetime.timedelta(days=365),
         published=True,

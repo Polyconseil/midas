@@ -321,7 +321,7 @@ class PolicyQueryset(models.QuerySet):
         return self.filter(
             Q(end_date__gt=at) | Q(end_date__isnull=True),
             start_date__lte=at,
-            # Whether to consider retroactive policies is up to the compliance worker
+            # Whether to consider retroactive policies is up to the policy engine
             published_date__isnull=False,
             prev_policies__isnull=True,
             **kwargs,
