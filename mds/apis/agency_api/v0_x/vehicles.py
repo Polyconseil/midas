@@ -8,6 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
+from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.db.utils import IntegrityError
 
@@ -16,9 +17,11 @@ from mds import enums, models, provider_mapping
 from mds.access_control.permissions import require_scopes
 from mds.access_control.scopes import SCOPE_AGENCY_API
 from mds.apis import utils as apis_utils
-from mds.utils import get_object_from_cache, telemetry_is_enabled
+from mds.utils import get_object_from_cache
 
 logger = logging.getLogger(__name__)
+
+telemetry_is_enabled = get_object_from_cache(settings.ENABLE_TELEMETRY_FUNCTION)
 
 
 class DeviceSerializer(serializers.Serializer):
