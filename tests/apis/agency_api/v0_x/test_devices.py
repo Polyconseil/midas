@@ -2,6 +2,7 @@ import datetime
 import uuid
 
 from django.urls import reverse
+from django.test import override_settings
 
 import pytest
 
@@ -389,17 +390,20 @@ def test_device_telemetry(client, django_assert_num_queries):
     )
 
 
+def returnFalse():
+    return False
+
+
 @pytest.mark.django_db
+@override_settings(ENABLE_TELEMETRY_FUNCTION="tests.apis.agency_api.v0_x.test_devices.returnFalse")
 def test_device_telemetry_when_disabled(client, django_assert_num_queries):
     mds.apis.agency_api.v0_x.vehicles.is_telemetry_enabled = lambda: False
 
     provider = factories.Provider(id=uuid.UUID("aaaa0000-61fd-4cce-8113-81af1de90942"))
-    provider2 = factories.Provider(id=uuid.UUID("aaaa0000-61fd-4cce-8113-81af1de90943"))
     device_id_pattern = "bbbb0000-61fd-4cce-8113-81af1de9094%s"
     factories.Device(id=uuid.UUID(device_id_pattern % 1), provider=provider)
     factories.Device(id=uuid.UUID(device_id_pattern % 2), provider=provider)
 
-    factories.Device(id=uuid.UUID(device_id_pattern % 3), provider=provider2)
     data = {
         "data": [
             {
@@ -431,18 +435,6 @@ def test_device_telemetry_when_disabled(client, django_assert_num_queries):
             },
         ]
     }
-
-    # test auth
-    assert (
-        models.EventRecord.objects.filter(
-            device_id__in=[device_id_pattern % i for i in range(1, 4)]
-        ).count()
-        == 0
-    )
-    response = client.post(
-        reverse("agency:device-telemetry"), data=data, content_type="application/json"
-    )
-    assert response.status_code == 401
 
     n = BASE_NUM_QUERIES
     n += 1  # select devices

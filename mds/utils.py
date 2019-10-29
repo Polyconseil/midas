@@ -2,6 +2,7 @@ import datetime
 import importlib
 import random
 
+from django.conf import settings
 from django.contrib.gis.geos.point import Point
 
 from functools import lru_cache
@@ -27,6 +28,9 @@ def telemetry_is_enabled():
     saving through a dynamic setting.
     """
     return True
+
+
+is_telemetry_enabled = get_object_from_settings(settings.ENABLE_TELEMETRY_FUNCTION)
 
 
 def to_mds_timestamp(dt: datetime.datetime) -> int:
