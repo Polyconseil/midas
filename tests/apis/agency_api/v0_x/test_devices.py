@@ -390,12 +390,14 @@ def test_device_telemetry(client, django_assert_num_queries):
     )
 
 
-def returnFalse():
+def return_false():
     return False
 
 
 @pytest.mark.django_db
-@override_settings(ENABLE_TELEMETRY_FUNCTION="tests.apis.agency_api.v0_x.test_devices.returnFalse")
+@override_settings(
+    ENABLE_TELEMETRY_FUNCTION="tests.apis.agency_api.v0_x.test_devices.return_false"
+)
 def test_device_telemetry_when_disabled(client, django_assert_num_queries):
     mds.apis.agency_api.v0_x.vehicles.is_telemetry_enabled = lambda: False
 
