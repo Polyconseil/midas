@@ -7,25 +7,24 @@ from django.contrib.gis.geos.point import Point
 from functools import lru_cache
 
 
-@lru_cache(maxsize=128)
-def get_object_from_cache(setting):
+@lru_cache()
+def get_object_from_settings(setting):
     """Return an object.
 
     ``setting`` should be a full Python path,
-    e.g. ``subzero.core.processes.customer.CustomerProcess``.
+    e.g. ``mds.utils.telemetry_is_enabled``.
     """
     module_name, obj_name = setting.rsplit(".", 1)
     module = importlib.import_module(module_name)
-    object = getattr(module, obj_name)
-    return object
+    return getattr(module, obj_name)
 
 
-def telemetry_enabled():
+def telemetry_is_enabled():
     """
     This function is imported with `get_object_from_cache`
     from ENABLE_TELEMETRY_FUNCTION in the settings.
     It may easily be overriden to enable/disable the telemetries
-    saving from a setting.
+    saving through a dynamic setting.
     """
     return True
 

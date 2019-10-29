@@ -17,11 +17,11 @@ from mds import enums, models, provider_mapping
 from mds.access_control.permissions import require_scopes
 from mds.access_control.scopes import SCOPE_AGENCY_API
 from mds.apis import utils as apis_utils
-from mds.utils import get_object_from_cache
+from mds.utils import get_object_from_settings
 
 logger = logging.getLogger(__name__)
 
-telemetry_is_enabled = get_object_from_cache(settings.ENABLE_TELEMETRY_FUNCTION)
+is_telemetry_enabled = get_object_from_settings(settings.ENABLE_TELEMETRY_FUNCTION)
 
 
 class DeviceSerializer(serializers.Serializer):
@@ -390,7 +390,7 @@ class DeviceViewSet(
         context["provider"] = models.Provider.objects.get(pk=provider_id)
         serializer = self.get_serializer(data=request.data, context=context)
         serializer.is_valid(raise_exception=True)
-        instance = serializer.save() if telemetry_is_enabled() else None
+        instance = serializer.save() if is_telemetry_enabled() else None
         response_serializer = self.get_serializer(
             instance=instance, context={"request_or_response": "response"}
         )

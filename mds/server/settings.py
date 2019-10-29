@@ -25,7 +25,7 @@ ALLOWED_HOSTS = CONFIG.getlist(
 )
 
 
-ENABLE_TELEMETRY_FUNCTION = "mds.utils.telemetry_enabled"
+ENABLE_TELEMETRY_FUNCTION = "mds.utils.telemetry_is_enabled"
 
 
 INSTALLED_APPS = [
