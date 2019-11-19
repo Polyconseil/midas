@@ -14,12 +14,11 @@ class RuleSerializer(serializers.Serializer):
     name = serializers.CharField(help_text="Name of rule")
     rule_type = serializers.CharField(help_text="Type of policy (see Rule Types)")
     geographies = serializers.ListField(
-        child=serializers.UUIDField(
-            help_text=(
-                "List of Geography UUIDs (non-overlapping) "
-                "specifying the covered geography"
-            ),
-        )
+        child=serializers.UUIDField(),
+        help_text=(
+            "List of Geography UUIDs (non-overlapping) "
+            "specifying the covered geography"
+        ),
     )
     statuses = serializers.DictField(
         help_text=(
@@ -33,15 +32,14 @@ class RuleSerializer(serializers.Serializer):
         required=False, help_text="Measured units of policy (see Rule Units)"
     )
     vehicle_types = serializers.ListField(
-        serializers.CharField(
-            required=False, help_text='Applicable vehicle types, default "all".'
-        )
+        child=serializers.CharField(),
+        required=False,
+        help_text='Applicable vehicle types, default "all".',
     )
     propulsion_types = serializers.ListField(
-        serializers.CharField(
-            required=False,
-            help_text='Applicable vehicle propulsion types, default "all".',
-        )
+        child=serializers.CharField(),
+        required=False,
+        help_text='Applicable vehicle propulsion types, default "all".',
     )
     minimum = serializers.IntegerField(
         required=False, help_text="Minimum value, if applicable (default 0)"
@@ -60,13 +58,12 @@ class RuleSerializer(serializers.Serializer):
         help_text="Ending time-of-day when the rule is in effect (default 23:59:59).",
     )
     days = serializers.ListField(
-        serializers.CharField(
-            required=False,
-            help_text=(
-                'Days ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] '
-                "when the rule is in effect (default all)"
-            ),
-        )
+        child=serializers.CharField(),
+        required=False,
+        help_text=(
+            'Days ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] '
+            "when the rule is in effect (default all)"
+        ),
     )
     messages = serializers.DictField(
         required=False,
