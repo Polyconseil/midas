@@ -15,11 +15,19 @@ class RuleSerializer(serializers.Serializer):
     rule_type = serializers.CharField(help_text="Type of policy (see Rule Types)")
     geographies = serializers.ListField(
         child=serializers.UUIDField(
-            help_text="List of Geography UUIDs (non-overlapping) specifying the covered geography",
+            help_text=(
+                "List of Geography UUIDs (non-overlapping) "
+                "specifying the covered geography"
+            ),
         )
     )
     statuses = serializers.DictField(
-        help_text="""Vehicle statuses to which this rule applies. Optionally, you may provide specific event_type's for the rule to apply to as a subset of a given status. An empty list or null/absent defaults to "all"."""
+        help_text=(
+            "Vehicle statuses to which this rule applies. "
+            "Optionally, you may provide specific event_type's for the rule "
+            "to apply to as a subset of a given status. "
+            'An empty list or null/absent defaults to "all".'
+        )
     )
     rule_units = serializers.CharField(
         required=False, help_text="Measured units of policy (see Rule Units)"
@@ -43,7 +51,9 @@ class RuleSerializer(serializers.Serializer):
     )
     start_time = serializers.TimeField(
         required=False,
-        help_text="Beginning time-of-day when the rule is in effect (default 00:00:00).",
+        help_text=(
+            "Beginning time-of-day when the rule is in effect (default 00:00:00)."
+        ),
     )
     end_time = serializers.TimeField(
         required=False,
@@ -52,16 +62,25 @@ class RuleSerializer(serializers.Serializer):
     days = serializers.ListField(
         serializers.CharField(
             required=False,
-            help_text='Days ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] when the rule is in effect (default all)',
+            help_text=(
+                'Days ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] '
+                "when the rule is in effect (default all)"
+            ),
         )
     )
     messages = serializers.DictField(
         required=False,
-        help_text="Message to rider user, if desired, in various languages, keyed by language tag (see Messages)",
+        help_text=(
+            "Message to rider user, if desired, in various languages, "
+            "keyed by language tag (see Messages)"
+        ),
     )
     value_url = serializers.URLField(
         required=False,
-        help_text="URL to an API endpoint that can provide dynamic information for the measured value (see Value URL)",
+        help_text=(
+            "URL to an API endpoint that can provide dynamic information "
+            "for the measured value (see Value URL)"
+        ),
     )
 
     def to_representation(self, rule):
