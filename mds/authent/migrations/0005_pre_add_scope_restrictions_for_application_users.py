@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name="users_allowed_scopes",
             field=django.contrib.postgres.fields.ArrayField(
                 base_field=models.CharField(max_length=32),
-                default=list,
+                null=True,
                 help_text="User's allowed scopes (separated with commas)",
                 size=None,
             ),
