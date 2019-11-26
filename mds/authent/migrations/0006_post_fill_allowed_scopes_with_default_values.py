@@ -7,12 +7,9 @@ from django.db.models import F
 
 def fill_default_scopes(apps, schema_editor):
     Application = apps.get_model("authent", "Application")
-
-    for application in Application.objects.all():
-        if application.users_allowed_scopes is None:
-            Application.objects.filter(users_allowed_scopes=None).update(
-                users_allowed_scopes=F("scopes")
-            )
+    Application.objects.filter(users_allowed_scopes=None).update(
+        users_allowed_scopes=F("scopes")
+    )
 
 
 class Migration(migrations.Migration):
