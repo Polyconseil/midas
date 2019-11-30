@@ -44,7 +44,7 @@ class Application(AbstractApplication):
 class AccessToken(AbstractAccessToken):
     token = models.TextField()  # remove 255 char limit (for JWT)
     jti = models.UUIDField(db_index=True)
-    revoked_after = models.DateTimeField(null=True, blank=True)
+    revoked_after = models.DateTimeField(null=True, blank=True, db_index=True)
 
 
 class Grant(AbstractGrant):
