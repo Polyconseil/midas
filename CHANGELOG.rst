@@ -4,7 +4,7 @@ Changelog
 0.6.22 (unreleased)
 -------------------
 
-- Change pggetext "Elsewhere" in french, "Ailleurs" to "Hors périmètre"
+- Change of translation for pggetext "Elsewhere".
 
 
 0.6.21 (2019-12-09)
