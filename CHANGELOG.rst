@@ -4,7 +4,7 @@ Changelog
 0.7.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Don't create register events on the fly in the poller.
 
 
 0.7.0 (2019-12-18)
