@@ -27,8 +27,8 @@ from .settings import PROVIDER_POLLER_LIMIT_DAYS
 from .settings import POLLER_CREATE_REGISTER_EVENTS
 
 
-# Up to three accepted versions *in ascending order*
-ACCEPTED_MDS_VERSIONS = ["0.2", "0.3"]
+MDS_CONTENT_TYPE = "application/vnd.mds.provider+json"
+
 
 logger = logging.getLogger(__name__)
 
@@ -206,16 +206,20 @@ class StatusChangesPoller:
         else:
             raise NotImplementedError
 
-        headers = {}
-        # TODO(hcauwelier) only accept a given version
-        accepted_content_types = ["application/json"]
-        # Add versioning header (some providers may choke on this)
-        # We prefer the latest version but accept the two previous ones
-        for version in ACCEPTED_MDS_VERSIONS:
-            accepted_content_types.append(
-                "application/vnd.mds.provider+json;version=%s" % version
-            )
-        headers["Accept"] = ", ".join(accepted_content_types)
+        # TODO(hcauwelier) make it mandatory, see SMP-1673
+        api_version = self.provider.api_configuration.get(
+            "api_version", enums.DEFAULT_PROVIDER_API_VERSION
+        )
+        # We store the enum key, which cannot be a numeric identifier
+        # It doubles as a validity check
+        api_version = enums.MDS_VERSIONS[api_version].value
+
+        headers = {
+            # We only accept the version we expect from that provider
+            # And it should reject it when it bumps to the new version
+            "Accept": "%s;version=%s"
+            % (MDS_CONTENT_TYPE, api_version)
+        }
 
         logger.debug("Polling provider on URL %s", url)
         response = client.get(url, timeout=30, headers=headers)
@@ -230,14 +234,21 @@ class StatusChangesPoller:
             "Content-Type", "application/json; charset=UTF-8"
         )
         if content_type.startswith("application/json"):
-            version = "unspecified"
+            received = "unspecified"
         else:
             # Let it raise if malformed
-            content_type, version = content_type.split(";")
-            _, version = version.split("=")
-        logger.debug(
-            "Provider %s pretends to accept version %s", self.provider.name, version
-        )
+            params = content_type.split(";")
+            content_type = params.pop(0)
+            assert content_type == MDS_CONTENT_TYPE
+            params = dict(param.split("=") for param in params)
+            received = params.get("version", "unspecified")
+        if received != api_version:
+            logger.warning(
+                "Provider %s didn't respond in version %s but %s",
+                self.provider.name,
+                api_version,
+                received,
+            )
 
         body = response.json()
         return body
