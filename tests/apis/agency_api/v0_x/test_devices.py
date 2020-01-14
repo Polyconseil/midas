@@ -13,9 +13,6 @@ from mds.access_control.scopes import SCOPE_AGENCY_API
 from tests.auth_helpers import auth_header, BASE_NUM_QUERIES
 
 
-import mds.apis.agency_api.v0_x.vehicles
-
-
 @pytest.mark.django_db
 def test_devices_metadata(client):
     provider = factories.Provider(name="Test provider")
