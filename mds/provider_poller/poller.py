@@ -470,7 +470,10 @@ class StatusChangesPoller:
         else:
             # TODO(hcauwelier) some server implementations are flawed
             # leave the standard content type for now
-            headers["Accept"] = "application/json,%s;version=%s" % (MDS_CONTENT_TYPE, api_version)
+            headers["Accept"] = "application/json,%s;version=%s" % (
+                MDS_CONTENT_TYPE,
+                api_version,
+            )
 
         logger.debug("Polling provider on URL %s with headers %s", url, headers)
         response = client.get(url, timeout=30, headers=headers)
