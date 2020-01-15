@@ -351,7 +351,9 @@ def test_device_telemetry(client, django_assert_num_queries):
         == 0
     )
     response = client.post(
-        reverse("agency-0.3:device-telemetry"), data=data, content_type="application/json"
+        reverse("agency-0.3:device-telemetry"),
+        data=data,
+        content_type="application/json",
     )
     assert response.status_code == 401
 
