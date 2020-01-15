@@ -393,7 +393,7 @@ def return_false():
 
 @pytest.mark.django_db
 @override_settings(
-    ENABLE_TELEMETRY_FUNCTION="tests.apis.agency_api.v0_x.test_devices.return_false"
+    ENABLE_TELEMETRY_FUNCTION="tests.apis.agency_api.v0_3.test_devices.return_false"
 )
 def test_device_telemetry_when_disabled(client, django_assert_num_queries):
     provider = factories.Provider(id=uuid.UUID("aaaa0000-61fd-4cce-8113-81af1de90942"))
