@@ -23,7 +23,7 @@ urlpatterns = [
         include(
             (
                 mds.apis.agency_api.v0_3.urls.get_url_patterns(prefix="mds/v0.3"),
-                "agency",
+                "agency-0.3",
             )
         ),
     ),
