@@ -365,6 +365,11 @@ def test_device_telemetry(client, django_assert_num_queries):
         **auth_header(SCOPE_AGENCY_API, provider_id=provider.id),
     )
     assert response.status_code == 400
+    assert response.data == {
+        "error": "bad_param",
+        "error_description": "A validation error occurred.",
+        "error_details": ["device_id"],
+    }
 
     n = BASE_NUM_QUERIES
     n += 1  # select devices
@@ -378,7 +383,10 @@ def test_device_telemetry(client, django_assert_num_queries):
             **auth_header(SCOPE_AGENCY_API, provider_id=provider.id),
         )
     assert response.status_code == 201
-    assert response.data == {}
+    assert response.data == {
+        "result": "1/1",
+        "failures": [],
+    }
     assert (
         models.EventRecord.objects.filter(
             event_type="telemetry",
@@ -387,6 +395,25 @@ def test_device_telemetry(client, django_assert_num_queries):
         ).count()
         == 2
     )
+
+
+@pytest.mark.django_db
+def test_device_telemetry_error(client):
+    """MDS 0.4 error messages."""
+    provider = factories.Provider(id=uuid.UUID("aaaa0000-61fd-4cce-8113-81af1de90942"))
+    data = {"data": [{"foo": "bar"}]}
+    response = client.post(
+        reverse("agency-0.4:device-telemetry"),
+        data=data,
+        content_type="application/json",
+        **auth_header(SCOPE_AGENCY_API, provider_id=provider.id),
+    )
+    assert response.status_code == 400
+    assert response.data == {
+        "error": "missing_param",
+        "error_description": "A required parameter is missing.",
+        "error_details": ["device_id", "gps", "timestamp"],
+    }
 
 
 def return_false():
@@ -437,6 +464,7 @@ def test_device_telemetry_when_disabled(client, django_assert_num_queries):
 
     n = BASE_NUM_QUERIES
     n += 1  # select devices
+    n += 1  # check unknown devices
     with django_assert_num_queries(n):
         response = client.post(
             reverse("agency-0.4:device-telemetry"),
@@ -445,7 +473,10 @@ def test_device_telemetry_when_disabled(client, django_assert_num_queries):
             **auth_header(SCOPE_AGENCY_API, provider_id=provider.id),
         )
     assert response.status_code == 201
-    assert response.data == {}
+    assert response.data == {
+        "result": "1/1",
+        "failures": [],
+    }
     assert (
         models.EventRecord.objects.filter(
             event_type="telemetry",

@@ -18,6 +18,9 @@ from mds.access_control.scopes import SCOPE_AGENCY_API
 from mds.apis import utils as apis_utils
 from mds.utils import is_telemetry_enabled
 
+from .utils import to_mds_error_response
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -283,15 +286,16 @@ class DeviceTelemetryInputSerializer(serializers.Serializer):
 
     data = DeviceTelemetrySerializer(many=True)
 
-    def create(self, validated_data):
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
         provider_id = self.context["request"].user.provider_id
         unknown_ids = [
             str(id)
             for id in (
-                set(t["device_id"] for t in validated_data["data"])
+                set(t["device_id"] for t in attrs["data"])
                 - set(
                     models.Device.objects.filter(
-                        id__in=[t["device_id"] for t in validated_data["data"]]
+                        id__in=[t["device_id"] for t in attrs["data"]]
                     )
                     .filter(provider_id=provider_id)
                     .values_list("id", flat=True)
@@ -300,9 +304,20 @@ class DeviceTelemetryInputSerializer(serializers.Serializer):
         ]
         if unknown_ids:
             raise ValidationError(
-                {"data.device_id": "Unknown ids: %s" % " ".join(unknown_ids)}
+                # Reformatted for to_mds_error_response
+                {
+                    "data": [
+                        {
+                            "device_id": [
+                                "Unknown device_ids: %s" % " ".join(unknown_ids)
+                            ]
+                        }
+                    ]
+                }
             )
+        return attrs
 
+    def create(self, validated_data):
         event_records = (
             models.EventRecord(
                 timestamp=telemetry["timestamp"],
@@ -310,16 +325,27 @@ class DeviceTelemetryInputSerializer(serializers.Serializer):
                 device_id=telemetry["device_id"],
                 event_type=enums.EVENT_TYPE.telemetry.name,
                 properties={"telemetry": telemetry, "trip_id": None},
+                source=enums.EVENT_SOURCE.agency_api.name,
             )
             for telemetry in validated_data["data"]
         )
         db_helpers.upsert_event_records(
-            event_records, enums.EVENT_SOURCE.agency_api.name, on_conflict_update=True
+            event_records,
+            enums.EVENT_SOURCE.agency_api.name,
+            # Agency telemetries are canonical over what may have been polled already
+            on_conflict_update=True,
         )
 
         # We don't have the created event records,
         # but we will return an empty response anyway (cf. DeviceViewSet)
         return []
+
+
+class DeviceTelemetryResponseSerializer(serializers.Serializer):
+    """Response format for the telemetry endpoint."""
+
+    result = serializers.CharField()
+    failures = DeviceTelemetrySerializer(many=True)
 
 
 class DeviceViewSet(
@@ -347,7 +373,7 @@ class DeviceViewSet(
         },
         "telemetry": {
             "request": DeviceTelemetryInputSerializer,
-            "response": apis_utils.EmptyResponseSerializer,
+            "response": DeviceTelemetryResponseSerializer,
         },
     }
 
@@ -397,10 +423,25 @@ class DeviceViewSet(
         provider_id = request.user.provider_id
         context["provider"] = models.Provider.objects.get(pk=provider_id)
         serializer = self.get_serializer(data=request.data, context=context)
-        serializer.is_valid(raise_exception=True)
-        instance = serializer.save() if is_telemetry_enabled() else None
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError as exc:
+            # Don't raise or DRF will use its error format
+            return to_mds_error_response(exc)
+
+        if is_telemetry_enabled():
+            serializer.save()
+
+        # The 0.4 spec is not clear about the return format
         response_serializer = self.get_serializer(
-            instance=instance, context={"request_or_response": "response"}
+            {
+                # Invalid data already rejected
+                "result": "%(total)s/%(total)s"
+                % {"total": len(serializer.validated_data)},
+                # Writing not expected to fail
+                "failures": [],
+            },
+            context={"request_or_response": "response"},
         )
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
