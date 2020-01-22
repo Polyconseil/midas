@@ -10,6 +10,7 @@ from django.utils import timezone
 from mds import enums
 from mds import factories
 from mds import models
+from mds import utils
 from mds.provider_mapping import (
     PROVIDER_REASON_TO_AGENCY_EVENT,
     PROVIDER_EVENT_TYPE_REASON_TO_EVENT_TYPE,
@@ -304,6 +305,8 @@ def test_poll_provider_v0_4_realtime(client, requests_mock):
     # Note: testing with the default "POLLER_CREATE_REGISTER_EVENTS = False"
     # This time we didn't poll long ago
     last_event_time_polled = timezone.now() - datetime.timedelta(3)
+    # MDS precision is to the millisecond only
+    last_event_time_polled = last_event_time_polled.replace(microsecond=1000)
     provider = factories.Provider(
         base_api_url="http://provider",
         api_configuration__api_version=enums.MDS_VERSIONS.v0_4.name,
@@ -316,17 +319,23 @@ def test_poll_provider_v0_4_realtime(client, requests_mock):
     )
     stdout, stderr = io.StringIO(), io.StringIO()
 
-    events = urllib.parse.urljoin(provider.base_api_url, "/events")
-    requests_mock.get(
-        events,
-        json=make_response(
+    def callback(request, context):
+        start_time = utils.from_mds_timestamp(int(request.qs["start_time"][0]))
+        assert start_time == last_event_time_polled
+        end_time = utils.from_mds_timestamp(int(request.qs["end_time"][0]))
+        almost_equal = timezone.now() - end_time
+        assert almost_equal < datetime.timedelta(seconds=1)
+        context.status_code = 200
+        return make_response(
             provider,
             expected_device,
             expected_event,
             event_type_reason="service_start",
             version="0.4.0",
-        ),
-    )
+        )
+
+    events = urllib.parse.urljoin(provider.base_api_url, "/events")
+    requests_mock.get(events, json=callback)
     # Mocking must fail if we query the archives endpoint instead
     requests_mock.get(
         urllib.parse.urljoin(provider.base_api_url, "/status_changes"), status_code=400,
@@ -345,6 +354,49 @@ def test_poll_provider_v0_4_realtime(client, requests_mock):
     assert event.event_type == enums.EVENT_TYPE.service_start.name
     assert_event_equal(event, expected_event)
     assert_device_equal(device, expected_device)
+
+
+@pytest.mark.django_db
+def test_poll_provider_v0_4_realtime_lag(client, requests_mock):
+    """test the edge case of being just above the lag threshold"""
+    # lag + 1 second
+    last_event_time_polled = timezone.now() - datetime.timedelta(hours=1, seconds=1)
+    # MDS precision is to the millisecond only
+    last_event_time_polled = last_event_time_polled.replace(microsecond=1000)
+    provider = factories.Provider(
+        base_api_url="http://provider",
+        api_configuration__api_version=enums.MDS_VERSIONS.v0_4.name,
+        last_event_time_polled=last_event_time_polled,
+        api_configuration__provider_polling_lag="PT1H",  # One hour
+    )
+
+    def callback(request, context):
+        start_time = utils.from_mds_timestamp(int(request.qs["start_time"][0]))
+        assert start_time == last_event_time_polled
+        end_time = utils.from_mds_timestamp(int(request.qs["end_time"][0]))
+        assert end_time > start_time
+        almost_equal = timezone.now() - end_time
+        assert almost_equal < datetime.timedelta(hours=1, seconds=1)
+        context.status_code = 200
+        return {
+            "version": "0.4.0",
+            "data": {"status_changes": []},
+        }
+
+    events = urllib.parse.urljoin(provider.base_api_url, "/events")
+    requests_mock.get(events, json=callback)
+    # Mocking must fail if we query the archives endpoint instead
+    requests_mock.get(
+        urllib.parse.urljoin(provider.base_api_url, "/status_changes"), status_code=400,
+    )
+
+    stdout, stderr = io.StringIO(), io.StringIO()
+    call_command("poll_providers", "--raise-on-error", stdout=stdout, stderr=stderr)
+    assert_command_success(stdout, stderr)
+
+    # No result, the polling cursor is not updated
+    provider = models.Provider.objects.get(pk=provider.pk)
+    assert provider.last_event_time_polled == last_event_time_polled
 
 
 @pytest.mark.django_db
