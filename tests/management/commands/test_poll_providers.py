@@ -305,8 +305,6 @@ def test_poll_provider_v0_4_realtime(client, requests_mock):
     # Note: testing with the default "POLLER_CREATE_REGISTER_EVENTS = False"
     # This time we didn't poll long ago
     last_event_time_polled = timezone.now() - datetime.timedelta(3)
-    # MDS precision is to the millisecond only
-    last_event_time_polled = last_event_time_polled.replace(microsecond=1000)
     provider = factories.Provider(
         base_api_url="http://provider",
         api_configuration__api_version=enums.MDS_VERSIONS.v0_4.name,
@@ -319,12 +317,17 @@ def test_poll_provider_v0_4_realtime(client, requests_mock):
     )
     stdout, stderr = io.StringIO(), io.StringIO()
 
-    def callback(request, context):
+    def events_callback(request, context):
+        """Check the query parameters"""
+        # Start time is were the poller stopped last time
         start_time = utils.from_mds_timestamp(int(request.qs["start_time"][0]))
-        assert start_time == last_event_time_polled
+        assert almost_equal(start_time, last_event_time_polled)
+        # End time is after start time but valued "now()" when the poller was running
         end_time = utils.from_mds_timestamp(int(request.qs["end_time"][0]))
-        almost_equal = timezone.now() - end_time
-        assert almost_equal < datetime.timedelta(seconds=1)
+        assert end_time > start_time
+        assert almost_equal(
+            end_time, timezone.now(), precision=datetime.timedelta(seconds=1)
+        )
         context.status_code = 200
         return make_response(
             provider,
@@ -335,7 +338,7 @@ def test_poll_provider_v0_4_realtime(client, requests_mock):
         )
 
     events = urllib.parse.urljoin(provider.base_api_url, "/events")
-    requests_mock.get(events, json=callback)
+    requests_mock.get(events, json=events_callback)
     # Mocking must fail if we query the archives endpoint instead
     requests_mock.get(
         urllib.parse.urljoin(provider.base_api_url, "/status_changes"), status_code=400,
@@ -359,10 +362,8 @@ def test_poll_provider_v0_4_realtime(client, requests_mock):
 @pytest.mark.django_db
 def test_poll_provider_v0_4_realtime_lag(client, requests_mock):
     """test the edge case of being just above the lag threshold"""
-    # lag + 1 second
-    last_event_time_polled = timezone.now() - datetime.timedelta(hours=1, seconds=1)
-    # MDS precision is to the millisecond only
-    last_event_time_polled = last_event_time_polled.replace(microsecond=1000)
+    lag_plus_one_second = datetime.timedelta(hours=1, seconds=1)
+    last_event_time_polled = timezone.now() - lag_plus_one_second
     provider = factories.Provider(
         base_api_url="http://provider",
         api_configuration__api_version=enums.MDS_VERSIONS.v0_4.name,
@@ -370,13 +371,15 @@ def test_poll_provider_v0_4_realtime_lag(client, requests_mock):
         api_configuration__provider_polling_lag="PT1H",  # One hour
     )
 
-    def callback(request, context):
+    def events_callback(request, context):
+        """Check the query parameters"""
+        # Start time is were the poller stopped last time
         start_time = utils.from_mds_timestamp(int(request.qs["start_time"][0]))
-        assert start_time == last_event_time_polled
+        assert almost_equal(start_time, last_event_time_polled)
+        # End time is after start time but before the lag threshold
         end_time = utils.from_mds_timestamp(int(request.qs["end_time"][0]))
         assert end_time > start_time
-        almost_equal = timezone.now() - end_time
-        assert almost_equal < datetime.timedelta(hours=1, seconds=1)
+        assert almost_equal(end_time, timezone.now(), precision=lag_plus_one_second)
         context.status_code = 200
         return {
             "version": "0.4.0",
@@ -384,7 +387,7 @@ def test_poll_provider_v0_4_realtime_lag(client, requests_mock):
         }
 
     events = urllib.parse.urljoin(provider.base_api_url, "/events")
-    requests_mock.get(events, json=callback)
+    requests_mock.get(events, json=events_callback)
     # Mocking must fail if we query the archives endpoint instead
     requests_mock.get(
         urllib.parse.urljoin(provider.base_api_url, "/status_changes"), status_code=400,
@@ -511,3 +514,16 @@ def assert_event_equal(event, expected_event):
     )
     assert event.point.json == expected_event.point.json
     assert event.properties == expected_event.properties
+
+
+def almost_equal(
+    datetime1: datetime.datetime,
+    datetime2: datetime.datetime,
+    precision: datetime.timedelta = datetime.timedelta(milliseconds=1),
+) -> bool:
+    """Compares two datetimes to be almost equal.
+
+    The default precision matches the MDS specification timestamps in milliseconds
+    (when Python datetime objects can be precise to the microsecond).
+    """
+    return abs(datetime1 - datetime2) < precision
